@@ -31,12 +31,20 @@ Terminal drawing API for Scala
 import net.team2xh.scurses.Scurses
 
 Scurses { screen =>
+  // The screen will only be in Scurses mode inside this block
+  // Scurses will reset the terminal buffer and everything when outside
+  
+  // Get the current terminal size
   val (w, h) = screen.size
+  
   val greeting = "Hello, world!"
   val prompt = "Press a key to continue..."
+  // Put some strings in the middle of the screen
   screen.put(w/2 - greeting.length/2, h/2, greeting)
   screen.put(w/2 - prompt.length/2, h/2 + 1, prompt, Colors.BRIGHT_BLACK)
+  // Flush the buffer
   screen.refresh()
+  // Wait for an input without storing it
   screen.keypress()
 }
 ```
