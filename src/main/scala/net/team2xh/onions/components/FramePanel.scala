@@ -16,6 +16,8 @@ case class FramePanel(parent: Frame, var width: Int, var height: Int)
   var left:   Option[FramePanel] = None
   var right:  Option[FramePanel] = None
 
+  val widgets = ListBuffer[Widget]()
+
   def innerWidth = width
   def innerHeight = height
 
@@ -39,12 +41,18 @@ case class FramePanel(parent: Frame, var width: Int, var height: Int)
     case Some(panel) => panel.y0 + panel.height
   }
 
+  // TODO: Call this on resize
+  private[components] def updateDimensions(newWidth: Int, newHeight: Int): Unit = {
+    val (_, nHorizontal) = totalHorizontal
+    val newColumnWidth = newWidth / nHorizontal
+    width = newWidth - (nHorizontal - 1) * newColumnWidth
+    resizeHorizontal(newColumnWidth)
 
-  private[components] def updateDimensions(width: Int, height: Int): Unit = {
-    
+    val (_, nVertical) = totalVertical
+    val newRowHeight = newHeight / nVertical
+    height = height - (nVertical - 1) * newRowHeight
+    resizeVertical(newRowHeight)
   }
-
-  val widgets = ListBuffer[Widget]()
 
   private[FramePanel] def totalHorizontal: (Int, Int) = {
     val l = totalLeft
@@ -167,7 +175,7 @@ case class FramePanel(parent: Frame, var width: Int, var height: Int)
     case Some(panel) => true
   }
 
-  def drawEdges(): Unit = {
+  private[FramePanel] def drawEdges(): Unit = {
     bottom.foreach(_.drawEdges())
     right.foreach(_.drawEdges())
 
@@ -187,7 +195,7 @@ case class FramePanel(parent: Frame, var width: Int, var height: Int)
     }
   }
 
-  def drawCorners(): Unit = {
+  private[FramePanel] def drawCorners(): Unit = {
     bottom.foreach(_.drawCorners())
     right.foreach(_.drawCorners())
 
@@ -239,7 +247,7 @@ case class FramePanel(parent: Frame, var width: Int, var height: Int)
 
   }
 
-  def drawDebug(): Unit = {
+  private[FramePanel] def drawDebug(): Unit = {
     bottom.foreach(_.drawDebug())
     right.foreach(_.drawDebug())
 

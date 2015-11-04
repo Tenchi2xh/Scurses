@@ -17,12 +17,6 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
   def innerHeight = screen.size._2 - 1
 
   override def redraw(): Unit = {
-    val columns = panel.horizontalDepth
-    val rows = panel.verticalDepths
-
-    // Draw boxes
-//    Box.drawColumns(0, 0, innerWidth + 2, innerHeight + 2, columns, rows)
-
     // Draw panels recursively
     panel.redraw()
 
