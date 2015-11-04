@@ -1,8 +1,7 @@
 package net.team2xh.onions.components
 
 import com.sun.org.apache.xpath.internal.functions.FuncFalse
-import net.team2xh.onions.Component
-import net.team2xh.onions.drawing.Symbols
+import net.team2xh.onions.{Symbols, Component}
 import net.team2xh.scurses.Scurses
 
 import scala.collection.mutable.ListBuffer
@@ -15,6 +14,9 @@ case class FramePanel(parent: Frame, var width: Int, var height: Int)
   var bottom: Option[FramePanel] = None
   var left:   Option[FramePanel] = None
   var right:  Option[FramePanel] = None
+
+  var focus = false
+  var widgetFocus = 0
 
   val widgets = ListBuffer[Widget]()
 
@@ -188,11 +190,9 @@ case class FramePanel(parent: Frame, var width: Int, var height: Int)
         screen.put(x0, y, Symbols.SV)
     }
     // Horizontal edges
-    for (x <- x0 + 1 until x0 + width) {
-      screen.put(x, y0, Symbols.SH)
-      if (bottom.isEmpty)
-        screen.put(x, y0 + height, Symbols.SH)
-    }
+    screen.put(x0 + 1, y0, Symbols.SH * (width - 1))
+    if (bottom.isEmpty)
+      screen.put(x0 + 1, y0 + height, Symbols.SH * (width - 1))
   }
 
   private[FramePanel] def drawCorners(): Unit = {
@@ -262,7 +262,21 @@ case class FramePanel(parent: Frame, var width: Int, var height: Int)
   override def redraw(): Unit = {
     drawEdges()
     drawCorners()
-    drawDebug()
+//    drawDebug()
+    drawWidgets()
+  }
+
+  def drawWidgets(): Unit = {
+    bottom.foreach(_.drawWidgets())
+    right.foreach(_.drawWidgets())
+
+    var y = 1
+    for ((widget, i) <- widgets.zipWithIndex) {
+      screen.setOffset(x0 + 2, y0 + y)
+      widget.draw(focus && widgetFocus == i)
+      y += widget.innerHeight
+    }
+    screen.resetOffset()
   }
 
   private[components] def horizontalDepth: Int = right match {

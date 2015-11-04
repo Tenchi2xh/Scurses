@@ -34,6 +34,9 @@ class Scurses {
   val csi = new EscapeCodes(out)
   val console = new ConsoleReader()
 
+  var offsetX = 0
+  var offsetY = 0
+
   init()
 
   /**
@@ -47,11 +50,21 @@ class Scurses {
   def put(x: Int, y: Int, string: String,
           foreground: Int = Colors.BRIGHT_WHITE,
           background: Int = Colors.DIM_BLACK) {
-    csi.move(x, y)
+    csi.move(x + offsetX, y + offsetY)
     csi.setForeground(foreground)
     csi.setBackground(background)
     out.write(string.getBytes)
     csi.resetColors()
+  }
+
+  def setOffset(x: Int, y: Int) {
+    offsetX = x
+    offsetY = y
+  }
+
+  def resetOffset() {
+    offsetX = 0
+    offsetY = 0
   }
 
   /**

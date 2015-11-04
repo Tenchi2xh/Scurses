@@ -1,4 +1,4 @@
-package net.team2xh.onions.drawing
+package net.team2xh.onions
 
 object Symbols {
   // 1. Box-drawing

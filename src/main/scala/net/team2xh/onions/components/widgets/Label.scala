@@ -1,17 +1,27 @@
 package net.team2xh.onions.components.widgets
 
-import net.team2xh.onions.Component
-import net.team2xh.onions.components.Widget
+import net.team2xh.onions.{Utils, Component}
+import net.team2xh.onions.components.{FramePanel, Widget}
+import net.team2xh.scurses.{Colors, Scurses}
 
-class Label(parent: Component) extends Widget(parent) {
+case class Label(parent: FramePanel, text: String)
+           (implicit screen: Scurses) extends Widget(parent) {
 
-  override def drawUnfocused(): Unit = {
+  val lines = Utils.wrapText(text, innerWidth - 2)
 
+  def drawText(foreground: Int, background: Int): Unit = {
+    for ((line, i) <- lines.zipWithIndex) {
+      screen.put(0, i, " " + line + " ", foreground = foreground, background = background)
+    }
+  }
+
+  override def draw(focus: Boolean): Unit = {
+    val fg = if (focus) Colors.DIM_BLACK else Colors.BRIGHT_WHITE
+    val bg = if (focus) Colors.BRIGHT_WHITE else Colors.DIM_BLACK
+    drawText(fg, bg)
   }
 
   override def handleKeypress(keypress: Int): Unit = ???
 
-  override def innerWidth: Int = parent.innerWidth
-
-  override def innerHeight: Int = 1
+  override def innerHeight: Int = lines.length
 }
