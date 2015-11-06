@@ -1,11 +1,9 @@
 package net.team2xh.onions.components
 
-import com.sun.org.apache.xpath.internal.functions.FuncFalse
 import net.team2xh.onions.{Symbols, Component}
 import net.team2xh.scurses.Scurses
 
 import scala.collection.mutable.ListBuffer
-
 
 case class FramePanel(parent: Frame, var width: Int, var height: Int)
                      (implicit screen: Scurses) extends Component(Some(parent)) {
@@ -44,6 +42,7 @@ case class FramePanel(parent: Frame, var width: Int, var height: Int)
   }
 
   // TODO: Call this on resize
+  // TODO: Go deeper in the tree
   private[components] def updateDimensions(newWidth: Int, newHeight: Int): Unit = {
     val (_, nHorizontal) = totalHorizontal
     val newColumnWidth = newWidth / nHorizontal
@@ -57,66 +56,44 @@ case class FramePanel(parent: Frame, var width: Int, var height: Int)
   }
 
   private[FramePanel] def totalHorizontal: (Int, Int) = {
-    val l = totalLeft
-    val r = totalRight
+    val l = total(_.left, _.width)
+    val r = total(_.right, _.width)
     (l._1 + width + r._1, l._2 + 1 + r._2)
   }
-  private[FramePanel] def totalLeft: (Int, Int) = left match {
-    case None => (0, 0)
-    case Some(panel) =>
-      val l = panel.totalLeft
-      (l._1 + panel.width, l._2 + 1)
-  }
-  private[FramePanel] def totalRight: (Int, Int) = right match {
-    case None => (0, 0)
-    case Some(panel) =>
-      val r = panel.totalRight
-      (panel.width + r._1, 1 + r._2)
-  }
+
   private[FramePanel] def totalVertical: (Int, Int) = {
-    val t = totalTop
-    val b = totalBottom
+    val t = total(_.top, _.height)
+    val b = total(_.bottom, _.height)
     (t._1 + height + b._1, t._2 + 1 + b._2)
   }
-  private[FramePanel] def totalTop: (Int, Int) = top match {
-    case None => (0, 0)
-    case Some(panel) =>
-      val t = panel.totalTop
-      (t._1 + panel.height, t._2 + 1)
+
+  private[FramePanel] def total(direction: (FramePanel) => Option[FramePanel],
+                                attribute: (FramePanel) => Int): (Int, Int) = {
+    direction(this) match {
+      case None => (0, 0)
+      case Some(panel) =>
+        val l = panel.total(direction, attribute)
+        (l._1 + attribute(panel), l._2 + 1)
+    }
   }
-  private[FramePanel] def totalBottom: (Int, Int) = bottom match {
-    case None => (0, 0)
-    case Some(panel) =>
-      val b = panel.totalBottom
-      (panel.height + b._1, 1 + b._2)
-  }
+
   private[FramePanel] def resizeHorizontal(columnWidth: Int): Unit = {
-    resizeLeft(columnWidth)
-    resizeRight(columnWidth)
+    resize(_.left, _.width = columnWidth)
+    resize(_.right, _.width = columnWidth)
   }
-  private[FramePanel] def resizeLeft(columnWidth: Int): Unit = left foreach {
-    panel =>
-      panel.width = columnWidth
-      panel.resizeLeft(columnWidth)
-  }
-  private[FramePanel] def resizeRight(columnWidth: Int): Unit = right foreach {
-    panel =>
-      panel.width = columnWidth
-      panel.resizeRight(columnWidth)
-  }
+
   private[FramePanel] def resizeVertical(rowHeight: Int): Unit = {
-    resizeTop(rowHeight)
-    resizeBottom(rowHeight)
+    resize(_.top, _.height = rowHeight)
+    resize(_.bottom, _.height = rowHeight)
   }
-  private[FramePanel] def resizeTop(rowHeight: Int): Unit = top foreach {
-    panel =>
-      panel.height = rowHeight
-      panel.resizeTop(rowHeight)
-  }
-  private[FramePanel] def resizeBottom(rowHeight: Int): Unit = bottom foreach {
-    panel =>
-      panel.height = rowHeight
-      panel.resizeBottom(rowHeight)
+
+  private[FramePanel] def resize(direction: (FramePanel) => Option[FramePanel],
+                                 setter: (FramePanel) => Unit): Unit = {
+    direction(this) foreach {
+      panel =>
+        setter(panel)
+        panel.resize(direction, setter)
+    }
   }
 
   /**
