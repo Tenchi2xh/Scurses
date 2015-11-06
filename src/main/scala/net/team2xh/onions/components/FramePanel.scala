@@ -208,7 +208,6 @@ case class FramePanel(parent: Component)
   private[FramePanel] def drawEdges(): Unit = {
     propagateDraw(_.drawEdges())
 
-    val indicator = if (focus) 240 else 0
     // Vertical edges
     for (y <- 1 to height - 1) {
       screen.put(width, y, Symbols.SV)
@@ -220,10 +219,11 @@ case class FramePanel(parent: Component)
     if (bottom.isEmpty)
       screen.put(1, height, Symbols.SH * (width - 1))
     // Focus indicator
-    screen.put(1, 1, Symbols.TLC_S_TO_S + Symbols.SH, foreground = indicator)
-    screen.put(1, height - 1, Symbols.BLC_S_TO_S + Symbols.SH, foreground = indicator)
-    screen.put(width - 2, 1, Symbols.SH + Symbols.TRC_S_TO_S, foreground = indicator)
-    screen.put(width - 2, height - 1, Symbols.SH + Symbols.BRC_S_TO_S, foreground = indicator)
+    val indicator = if (focus) 237 else 0
+    screen.put(1, 1, Symbols.BLOCK + Symbols.BLOCK_UPPER, foreground = indicator)
+    screen.put(1, height - 1, Symbols.BLOCK + Symbols.BLOCK_LOWER, foreground = indicator)
+    screen.put(width - 2, 1, Symbols.BLOCK_UPPER + Symbols.BLOCK, foreground = indicator)
+    screen.put(width - 2, height - 1, Symbols.BLOCK_LOWER + Symbols.BLOCK, foreground = indicator)
   }
 
   private[FramePanel] def drawCorners(): Unit = {

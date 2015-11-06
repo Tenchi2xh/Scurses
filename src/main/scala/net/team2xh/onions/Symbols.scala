@@ -51,4 +51,13 @@ object Symbols {
   val SH_X_DV = "╫"    // Single horizontal cross double vertical
   val DH_X_SV = "╪"    // Double horizontal cross single vertical
   val DH_X_DV = "╬"    // Double horizontal cross double vertical
+  // 2. Block symbols
+  val BLOCK       = "█"
+  val BLOCK_75    = "▓"
+  val BLOCK_50    = "▒"
+  val BLOCK_25    = "░"
+  val BLOCK_LOWER = "▄"
+  val BLOCK_UPPER = "▀"
+  val BLOCK_LEFT  = "▌"
+  val BLOCK_RIGHT = "▐"
 }
