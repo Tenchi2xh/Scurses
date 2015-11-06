@@ -8,7 +8,8 @@ import net.team2xh.scurses.{Colors, Scurses}
 case class Label(parent: FramePanel, text: String, alignment: Int = TextWrap.ALIGN_LEFT)
                 (implicit screen: Scurses) extends Widget(parent) {
 
-  val isFocusable = true
+  var enabled = true
+  def focusable = enabled
 
   var lines = Seq[String]()
 

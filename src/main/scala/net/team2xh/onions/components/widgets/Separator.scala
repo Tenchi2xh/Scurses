@@ -7,7 +7,7 @@ import net.team2xh.scurses.Scurses
 case class Separator(parent: FramePanel)
                (implicit screen: Scurses) extends Widget(parent) {
 
-  override val isFocusable: Boolean = false
+  val focusable = false
 
   override def draw(focus: Boolean): Unit = {
     screen.put(0, 0, Symbols.SH * innerWidth)

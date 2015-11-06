@@ -89,13 +89,14 @@ case class FramePanel(parent: Component)
       None
   }
 
+  // TODO: Separate discovery and mutation
   def focusPreviousWidget: Boolean = {
     val l = widgets.length
     if (l == 0 || widgetFocus == 0)
       false
     else {
       widgetFocus -= 1
-      if (widgets(widgetFocus).isFocusable)
+      if (widgets(widgetFocus).focusable)
         true
       else
         focusPreviousWidget
@@ -108,7 +109,7 @@ case class FramePanel(parent: Component)
       false
     else {
       widgetFocus += 1
-      if (widgets(widgetFocus).isFocusable)
+      if (widgets(widgetFocus).focusable)
         true
       else
         focusNextWidget
