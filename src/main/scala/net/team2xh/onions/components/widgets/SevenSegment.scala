@@ -1,0 +1,186 @@
+package net.team2xh.onions.components.widgets
+
+import net.team2xh.onions.components.{Widget, FramePanel}
+import net.team2xh.onions.components.widgets.SevenSegment.{symbols, empty}
+import net.team2xh.scurses.{Colors, Scurses}
+
+case class SevenSegment(parent: FramePanel, var text: String, var color: Int = Colors.DIM_GREEN)
+                  (implicit screen: Scurses) extends Widget(parent) {
+
+  override def focusable: Boolean = false
+
+  override def draw(focus: Boolean): Unit = {
+    if (!text.isEmpty) {
+      val wrapped = text.grouped(innerWidth / 4).toList
+      val width = wrapped.head.length * 4
+      for ((chunk, i) <- wrapped.zipWithIndex) {
+        val chars = chunk.toLowerCase.map(symbols.getOrElse(_, empty))
+        for (y <- 0 until 3) {
+          screen.put((innerWidth - width) / 2, y + i * 3, ("" /: chars)((line, char) => line + char(y)), foreground = color)
+        }
+      }
+    }
+  }
+
+  override def handleKeypress(keypress: Int): Unit = { }
+
+  override def innerHeight: Int = 3
+}
+
+object SevenSegment {
+  var empty = Seq("", "", "", "")
+  val symbols = Map(
+    'a' -> Seq(
+      " _  ",
+      "|_| ",
+      "| | "),
+    'b' -> Seq(
+      " _  ",
+      "|_| ",
+      "|_| "),
+    'c' -> Seq(
+      " _  ",
+      "|   ",
+      "|_  "),
+    'd' -> Seq(
+      "    ",
+      " _| ",
+      "|_| "),
+    'e' -> Seq(
+      " _  ",
+      "|_  ",
+      "|_  "),
+    'f' -> Seq(
+      " _  ",
+      "|_  ",
+      "|   "),
+    'g' -> Seq(
+      " _  ",
+      "|_| ",
+      " _| "),
+    'h' -> Seq(
+      "    ",
+      "|_  ",
+      "| | "),
+    'i' -> Seq(
+      "    ",
+      "|   ",
+      "|   "),
+    'j' -> Seq(
+      "    ",
+      "  | ",
+      "|_| "),
+    'k' -> Seq(
+      "    ",
+      "|_| ",
+      "| | "),
+    'l' -> Seq(
+      "    ",
+      "|   ",
+      "|_  "),
+    'm' -> Seq(
+      " _  ",
+      "    ",
+      "| | "),
+    'n' -> Seq(
+      "    ",
+      " _  ",
+      "| | "),
+    'o' -> Seq(
+      "    ",
+      " _  ",
+      "|_| "),
+    'p' -> Seq(
+      " _  ",
+      "|_| ",
+      "|   "),
+    'q' -> Seq(
+      " _  ",
+      "|_| ",
+      "  | "),
+    'r' -> Seq(
+      "    ",
+      " _  ",
+      "|   "),
+    '0' -> Seq(
+      " _  ",
+      "|_  ",
+      " _| "),
+    't' -> Seq(
+      "    ",
+      "|_  ",
+      "|_  "),
+    'u' -> Seq(
+      "    ",
+      "| | ",
+      "|_| "),
+    'v' -> Seq(
+      "    ",
+      "    ",
+      "|_| "),
+    'w' -> Seq(
+      "    ",
+      "| | ",
+      " _  "),
+    'x' -> Seq(
+      "    ",
+      "|_| ",
+      "| | "),
+    'y' -> Seq(
+      "    ",
+      "|_| ",
+      " _| "),
+    'z' -> Seq(
+      " _  ",
+      " _| ",
+      "|_  "),
+    '0' -> Seq(
+      " _  ",
+      "| | ",
+      "|_| "),
+    '1' -> Seq(
+      "    ",
+      "  | ",
+      "  | "),
+    '2' -> Seq(
+      " _  ",
+      " _| ",
+      "|_  "),
+    '3' -> Seq(
+      " _  ",
+      " _| ",
+      " _| "),
+    '4' -> Seq(
+      "    ",
+      "|_| ",
+      "  | "),
+    '5' -> Seq(
+      " _  ",
+      "|_  ",
+      " _| "),
+    '6' -> Seq(
+      " _  ",
+      "|_  ",
+      "|_| "),
+    '7' -> Seq(
+      " _  ",
+      "  | ",
+      "  | "),
+    '8' -> Seq(
+      " _  ",
+      "|_| ",
+      "|_| "),
+    '9' -> Seq(
+      " _  ",
+      "|_| ",
+      " _| "),
+    ':' -> Seq(
+      "    ",
+      " .  ",
+      " .  "),
+    '.' -> Seq(
+      "    ",
+      "    ",
+      " .  ")
+  )
+}

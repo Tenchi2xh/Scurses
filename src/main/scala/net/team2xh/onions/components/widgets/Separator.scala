@@ -16,7 +16,7 @@ class Separator(parent: FramePanel, symbol: String = Symbols.SH)
   val focusable = false
 
   override def draw(focus: Boolean): Unit = {
-    screen.put(0, 0, symbol * innerWidth)
+    screen.put(0, 0, symbol * innerWidth, foreground = 250)
   }
 
   override def handleKeypress(keypress: Int): Unit = { }

@@ -22,8 +22,8 @@ case class Label(parent: FramePanel, text: String, alignment: Int = TextWrap.ALI
   }
 
   override def draw(focus: Boolean): Unit = {
-    val fg = if (focus) Colors.DIM_BLACK else Colors.BRIGHT_WHITE
-    val bg = if (focus) Colors.BRIGHT_WHITE else Colors.DIM_BLACK
+    val fg = if (focus && focusable) Colors.DIM_BLACK else Colors.BRIGHT_WHITE
+    val bg = if (focus && focusable) Colors.BRIGHT_WHITE else Colors.DIM_BLACK
     drawText(fg, bg)
   }
 

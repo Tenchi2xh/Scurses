@@ -1,7 +1,7 @@
 package net.team2xh.onions.examples
 
 import net.team2xh.onions.components.{FramePanel, Frame}
-import net.team2xh.onions.components.widgets.{Spacer, Separator, Label}
+import net.team2xh.onions.components.widgets.{SevenSegment, Spacer, Separator, Label}
 import net.team2xh.onions.utils.TextWrap
 import net.team2xh.scurses.Scurses
 
@@ -18,6 +18,7 @@ object ExampleUI extends App {
     val colB2 = colB.splitDown
     val colB3 = colB2.splitDown
     val colB3B = colB3.splitRight
+    val colB3B2 = colB3B.splitDown
     val colC2 = colC.splitDown
 
     colA.title = "Labels"
@@ -37,6 +38,9 @@ object ExampleUI extends App {
     Label(colA, "Centered text: ")
     Separator(colA)
     Label(colA, "Etiam sit amet lacinia quam, sed efficitur lorem. Integer sit amet diam at tortor molestie pellentesque eget euismod lorem. Vivamus varius purus sed ex aliquam lacinia.", TextWrap.CENTER)
+
+    colB3B.title = "7-segment"
+    SevenSegment(colB3B, "13:37")
 
     frame.show()
   }
