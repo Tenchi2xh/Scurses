@@ -2,6 +2,7 @@ package net.team2xh.scurses
 
 object Keys {
 
+  val TAB = 9
   val ENTER = 10
 
   val UP_ARROW = 16

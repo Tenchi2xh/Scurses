@@ -77,6 +77,30 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
     resizeVertical(newRowHeight)
   }
 
+  def getTreeWalk: Seq[FramePanel] = {
+    val b = bottom match {
+      case None => Seq()
+      case Some(panel) => panel.getTreeWalk
+    }
+    val r = right match {
+      case None => Seq()
+      case Some(panel) => panel.getTreeWalk
+    }
+    this +: (b ++ r)
+  }
+
+  def getNextDirection(direction: (FramePanel) => Option[FramePanel],
+                   fallback: (FramePanel) => Option[FramePanel]): Option[FramePanel] = {
+    direction(this) match {
+      case Some(panel) => Some(panel)
+      case None =>
+        fallback(this) match {
+          case Some(panel) => panel.getNextDirection(direction, fallback)
+          case None => None
+        }
+    }
+  }
+
   private[FramePanel] def totalHorizontal: (Int, Int) = {
     val l = total(_.left, _.width)
     val r = total(_.right, _.width)

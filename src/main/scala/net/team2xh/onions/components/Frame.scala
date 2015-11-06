@@ -31,6 +31,8 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
   }
   
   def eventLoop(): Unit = {
+    val tree = panel.getTreeWalk
+
     var k = screen.keypress()
     while (k != 'q'.toInt && k != Keys.ENTER) {
       k match {
@@ -46,21 +48,17 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
             focusedPanel.widgetFocus += 1
             focusedPanel.widgetFocus %= l
           }
-        case Keys.LEFT_ARROW =>
-          // TODO: Find left if no immediate left
-          val left = focusedPanel.left
-          left foreach { panel =>
-            focusedPanel.focus = false
-            panel.focus = true
-            focusedPanel = panel
-          }
-        case Keys.RIGHT_ARROW =>
-          // TODO: Find right if no immediate right
-          val right = focusedPanel.right
-          right foreach { panel =>
-            focusedPanel.focus = false
-            panel.focus = true
-            focusedPanel = panel
+        case Keys.TAB =>
+          val next = tree.dropWhile(_ != focusedPanel).tail.headOption
+          next match {
+            case Some(panel) =>
+              focusedPanel.focus = false
+              panel.focus = true
+              focusedPanel = panel
+            case None =>
+              focusedPanel.focus = false
+              panel.focus = true
+              focusedPanel = panel
           }
         case _ => // Delegate
       }
