@@ -9,6 +9,7 @@ object ExampleUI extends App {
   
   Scurses { implicit screen =>
     val frame = Frame("Example UI")
+    frame.debug = true
 
     val p1 = frame.panel
     val p2 = p1.splitRight

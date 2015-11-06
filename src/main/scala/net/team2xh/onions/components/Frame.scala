@@ -10,13 +10,15 @@ object Frame {
 
 class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Component(None) {
 
+  var debug = false
+
   val panel = FramePanel(this)
   panel.focus = true
 
   var focusedPanel = panel
 
   def innerWidth = screen.size._1 - 1
-  def innerHeight = screen.size._2 - 1
+  def innerHeight = screen.size._2 - 1 - (if (debug) 1 else 0)
 
   override def redraw(): Unit = {
     // Draw panels recursively
@@ -40,7 +42,7 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
     val tree = panel.getTreeWalk
 
     var k = screen.keypress()
-    while (k != 'q'.toInt && k != Keys.ENTER) {
+    while (k != Keys.ENTER) {
       k match {
         case Keys.UP =>
           val l = panel.widgets.length
@@ -77,10 +79,11 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
             widget => widget.handleKeypress(keypress)
           }
       }
+      if (debug) {
+        val line = s"Keypress: $k (${k.toChar})"
+        screen.put(0, innerHeight + 1, line + " " * (innerWidth + 1 - line.length))
+      }
       redraw()
-
-      screen.put(0, 0, k.toString)
-      screen.refresh()
 
       k = screen.keypress()
     }

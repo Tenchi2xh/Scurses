@@ -53,7 +53,7 @@ class Scurses {
     csi.move(x + offsetX, y + offsetY)
     csi.setForeground(foreground)
     csi.setBackground(background)
-    out.write(string.getBytes)
+    out.write(string.map(b => if (b >= 32) b else '?').getBytes)
     csi.resetColors()
   }
 
