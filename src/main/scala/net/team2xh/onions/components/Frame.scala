@@ -42,18 +42,32 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
     var k = screen.keypress()
     while (k != 'q'.toInt && k != Keys.ENTER) {
       k match {
-        case Keys.UP_ARROW =>
+        case Keys.UP =>
           val l = panel.widgets.length
           if (l > 0) {
-            focusedPanel.widgetFocus += -1 + l
-            focusedPanel.widgetFocus %= l
+            if (focusedPanel.widgetFocus - 1 < 0) {
+              val next = focusedPanel.getNextDirection(_.top, _.left)
+              next foreach (panel => switchFocusTo(panel))
+            } else {
+              focusedPanel.widgetFocus -= 1
+            }
           }
-        case Keys.DOWN_ARROW =>
+        case Keys.DOWN =>
           val l = panel.widgets.length
           if (l > 0) {
-            focusedPanel.widgetFocus += 1
-            focusedPanel.widgetFocus %= l
+            if (focusedPanel.widgetFocus + 1 >= l) {
+              val next = focusedPanel.getNextDirection(_.bottom, _.left)
+              next foreach (panel => switchFocusTo(panel))
+            } else {
+              focusedPanel.widgetFocus += 1
+            }
           }
+        case Keys.LEFT =>
+          val next = focusedPanel.getNextDirection(_.left, _.top)
+          next foreach (panel => switchFocusTo(panel))
+        case Keys.RIGHT =>
+          val next = focusedPanel.getNextDirection(_.right, _.top)
+          next foreach (panel => switchFocusTo(panel))
         case Keys.TAB =>
           val next = tree.dropWhile(_ != focusedPanel).tail.headOption
           next match {
@@ -62,18 +76,6 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
             case None =>
               switchFocusTo(panel)
           }
-        case Keys.KEY_I =>
-          val next = focusedPanel.getNextDirection(_.top, _.left)
-          next foreach (panel => switchFocusTo(panel))
-        case Keys.KEY_K =>
-          val next = focusedPanel.getNextDirection(_.bottom, _.left)
-          next foreach (panel => switchFocusTo(panel))
-        case Keys.KEY_J =>
-          val next = focusedPanel.getNextDirection(_.left, _.top)
-          next foreach (panel => switchFocusTo(panel))
-        case Keys.KEY_L =>
-          val next = focusedPanel.getNextDirection(_.right, _.top)
-          next foreach (panel => switchFocusTo(panel))
         case keypress =>
           focusedPanel.getFocusedWidget foreach {
             widget => widget.handleKeypress(keypress)
