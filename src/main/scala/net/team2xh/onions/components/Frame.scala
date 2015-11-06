@@ -10,7 +10,7 @@ object Frame {
 
 class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Component(None) {
 
-  val panel = FramePanel(this, innerWidth, innerHeight)
+  val panel = FramePanel(this)
   panel.focus = true
 
   var focusedPanel = panel

@@ -80,6 +80,13 @@ class Scurses {
   }
 
   /**
+   * Clears the terminal screen.
+   */
+  def clear() {
+    csi.clear()
+  }
+
+  /**
    * Moves the cursor to the desired position.
    * If outside of terminal screen range, will stick to a border.
    * @param x X coordinate of the desired cursor position (0 indexed)

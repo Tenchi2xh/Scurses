@@ -10,9 +10,10 @@ case class Label(parent: FramePanel, text: String, alignment: Int = TextWrap.ALI
 
   val isFocusable = true
 
-  val lines = TextWrap.wrapText(text, innerWidth - 1, alignment)
+  var lines = Seq[String]()
 
   def drawText(foreground: Int, background: Int): Unit = {
+    lines = TextWrap.wrapText(text, innerWidth - 1, alignment)
     for ((line, i) <- lines.zipWithIndex) {
       screen.put(0, i, " " + line + " " * (innerWidth - line.length - 1),
         foreground = foreground, background = background)

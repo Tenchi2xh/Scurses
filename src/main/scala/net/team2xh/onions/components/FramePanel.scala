@@ -6,9 +6,9 @@ import net.team2xh.scurses.Scurses
 import scala.collection.mutable.ListBuffer
 
 object FramePanel {
-  def expandRight(parent: FramePanel, width: Int, height: Int)
+  def expandRight(parent: FramePanel)
                  (implicit screen: Scurses): FramePanel = {
-    val newRight = new FramePanel(parent, width, height)
+    val newRight = new FramePanel(parent)
     newRight.right = parent.right
     newRight.left = Some(parent)
     parent.right.foreach(panel => panel.left = Some(newRight))
@@ -16,19 +16,24 @@ object FramePanel {
     newRight
   }
 
-  def expandDown(parent: FramePanel, width: Int, height: Int)
+  def expandDown(parent: FramePanel)
                 (implicit screen: Scurses): FramePanel = {
-    val newBottom = new FramePanel(parent, width, height)
+    val newBottom = new FramePanel(parent)
     newBottom.bottom = parent.bottom
     newBottom.top = Some(parent)
     parent.bottom.foreach(panel => panel.top = Some(newBottom))
     parent.bottom = Some(newBottom)
     newBottom
   }
+
+  var idCounter = 0
 }
 
-case class FramePanel(parent: Component, var width: Int, var height: Int)
+case class FramePanel(parent: Component)
                      (implicit screen: Scurses) extends Component(Some(parent)) {
+
+  var width = 0
+  var height = 0
 
   var top:    Option[FramePanel] = None
   var bottom: Option[FramePanel] = None
@@ -40,21 +45,29 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
 
   val widgets = ListBuffer[Widget]()
 
+  val id = FramePanel.idCounter
+  FramePanel.idCounter += 1
+
   def innerWidth = width
   def innerHeight = height
 
-  // TODO: Call this on resize
-  // TODO: Go deeper in the tree
   private[components] def updateDimensions(newWidth: Int, newHeight: Int): Unit = {
     val (_, nHorizontal) = totalHorizontal
     val newColumnWidth = newWidth / nHorizontal
-    width = newWidth - (nHorizontal - 1) * newColumnWidth
-    resizeHorizontal(newColumnWidth)
+    right match {
+      case None => width = newWidth - (nHorizontal - 1) * newColumnWidth
+      case _ => width = newColumnWidth
+    }
 
     val (_, nVertical) = totalVertical
     val newRowHeight = newHeight / nVertical
-    height = height - (nVertical - 1) * newRowHeight
-    resizeVertical(newRowHeight)
+    bottom match {
+      case None => height = newHeight - (nVertical - 1) * newRowHeight
+      case _ => height = newRowHeight
+    }
+
+    bottom.foreach(_.updateDimensions(if (left.isEmpty) newWidth else width, newHeight))
+    right.foreach(_.updateDimensions(newWidth, if (top.isEmpty) newHeight else height))
   }
 
   def getTreeWalk: Seq[FramePanel] = {
@@ -78,7 +91,7 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
 
   def focusPreviousWidget: Boolean = {
     val l = widgets.length
-    if (widgetFocus == 0)
+    if (l == 0 || widgetFocus == 0)
       false
     else {
       widgetFocus -= 1
@@ -91,7 +104,7 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
 
   def focusNextWidget: Boolean = {
     val l = widgets.length
-    if (widgetFocus == l - 1)
+    if (l == 0 || widgetFocus == l - 1)
       false
     else {
       widgetFocus += 1
@@ -160,12 +173,7 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
    * @return Right panel resulting from the split
    */
   def splitRight: FramePanel = {
-    val (totalWidth, nHorizontal) = totalHorizontal
-    val newColumnWidth = totalWidth / (nHorizontal + 1)
-    width = totalWidth - nHorizontal * newColumnWidth
-    resizeHorizontal(newColumnWidth)
-
-    FramePanel.expandRight(this, newColumnWidth, height)
+    FramePanel.expandRight(this)
   }
 
   /**
@@ -173,12 +181,7 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
    * @return Bottom panel resulting from the slice
    */
   def splitDown: FramePanel = {
-    val (totalHeight, nVertical) = totalVertical
-    val newRowHeight = totalHeight / (nVertical + 1)
-    height = totalHeight - nVertical * newRowHeight
-    resizeVertical(newRowHeight)
-
-    FramePanel.expandDown(this, width, newRowHeight)
+    FramePanel.expandDown(this)
   }
 
   private[FramePanel] def hasAnyLeft: Boolean = left match {
@@ -207,11 +210,15 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
       screen.put(width, y, Symbols.SV)
       if (left.isEmpty)
         screen.put(0, y, Symbols.SV)
+      screen.put(1, y, " ", background = if (focus) 238 else 0)
+      screen.put(width - 1, y, " ", background = if (focus) 238 else 0)
     }
     // Horizontal edges
     screen.put(1, 0, Symbols.SH * (width - 1))
     if (bottom.isEmpty)
       screen.put(1, height, Symbols.SH * (width - 1))
+    screen.put(1, 1, " " * (width - 2), background = if (focus) 238 else 0)
+    screen.put(1, height - 1, " " * (width - 2), background = if (focus) 238 else 0)
   }
 
   private[FramePanel] def drawCorners(): Unit = {
@@ -274,10 +281,12 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
   }
 
   override def redraw(): Unit = {
+    updateDimensions(parent.innerWidth, parent.innerHeight)
+
     drawEdges()
     drawCorners()
-//    drawDebug()
-    drawWidgets()
+    drawDebug()
+//    drawWidgets()
   }
 
   def drawWidgets(): Unit = {
@@ -320,4 +329,5 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
     case Some(panel) => Seq(verticalDepth) ++ panel.verticalDepths
   }
 
+  override def toString: String = s"FramePanel #$id"
 }
