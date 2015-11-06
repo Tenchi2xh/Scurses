@@ -5,7 +5,29 @@ import net.team2xh.scurses.Scurses
 
 import scala.collection.mutable.ListBuffer
 
-case class FramePanel(parent: Frame, var width: Int, var height: Int)
+object FramePanel {
+  def expandRight(parent: FramePanel, width: Int, height: Int)
+                 (implicit screen: Scurses): FramePanel = {
+    val newRight = new FramePanel(parent, width, height)
+    newRight.right = parent.right
+    newRight.left = Some(parent)
+    parent.right.foreach(panel => panel.left = Some(newRight))
+    parent.right = Some(newRight)
+    newRight
+  }
+
+  def expandDown(parent: FramePanel, width: Int, height: Int)
+                (implicit screen: Scurses): FramePanel = {
+    val newBottom = new FramePanel(parent, width, height)
+    newBottom.bottom = parent.bottom
+    newBottom.top = Some(parent)
+    parent.bottom.foreach(panel => panel.top = Some(newBottom))
+    parent.bottom = Some(newBottom)
+    newBottom
+  }
+}
+
+case class FramePanel(parent: Component, var width: Int, var height: Int)
                      (implicit screen: Scurses) extends Component(Some(parent)) {
 
   var top:    Option[FramePanel] = None
@@ -106,14 +128,7 @@ case class FramePanel(parent: Frame, var width: Int, var height: Int)
     width = totalWidth - nHorizontal * newColumnWidth
     resizeHorizontal(newColumnWidth)
 
-    val newRight = FramePanel(parent, newColumnWidth, height)
-    // Update neighbours
-    newRight.right = right
-    newRight.left = Some(this)
-    right.foreach(panel => panel.left = Some(newRight))
-    right = Some(newRight)
-
-    newRight
+    FramePanel.expandRight(this, newColumnWidth, height)
   }
 
   /**
@@ -126,14 +141,7 @@ case class FramePanel(parent: Frame, var width: Int, var height: Int)
     height = totalHeight - nVertical * newRowHeight
     resizeVertical(newRowHeight)
 
-    val newBottom = FramePanel(parent, width, newRowHeight)
-    // Update neighbours
-    newBottom.bottom = bottom
-    newBottom.top = Some(this)
-    bottom.foreach(panel => panel.top = Some(newBottom))
-    bottom = Some(newBottom)
-
-    newBottom
+    FramePanel.expandDown(this, width, newRowHeight)
   }
 
   private[FramePanel] def hasAnyLeft: Boolean = left match {
