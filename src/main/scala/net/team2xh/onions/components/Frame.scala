@@ -45,21 +45,17 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
         case Keys.UP =>
           val l = panel.widgets.length
           if (l > 0) {
-            if (focusedPanel.widgetFocus - 1 < 0) {
+            if (!focusedPanel.focusPreviousWidget) {
               val next = focusedPanel.getNextDirection(_.top, _.left)
               next foreach (panel => switchFocusTo(panel))
-            } else {
-              focusedPanel.widgetFocus -= 1
             }
           }
         case Keys.DOWN =>
           val l = panel.widgets.length
           if (l > 0) {
-            if (focusedPanel.widgetFocus + 1 >= l) {
+            if (!focusedPanel.focusNextWidget) {
               val next = focusedPanel.getNextDirection(_.bottom, _.left)
               next foreach (panel => switchFocusTo(panel))
-            } else {
-              focusedPanel.widgetFocus += 1
             }
           }
         case Keys.LEFT =>

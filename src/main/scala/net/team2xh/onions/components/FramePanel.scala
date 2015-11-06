@@ -96,6 +96,32 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
       None
   }
 
+  def focusPreviousWidget: Boolean = {
+    val l = widgets.length
+    if (widgetFocus == 0)
+      false
+    else {
+      widgetFocus -= 1
+      if (widgets(widgetFocus).isFocusable)
+        true
+      else
+        focusPreviousWidget
+    }
+  }
+
+  def focusNextWidget: Boolean = {
+    val l = widgets.length
+    if (widgetFocus == l - 1)
+      false
+    else {
+      widgetFocus += 1
+      if (widgets(widgetFocus).isFocusable)
+        true
+      else
+        focusNextWidget
+    }
+  }
+
   def getNextDirection(direction: (FramePanel) => Option[FramePanel],
                    fallback: (FramePanel) => Option[FramePanel]): Option[FramePanel] = {
     direction(this) match {
