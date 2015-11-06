@@ -74,7 +74,10 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
         case Keys.KEY_L =>
           val next = focusedPanel.getNextDirection(_.right, _.top)
           next foreach (panel => switchFocusTo(panel))
-        case _ => // Delegate
+        case keypress =>
+          focusedPanel.getFocusedWidget foreach {
+            widget => widget.handleKeypress(keypress)
+          }
       }
       redraw()
 

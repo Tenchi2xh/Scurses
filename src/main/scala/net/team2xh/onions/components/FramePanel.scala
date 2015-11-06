@@ -89,6 +89,13 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
     this +: (b ++ r)
   }
 
+  def getFocusedWidget: Option[Widget] = {
+    if (widgetFocus < widgets.length)
+      Some(widgets(widgetFocus))
+    else
+      None
+  }
+
   def getNextDirection(direction: (FramePanel) => Option[FramePanel],
                    fallback: (FramePanel) => Option[FramePanel]): Option[FramePanel] = {
     direction(this) match {

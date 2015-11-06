@@ -21,7 +21,11 @@ case class Label(parent: FramePanel, text: String)
     drawText(fg, bg)
   }
 
-  override def handleKeypress(keypress: Int): Unit = ???
+  override def handleKeypress(keypress: Int): Unit = {
+    keypress match {
+      case _ =>
+    }
+  }
 
   override def innerHeight: Int = lines.length
 }
