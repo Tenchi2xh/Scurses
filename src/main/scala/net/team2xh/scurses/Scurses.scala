@@ -54,7 +54,7 @@ class Scurses {
     csi.setForeground(foreground)
     csi.setBackground(background)
     out.write(string.map(b => if (b >= 32) b else '?').getBytes)
-    csi.resetColors()
+//    csi.resetColors()
   }
 
   def translateOffset(x: Int = 0, y: Int = 0): Unit = {

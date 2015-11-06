@@ -1,6 +1,6 @@
 package net.team2xh.onions.components
 
-import net.team2xh.onions.Component
+import net.team2xh.onions.{Symbols, Component}
 import net.team2xh.scurses.{Keys, Scurses}
 
 object Frame {
@@ -17,14 +17,34 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
 
   var focusedPanel = panel
 
+  private[Frame] val titleOffset = 2
+
   def innerWidth = screen.size._1 - 1
-  def innerHeight = screen.size._2 - 1 - (if (debug) 1 else 0)
+  def innerHeight = screen.size._2 - 1 - (if (debug) 1 else 0) - (if (title.isDefined) titleOffset else 0)
 
   override def redraw(): Unit = {
     // Draw panels recursively
+    if (title.isDefined) screen.translateOffset(y = titleOffset)
     panel.redraw()
+    if (title.isDefined) {
+      screen.translateOffset(y = -titleOffset)
+      drawTitle()
+    }
 
     screen.refresh()
+  }
+
+  private[Frame] def drawTitle(): Unit = {
+    title.foreach { t =>
+      screen.put(0, 0, Symbols.TLC_S_TO_D)
+      screen.put(innerWidth + 1, 0, Symbols.TRC_D_TO_S)
+      screen.put(1, 0, Symbols.DH * (innerWidth - 1))
+      screen.put(0, 1, Symbols.SV)
+      screen.put(innerWidth + 1, 1, Symbols.SV)
+      screen.put((innerWidth + 1 - t.length) / 2, 1, t)
+      screen.put(0, 2, Symbols.SV_TO_SR)
+      screen.put(innerWidth + 1, 2, Symbols.SV_TO_SL)
+    }
   }
 
   def show(): Unit = {
@@ -95,9 +115,11 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
     val key = s"Keypress: $k (${k.toChar})"
     val time = s"Render time: ${ms}ms"
     val line = "%-17s | %-19s".format(key, time)
-    screen.put(0, innerHeight + 1, line + " " * (innerWidth + 1 - line.length))
 
+    if (title.isDefined) screen.translateOffset(y = titleOffset)
+    screen.put(0, innerHeight + 1, line + " " * (innerWidth + 1 - line.length))
     panel.drawDebug()
+    if (title.isDefined) screen.translateOffset(y = -titleOffset)
 
     screen.refresh()
   }

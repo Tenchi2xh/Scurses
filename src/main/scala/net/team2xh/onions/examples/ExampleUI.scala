@@ -8,7 +8,7 @@ import net.team2xh.scurses.Scurses
 object ExampleUI extends App {
   
   Scurses { implicit screen =>
-    val frame = Frame("Example UI")
+    val frame = Frame("Example Onions UI - Powered by Scurses")
     frame.debug = true
 
     val colA = frame.panel
