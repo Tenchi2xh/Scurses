@@ -35,6 +35,8 @@ case class FramePanel(parent: Component)
   var width = 0
   var height = 0
 
+  var title = ""
+
   var top:    Option[FramePanel] = None
   var bottom: Option[FramePanel] = None
   var left:   Option[FramePanel] = None
@@ -272,14 +274,24 @@ case class FramePanel(parent: Component)
 
   }
 
-  private[FramePanel] def drawDebug(): Unit = {
+  private[FramePanel] def drawTitles(): Unit = {
+    propagateDraw(_.drawTitles())
+
+    if (title != "") {
+      screen.put(2, 0, s"[$title]")
+    }
+  }
+
+  private[components] def drawDebug(): Unit = {
     propagateDraw(_.drawDebug())
 
-    screen.put(2, 1, s"$width x $height")
-    screen.put(2, 2, "[%s] top".format(if (top.isDefined) "X" else " "))
-    screen.put(2, 3, "[%s] bottom".format(if (bottom.isDefined) "X" else " "))
-    screen.put(2, 4, "[%s] left".format(if (left.isDefined) "X" else " "))
-    screen.put(2, 5, "[%s] right".format(if (right.isDefined) "X" else " "))
+    val neighbours = "%s%s%s%s".format(if (top.isDefined) "↑" else "",
+                                       if (bottom.isDefined) "↓" else "",
+                                       if (left.isDefined) "←" else "",
+                                       if (right.isDefined) "→" else "")
+
+    val line = s"[#$id|${width}x$height|$neighbours]"
+    screen.put(width - 1 - line.length, 0, line, foreground = 248)
   }
 
   override def redraw(): Unit = {
@@ -287,6 +299,7 @@ case class FramePanel(parent: Component)
 
     drawEdges()
     drawCorners()
+    drawTitles()
 //    drawDebug()
     drawWidgets()
   }

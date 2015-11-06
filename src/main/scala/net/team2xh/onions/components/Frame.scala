@@ -96,6 +96,9 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
     val time = s"Render time: ${ms}ms"
     val line = "%-17s | %-19s".format(key, time)
     screen.put(0, innerHeight + 1, line + " " * (innerWidth + 1 - line.length))
+
+    panel.drawDebug()
+
     screen.refresh()
   }
 

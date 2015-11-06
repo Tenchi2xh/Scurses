@@ -11,25 +11,25 @@ object ExampleUI extends App {
     val frame = Frame("Example UI")
     frame.debug = true
 
-    val p1 = frame.panel
-    val p2 = p1.splitRight
-    val p3 = p2.splitRight
+    val colA = frame.panel
+    val colB = colA.splitRight
+    val colC = colB.splitRight
 
-    val p22 = p2.splitDown
-    val p23 = p22.splitDown
+    val colB2 = colB.splitDown
+    val colB3 = colB2.splitDown
+    val colB3B = colB3.splitRight
+    val colC2 = colC.splitDown
 
-    val p232 = p23.splitRight
+    colA.title = "Alignments"
 
-    val p32 = p3.splitDown
-
-    Label(p1, "Left-aligned text: ")
-    Label(p1, "Etiam sit amet lacinia quam, sed efficitur lorem. Integer sit amet diam at tortor molestie pellentesque eget euismod lorem. Vivamus varius purus sed ex aliquam lacinia.")
-    Separator(p1)
-    Label(p1, "Justified text:")
-    Label(p1, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque enim erat, sollicitudin vitae lacus nec, consectetur porta velit. Donec porta placerat lectus, in porttitor elit.", TextWrap.JUSTIFY)
-    Separator(p1)
-    Label(p1, "Right-aligned text: ")
-    Label(p1, "Nam ut odio ex. Donec faucibus in odio in blandit. In mattis sodales mi, quis rhoncus lorem tincidunt sed. Ut varius gravida augue at tristique. Suspendisse lacinia mi nunc, ac convallis elit consequat a.", TextWrap.ALIGN_RIGHT)
+    Label(colA, "Left-aligned text: ")
+    Label(colA, "Etiam sit amet lacinia quam, sed efficitur lorem. Integer sit amet diam at tortor molestie pellentesque eget euismod lorem. Vivamus varius purus sed ex aliquam lacinia.")
+    Separator(colA)
+    Label(colA, "Justified text:")
+    Label(colA, "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque enim erat, sollicitudin vitae lacus nec, consectetur porta velit. Donec porta placerat lectus, in porttitor elit.", TextWrap.JUSTIFY)
+    Separator(colA)
+    Label(colA, "Right-aligned text: ")
+    Label(colA, "Nam ut odio ex. Donec faucibus in odio in blandit. In mattis sodales mi, quis rhoncus lorem tincidunt sed. Ut varius gravida augue at tristique. Suspendisse lacinia mi nunc, ac convallis elit consequat a.", TextWrap.ALIGN_RIGHT)
 
     frame.show()
   }
