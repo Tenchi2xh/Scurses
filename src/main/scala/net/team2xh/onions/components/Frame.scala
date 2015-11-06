@@ -28,7 +28,8 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
   }
 
   def show(): Unit = {
-    redraw()
+    if (debug) drawDebug(0)
+    else redraw()
     eventLoop()
   }
 
@@ -79,14 +80,23 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
             widget => widget.handleKeypress(keypress)
           }
       }
-      if (debug) {
-        val line = s"Keypress: $k (${k.toChar})"
-        screen.put(0, innerHeight + 1, line + " " * (innerWidth + 1 - line.length))
-      }
-      redraw()
+      if (debug) drawDebug(k)
+      else redraw()
 
       k = screen.keypress()
     }
+  }
+
+  def drawDebug(k: Int): Unit = {
+    val start = System.currentTimeMillis
+    redraw()
+    val ms = System.currentTimeMillis - start
+
+    val key = s"Keypress: $k (${k.toChar})"
+    val time = s"Render time: ${ms}ms"
+    val line = "%-17s | %-19s".format(key, time)
+    screen.put(0, innerHeight + 1, line + " " * (innerWidth + 1 - line.length))
+    screen.refresh()
   }
 
 }
