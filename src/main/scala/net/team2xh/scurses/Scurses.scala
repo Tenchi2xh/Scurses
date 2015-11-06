@@ -57,6 +57,11 @@ class Scurses {
     csi.resetColors()
   }
 
+  def translateOffset(x: Int = 0, y: Int = 0): Unit = {
+    offsetX += x
+    offsetY += y
+  }
+
   def setOffset(x: Int, y: Int) {
     offsetX = x
     offsetY = y

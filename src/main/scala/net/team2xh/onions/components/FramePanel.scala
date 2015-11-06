@@ -43,26 +43,6 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
   def innerWidth = width
   def innerHeight = height
 
-  def position: (Int, Int) = {
-    (x0, y0)
-  }
-  def x0: Int = left match {
-    case None =>
-      top match {
-        case None => 0
-        case Some(panel) => panel.x0
-      }
-    case Some(panel) => panel.x0 + panel.width
-  }
-  def y0: Int = top match {
-    case None =>
-      left match {
-        case None => 0
-        case Some(panel) => panel.y0
-      }
-    case Some(panel) => panel.y0 + panel.height
-  }
-
   // TODO: Call this on resize
   // TODO: Go deeper in the tree
   private[components] def updateDimensions(newWidth: Int, newHeight: Int): Unit = {
@@ -220,28 +200,30 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
   }
 
   private[FramePanel] def drawEdges(): Unit = {
+    screen.translateOffset(y = height)
     bottom.foreach(_.drawEdges())
+    screen.translateOffset(x = width, y = -height)
     right.foreach(_.drawEdges())
-
-    val (x0, y0) = position
+    screen.translateOffset(x = -width)
 
     // Vertical edges
-    for (y <- y0 + 1 to y0 + height - 1) {
-      screen.put(x0 + width, y, Symbols.SV)
+    for (y <- 1 to height - 1) {
+      screen.put(width, y, Symbols.SV)
       if (left.isEmpty)
-        screen.put(x0, y, Symbols.SV)
+        screen.put(0, y, Symbols.SV)
     }
     // Horizontal edges
-    screen.put(x0 + 1, y0, Symbols.SH * (width - 1))
+    screen.put(1, 0, Symbols.SH * (width - 1))
     if (bottom.isEmpty)
-      screen.put(x0 + 1, y0 + height, Symbols.SH * (width - 1))
+      screen.put(1, height, Symbols.SH * (width - 1))
   }
 
   private[FramePanel] def drawCorners(): Unit = {
+    screen.translateOffset(y = height)
     bottom.foreach(_.drawCorners())
+    screen.translateOffset(x = width, y = -height)
     right.foreach(_.drawCorners())
-
-    val (x0, y0) = position
+    screen.translateOffset(x = -width)
 
     // Top-left corner
     val tlc = if (left.isEmpty)
@@ -253,7 +235,7 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
       Symbols.SH_TO_SD
     else
       Symbols.SH_X_SV
-    screen.put(x0, y0, tlc)
+    screen.put(0, 0, tlc)
     // Bottom-left corner
     // ┼ not supported
     val blc = if (hasAnyLeft)
@@ -263,7 +245,7 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
         Symbols.SV_TO_SR
     else
       Symbols.BLC_S_TO_S
-    screen.put(x0, y0 + height, blc)
+    screen.put(0, height, blc)
     // Bottom-right corner
     val brc = if (hasAnyRight)
       if (bottom.isEmpty)
@@ -274,7 +256,7 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
       Symbols.BRC_S_TO_S
     else
       Symbols.SV_TO_SL
-    screen.put(x0 + width, y0 + height, brc)
+    screen.put(width, height, brc)
     // Top-right corner
     val trc = if (top.isEmpty)
       if (right.isEmpty)
@@ -285,20 +267,22 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
       Symbols.SV_TO_SL
     else
       Symbols.SH_TO_SD
-    screen.put(x0 + width, y0, trc)
+    screen.put(width, 0, trc)
 
   }
 
   private[FramePanel] def drawDebug(): Unit = {
+    screen.translateOffset(y = height)
     bottom.foreach(_.drawDebug())
+    screen.translateOffset(x = width, y = -height)
     right.foreach(_.drawDebug())
+    screen.translateOffset(x = -width)
 
-    val (x0, y0) = position
-    screen.put(x0 + 2, y0 + 1, s"$width x $height")
-    screen.put(x0 + 2, y0 + 2, "[%s] top".format(if (top.isDefined) "X" else " "))
-    screen.put(x0 + 2, y0 + 3, "[%s] bottom".format(if (bottom.isDefined) "X" else " "))
-    screen.put(x0 + 2, y0 + 4, "[%s] left".format(if (left.isDefined) "X" else " "))
-    screen.put(x0 + 2, y0 + 5, "[%s] right".format(if (right.isDefined) "X" else " "))
+    screen.put(2, 1, s"$width x $height")
+    screen.put(2, 2, "[%s] top".format(if (top.isDefined) "X" else " "))
+    screen.put(2, 3, "[%s] bottom".format(if (bottom.isDefined) "X" else " "))
+    screen.put(2, 4, "[%s] left".format(if (left.isDefined) "X" else " "))
+    screen.put(2, 5, "[%s] right".format(if (right.isDefined) "X" else " "))
   }
 
   override def redraw(): Unit = {
@@ -309,16 +293,19 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
   }
 
   def drawWidgets(): Unit = {
+    screen.translateOffset(y = height)
     bottom.foreach(_.drawWidgets())
+    screen.translateOffset(x = width, y = -height)
     right.foreach(_.drawWidgets())
+    screen.translateOffset(x = -width)
 
     var y = 1
     for ((widget, i) <- widgets.zipWithIndex) {
-      screen.setOffset(x0 + 2, y0 + y)
+      screen.translateOffset(x = 2, y = y)
       widget.draw(focus && widgetFocus == i)
+      screen.translateOffset(x = -2, y = -y)
       y += widget.innerHeight
     }
-    screen.resetOffset()
   }
 
   private[components] def horizontalDepth: Int = right match {
