@@ -8,7 +8,8 @@ object TextWrap {
 
   val ALIGN_LEFT  = 0
   val ALIGN_RIGHT = 1
-  val JUSTIFY     = 2
+  val CENTER      = 2
+  val JUSTIFY     = 3
 
   def wrapText(text: String, width: Int, alignment: Int = ALIGN_LEFT): Seq[String] = {
     val tokenizer = new StringTokenizer(text)
@@ -39,6 +40,11 @@ object TextWrap {
     alignment match {
       case ALIGN_LEFT => lines.map(_._1.mkString(" "))
       case ALIGN_RIGHT => lines.map { case (l, s) => " " * s + l.mkString(" ") }
+      case CENTER => lines.map { case (l, s) =>
+        val s1 = s / 2
+        val s2 = s - s1
+        " " * s1 + l.mkString(" ") + " " * s2
+      }
       case JUSTIFY => lines.zipWithIndex.map { case ((l, s), i) =>
         if (l.length == 1) {
           l.head

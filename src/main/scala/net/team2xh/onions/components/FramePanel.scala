@@ -307,7 +307,7 @@ case class FramePanel(parent: Component)
   def drawWidgets(): Unit = {
     propagateDraw(_.drawWidgets())
 
-    var y = 1
+    var y = 2
     for ((widget, i) <- widgets.zipWithIndex) {
       screen.translateOffset(x = 2, y = y)
       widget.draw(focus && widgetFocus == i)
