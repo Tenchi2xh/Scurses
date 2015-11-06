@@ -65,7 +65,7 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
           val next = focusedPanel.getNextDirection(_.right, _.top)
           next foreach (panel => switchFocusTo(panel))
         case Keys.TAB =>
-          val next = tree.dropWhile(_ != focusedPanel).tail.headOption
+          val next = tree.dropWhile(_.id != focusedPanel.id).tail.headOption
           next match {
             case Some(panel) =>
               switchFocusTo(panel)

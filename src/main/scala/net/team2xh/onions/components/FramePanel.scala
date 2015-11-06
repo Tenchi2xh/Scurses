@@ -205,20 +205,21 @@ case class FramePanel(parent: Component)
   private[FramePanel] def drawEdges(): Unit = {
     propagateDraw(_.drawEdges())
 
+    val ring = if (focus && widgets.isEmpty) 240 else 0
     // Vertical edges
     for (y <- 1 to height - 1) {
       screen.put(width, y, Symbols.SV)
       if (left.isEmpty)
         screen.put(0, y, Symbols.SV)
-      screen.put(1, y, " ", background = if (focus) 238 else 0)
-      screen.put(width - 1, y, " ", background = if (focus) 238 else 0)
+      screen.put(1, y, " ", background = ring)
+      screen.put(width - 1, y, " ", background = ring)
     }
     // Horizontal edges
     screen.put(1, 0, Symbols.SH * (width - 1))
     if (bottom.isEmpty)
       screen.put(1, height, Symbols.SH * (width - 1))
-    screen.put(1, 1, " " * (width - 2), background = if (focus) 238 else 0)
-    screen.put(1, height - 1, " " * (width - 2), background = if (focus) 238 else 0)
+    screen.put(1, 1, " " * (width - 2), background = ring)
+    screen.put(1, height - 1, " " * (width - 2), background = ring)
   }
 
   private[FramePanel] def drawCorners(): Unit = {
@@ -285,8 +286,8 @@ case class FramePanel(parent: Component)
 
     drawEdges()
     drawCorners()
-    drawDebug()
-//    drawWidgets()
+//    drawDebug()
+    drawWidgets()
   }
 
   def drawWidgets(): Unit = {
