@@ -200,11 +200,7 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
   }
 
   private[FramePanel] def drawEdges(): Unit = {
-    screen.translateOffset(y = height)
-    bottom.foreach(_.drawEdges())
-    screen.translateOffset(x = width, y = -height)
-    right.foreach(_.drawEdges())
-    screen.translateOffset(x = -width)
+    propagateDraw(_.drawEdges())
 
     // Vertical edges
     for (y <- 1 to height - 1) {
@@ -219,11 +215,7 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
   }
 
   private[FramePanel] def drawCorners(): Unit = {
-    screen.translateOffset(y = height)
-    bottom.foreach(_.drawCorners())
-    screen.translateOffset(x = width, y = -height)
-    right.foreach(_.drawCorners())
-    screen.translateOffset(x = -width)
+    propagateDraw(_.drawCorners())
 
     // Top-left corner
     val tlc = if (left.isEmpty)
@@ -272,11 +264,7 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
   }
 
   private[FramePanel] def drawDebug(): Unit = {
-    screen.translateOffset(y = height)
-    bottom.foreach(_.drawDebug())
-    screen.translateOffset(x = width, y = -height)
-    right.foreach(_.drawDebug())
-    screen.translateOffset(x = -width)
+    propagateDraw(_.drawDebug())
 
     screen.put(2, 1, s"$width x $height")
     screen.put(2, 2, "[%s] top".format(if (top.isDefined) "X" else " "))
@@ -293,11 +281,7 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
   }
 
   def drawWidgets(): Unit = {
-    screen.translateOffset(y = height)
-    bottom.foreach(_.drawWidgets())
-    screen.translateOffset(x = width, y = -height)
-    right.foreach(_.drawWidgets())
-    screen.translateOffset(x = -width)
+    propagateDraw(_.drawWidgets())
 
     var y = 1
     for ((widget, i) <- widgets.zipWithIndex) {
@@ -306,6 +290,14 @@ case class FramePanel(parent: Component, var width: Int, var height: Int)
       screen.translateOffset(x = -2, y = -y)
       y += widget.innerHeight
     }
+  }
+  
+  def propagateDraw(drawMethod: (FramePanel) => Unit): Unit = {
+    screen.translateOffset(y = height)
+    bottom.foreach(b => drawMethod(b))
+    screen.translateOffset(x = width, y = -height)
+    right.foreach(b => drawMethod(b))
+    screen.translateOffset(x = -width)
   }
 
   private[components] def horizontalDepth: Int = right match {
