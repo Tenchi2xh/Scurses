@@ -1,7 +1,7 @@
 package net.team2xh.onions.components
 
 import net.team2xh.onions.Component
-import net.team2xh.scurses.Scurses
+import net.team2xh.scurses.{Keys, Scurses}
 
 object Frame {
   def apply(implicit screen: Scurses): Frame = new Frame(None)
@@ -32,36 +32,35 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
   
   def eventLoop(): Unit = {
     var k = screen.keypress()
-    while (k != 'q'.toInt && k != 10) {
+    while (k != 'q'.toInt && k != Keys.ENTER) {
       k match {
-        // TODO: Put these magic numbers somewhere
-        case 16 => // Up arrow
+        case Keys.UP_ARROW =>
           val l = panel.widgets.length
           if (l > 0) {
             focusedPanel.widgetFocus += -1 + l
             focusedPanel.widgetFocus %= l
           }
-        case 14 => // Down arrow
+        case Keys.DOWN_ARROW =>
           val l = panel.widgets.length
           if (l > 0) {
             focusedPanel.widgetFocus += 1
             focusedPanel.widgetFocus %= l
           }
-        case 2 => // Left arrow
+        case Keys.LEFT_ARROW =>
           // TODO: Find left if no immediate left
-          val l = focusedPanel.left
-          if (l.isDefined) {
+          val left = focusedPanel.left
+          left foreach { panel =>
             focusedPanel.focus = false
-            l.get.focus = true
-            focusedPanel = l.get
+            panel.focus = true
+            focusedPanel = panel
           }
-        case 6 => // Right arrow
+        case Keys.RIGHT_ARROW =>
           // TODO: Find right if no immediate right
-          val r = focusedPanel.right
-          if (r.isDefined) {
+          val right = focusedPanel.right
+          right foreach { panel =>
             focusedPanel.focus = false
-            r.get.focus = true
-            focusedPanel = r.get
+            panel.focus = true
+            focusedPanel = panel
           }
         case _ => // Delegate
       }
