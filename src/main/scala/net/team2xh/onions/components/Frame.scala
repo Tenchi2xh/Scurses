@@ -29,7 +29,13 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
     redraw()
     eventLoop()
   }
-  
+
+  def switchFocusTo(panel: FramePanel): Unit = {
+    focusedPanel.focus = false
+    panel.focus = true
+    focusedPanel = panel
+  }
+
   def eventLoop(): Unit = {
     val tree = panel.getTreeWalk
 
@@ -52,14 +58,22 @@ class Frame(title: Option[String] = None)(implicit screen: Scurses) extends Comp
           val next = tree.dropWhile(_ != focusedPanel).tail.headOption
           next match {
             case Some(panel) =>
-              focusedPanel.focus = false
-              panel.focus = true
-              focusedPanel = panel
+              switchFocusTo(panel)
             case None =>
-              focusedPanel.focus = false
-              panel.focus = true
-              focusedPanel = panel
+              switchFocusTo(panel)
           }
+        case Keys.KEY_I =>
+          val next = focusedPanel.getNextDirection(_.top, _.left)
+          next foreach (panel => switchFocusTo(panel))
+        case Keys.KEY_K =>
+          val next = focusedPanel.getNextDirection(_.bottom, _.left)
+          next foreach (panel => switchFocusTo(panel))
+        case Keys.KEY_J =>
+          val next = focusedPanel.getNextDirection(_.left, _.top)
+          next foreach (panel => switchFocusTo(panel))
+        case Keys.KEY_L =>
+          val next = focusedPanel.getNextDirection(_.right, _.top)
+          next foreach (panel => switchFocusTo(panel))
         case _ => // Delegate
       }
       redraw()
