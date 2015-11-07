@@ -15,7 +15,7 @@ case class Input(parent: FramePanel, var defaultText: String = "Input")
   override def draw(focus: Boolean, theme: ColorScheme): Unit = {
     val cursorSymbol = if (focus) Symbols.BLOCK else " "
     val limit = innerWidth - 3
-    val t = if (cursorIndex == 0) "<" + defaultText + ">" else text.value
+    val t = if (cursorIndex == 0 && !focus) "<" + defaultText + ">" else text.value
     val fg = if (cursorIndex == 0) theme.background else theme.foreground(focus)
     val l = t.length
     val wrappedText = if (l > limit) {
