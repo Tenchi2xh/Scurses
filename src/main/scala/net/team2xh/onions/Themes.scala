@@ -36,7 +36,7 @@ object Themes {
     override val accent2: Int = 249
   }
 
-  val DOS = new ColorScheme {
+  val MSDOS = new ColorScheme {
     override val foreground: Int = 248
     override val background: Int = 4
     override val focusForeground: Int = 0

@@ -62,6 +62,16 @@ object ExampleUI extends App {
       big.color := color
     })
 
+    Label(colB3, "Choose a theme:")
+    val radio2 = Radio(colB3, Seq("Default", "Light", "MS-DOS"))
+    radio2.subscribe(() => {
+      frame.theme = radio2.value match {
+        case 0 => Themes.default
+        case 1 => Themes.light
+        case 2 => Themes.MSDOS
+      }
+    })
+
     colB3B.title = "7-segment"
     val ss = SevenSegment(colB3B, "00:00")
 

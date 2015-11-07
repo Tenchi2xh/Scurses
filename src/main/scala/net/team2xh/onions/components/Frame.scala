@@ -7,7 +7,7 @@ import scala.language.implicitConversions
 import net.team2xh.onions.{Themes, Symbols, Component}
 import net.team2xh.scurses.{Keys, Scurses}
 
-case class Frame(title: Option[String] = None, debug: Boolean = false, theme: ColorScheme = Themes.default)
+case class Frame(title: Option[String] = None, debug: Boolean = false, var theme: ColorScheme = Themes.default)
                 (implicit screen: Scurses) extends Component(None) {
 
   val panel = FramePanel(this)
