@@ -7,7 +7,7 @@ import net.team2xh.scurses.{Scurses, Colors}
 
 abstract class FontMapper(parent: FramePanel, empty: Seq[String],
                           symbols: Map[Char, Seq[String]], text: Varying[String],
-                          color: Varying[Int] = Colors.BRIGHT_WHITE)
+                          var color: Varying[Int] = Colors.BRIGHT_WHITE)
                          (implicit screen: Scurses) extends Widget(parent, text, color) {
 
   override def focusable: Boolean = false
