@@ -4,10 +4,10 @@ import net.team2xh.onions.Component
 import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.onions.components.{FramePanel, Widget}
 import net.team2xh.onions.utils.{Varying, TextWrap}
-import net.team2xh.scurses.{Colors, Scurses}
+import net.team2xh.scurses.{Keys, Colors, Scurses}
 
 case class Label(parent: FramePanel, text: Varying[String],
-                 alignment: Varying[Int] = TextWrap.ALIGN_LEFT)
+                 alignment: Varying[Int] = TextWrap.ALIGN_LEFT, var action: () => Unit = () => {})
                 (implicit screen: Scurses) extends Widget(parent, text, alignment) {
 
   var enabled = true
@@ -28,9 +28,7 @@ case class Label(parent: FramePanel, text: Varying[String],
   }
 
   override def handleKeypress(keypress: Int): Unit = {
-    keypress match {
-      case _ =>
-    }
+    if (keypress == Keys.ENTER || keypress == Keys.SPACE) action()
   }
 
   override def innerHeight: Int = lines.length
