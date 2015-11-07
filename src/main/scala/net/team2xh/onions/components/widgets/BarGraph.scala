@@ -12,7 +12,7 @@ case class BarGraph(parent: FramePanel, values: Varying[Seq[Int]],
                      showLabels: Boolean = true, showValues: Boolean = true)
                     (implicit screen: Scurses) extends Widget(parent, values) {
 
-  val gridWidth = 5
+  val gridWidth = 4
 
   override def draw(focus: Boolean, theme: ColorScheme): Unit = {
     val vs = values.value
@@ -27,7 +27,8 @@ case class BarGraph(parent: FramePanel, values: Varying[Seq[Int]],
       else
         max
     // Draw grid
-    Drawing.drawGrid(0, 0, graphLength, graphHeight, gridWidth, theme.accent1, theme.background)
+    Drawing.drawGrid(0, 0, graphLength, graphHeight, gridWidth, theme.accent1, theme.background,
+                     showVertical = true, showHorizontal = false)
     // Draw bars
     val spacing = graphHeight / (vs.length - 1)
     val spaceTop = (graphHeight - (vs.length - 1) * spacing - 1) / 2
@@ -41,11 +42,12 @@ case class BarGraph(parent: FramePanel, values: Varying[Seq[Int]],
         screen.put(length + 2, 1 + y, vs(i).toString, foreground = theme.foreground, background = theme.background)
     }
     // Draw legends
+    val spaceTopLabels = (graphHeight - vs.length) / 2
     if (showLabels)
       for (i <- vs.indices) {
-        screen.put(graphLength + 2, 1 + i, Symbols.SQUARE,
+        screen.put(graphLength + 2, 1 + spaceTopLabels + i, Symbols.SQUARE,
           foreground = palette(i % palette.length), background = theme.background)
-        screen.put(graphLength + 4, 1 + i, ls(i),
+        screen.put(graphLength + 4, 1 + spaceTopLabels + i, ls(i),
           foreground = theme.accent3, background = theme.background)
       }
     // Draw grid values

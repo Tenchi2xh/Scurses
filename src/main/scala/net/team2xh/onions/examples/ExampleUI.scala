@@ -49,7 +49,7 @@ object ExampleUI extends App {
     colB.title = "Misc. widgets"
     Label(colB, "Enter your name here:")
     val input = Input(colB, "Name")
-    Label(colB, Varying.from(input.text, "No name entered", s => s"Your name is: $s"))
+    BigText(colB, Varying.from(input.text, "Your name", s => s"$s"))
 
     colB3B.title = "7-segment"
     val ss = SevenSegment(colB3B, "00:00")
@@ -59,7 +59,9 @@ object ExampleUI extends App {
     val bars = BarGraph(colC, refValues, labels = Lorem.Ipsum.split(' '),
                         palette = Palettes.rainbow, max = 24)
 
-    colC2.title = "Histogram"
+    colB2.title = "Histogram"
+
+    colC2.title = "Scatter plot"
 
     clockTimer.scheduleAtFixedRate(new TimerTask {
       var s = 1
