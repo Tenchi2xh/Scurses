@@ -36,7 +36,7 @@ case class BarGraph(parent: FramePanel, values: Varying[Seq[Int]],
       val length = math.floor((vs(i) * graphLength.toDouble) / valueMax).toInt
       // Draw bars
       screen.put(0, 1 + y, Symbols.BLOCK_RIGHT + Symbols.BLOCK * length + Symbols.BLOCK_LEFT,
-        foreground = palette(i % palette.length))
+        foreground = palette(i % palette.length), background = theme.background)
       // Draw values
       if (showValues)
         screen.put(length + 2, 1 + y, vs(i).toString, foreground = theme.foreground, background = theme.background)
