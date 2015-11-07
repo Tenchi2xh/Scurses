@@ -93,7 +93,16 @@ class Scurses {
    * @param y Y coordinate of the desired cursor position (0 indexed)
    */
   def move(x: Int, y: Int) {
-    csi.move(x, y)
+    csi.showCursor()
+    csi.move(x + offsetX, y + offsetY)
+  }
+
+  def hideCursor() {
+    csi.hideCursor()
+  }
+
+  def showCursor() {
+    csi.showCursor()
   }
 
   /**

@@ -109,6 +109,7 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, theme: Co
   }
 
   def draw(): Unit = {
+    screen.hideCursor()
     if (title.isDefined) screen.translateOffset(y = titleOffset)
     // Draw panels recursively
     panel.redraw(theme)

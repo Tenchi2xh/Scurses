@@ -9,7 +9,7 @@ object Varying {
 
 case class Varying[T](initialValue: T) {
 
-  private var storedValue = initialValue
+  var storedValue = initialValue
   private var callbacks: List[() => Unit] = Nil
 
   def :=(newValue: T): Unit = {
