@@ -2,11 +2,13 @@ package net.team2xh.onions.examples
 
 import java.util.{TimerTask, Timer}
 
-import net.team2xh.onions.Themes
+import net.team2xh.onions.{Palettes, Themes}
 import net.team2xh.onions.components.Frame
 import net.team2xh.onions.components.widgets._
-import net.team2xh.onions.utils.{Lorem, TextWrap}
+import net.team2xh.onions.utils.{Varying, Lorem, TextWrap}
 import net.team2xh.scurses.Scurses
+
+import scala.util.Random
 
 object ExampleUI extends App {
 
@@ -46,19 +48,29 @@ object ExampleUI extends App {
 
     colB.title = "Misc. widgets"
     Label(colB, "Enter your name here:")
-    Input(colB, "Name")
+    val input = Input(colB, "Name")
+    Label(colB, Varying.from(input.text, "No name entered", s => s"Your name is: $s"))
 
     colB3B.title = "7-segment"
     val ss = SevenSegment(colB3B, "00:00")
+
+    colC.title = "Bar graph"
+    val refValues = Seq(15, 11, 2, 20, 8, 7, 4)
+    val bars = BarGraph(colC, refValues, labels = Lorem.Ipsum.split(' '),
+                        palette = Palettes.rainbow, max = 24)
+
+    colC2.title = "Histogram"
+
     clockTimer.scheduleAtFixedRate(new TimerTask {
       var s = 1
+      val r = Random
       override def run(): Unit = {
         val column = if (s % 2 == 0) ":" else " "
         ss.text := "%02d%s%02d".format(s / 60, column, s % 60)
+        bars.values := refValues.map(n => n + r.nextInt(5) - 2)
         s += 1
       }
     }, 1000, 1000)
-
     frame.show()
   }
 

@@ -9,13 +9,13 @@ import net.team2xh.scurses.{Keys, Scurses}
 case class Input(parent: FramePanel, var defaultText: String = "Input")
                 (implicit screen: Scurses) extends Widget(parent) {
 
-  var text = ""
-  def cursorIndex = text.length
+  var text: Varying[String] = ""
+  def cursorIndex = text.value.length
 
   override def draw(focus: Boolean, theme: ColorScheme): Unit = {
     val cursorSymbol = if (focus) Symbols.BLOCK else " "
     val limit = innerWidth - 3
-    val t = if (cursorIndex == 0) "<" + defaultText + ">" else text
+    val t = if (cursorIndex == 0) "<" + defaultText + ">" else text.value
     val fg = if (cursorIndex == 0) theme.background else theme.foreground(focus)
     val l = t.length
     val wrappedText = if (l > limit) {
@@ -29,8 +29,8 @@ case class Input(parent: FramePanel, var defaultText: String = "Input")
 
   override def handleKeypress(keypress: Int): Unit = keypress match {
     case Keys.BACKSPACE => if (cursorIndex > 0)
-      text = text.init
-    case char => text += keypress.toChar
+      text := text.value.init
+    case char => text := text.value + keypress.toChar
   }
 
   override def focusable: Boolean = true

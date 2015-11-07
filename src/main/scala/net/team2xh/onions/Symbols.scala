@@ -60,4 +60,6 @@ object Symbols {
   val BLOCK_UPPER = "▀"
   val BLOCK_LEFT  = "▌"
   val BLOCK_RIGHT = "▐"
+  // 3. Misc characters
+  val SQUARE = "■"
 }
