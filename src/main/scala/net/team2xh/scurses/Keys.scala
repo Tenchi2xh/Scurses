@@ -38,4 +38,16 @@ object Keys {
   val X = 120
   val Y = 121
   val Z = 122
+
+  def repr(key: Int): String = key match {
+    case TAB       => "⇥ "
+    case ENTER     => "↵ "
+    case BACKSPACE => "⇤ "
+    case SPACE     => " "
+    case UP        => "↑"
+    case DOWN      => "↓"
+    case LEFT      => "←"
+    case RIGHT     => "→"
+    case _ => key.toChar.toString
+  }
 }

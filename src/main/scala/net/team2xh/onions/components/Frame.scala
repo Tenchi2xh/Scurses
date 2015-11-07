@@ -98,12 +98,16 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, theme: Co
         draw()
         val ms = System.currentTimeMillis - start
 
-        val key = if (lastKeypress >= 0) s"Keypress: $lastKeypress (${lastKeypress.toChar})" else "No key pressed"
+        val key = if (lastKeypress >= 0) s"Keypress: $lastKeypress (${Keys.repr(lastKeypress)})" else "No key pressed"
         val time = s"Render time: ${ms}ms"
-        val line = "%-18s | %-19s".format(key, time)
+        val left = "%-18s | %-19s".format(key, time)
+        val widget = if (focusedPanel.widgets.isEmpty) "Ø" else focusedPanel.widgets(focusedPanel.widgetFocus)
+        val right = s"Panel $focusedPanel, $widget"
+        val n = innerWidth + 1 - left.length
+        val line = (s"%s%${n}s").format(left, right)
 
         if (title.isDefined) screen.translateOffset(y = titleOffset)
-        screen.put(0, innerHeight + 1, line + " " * (innerWidth + 1 - line.length),
+        screen.put(0, innerHeight + 1, line,
                    foreground = theme.foreground, background = theme.background)
         panel.drawDebug(theme)
         if (title.isDefined) screen.translateOffset(y = -titleOffset)

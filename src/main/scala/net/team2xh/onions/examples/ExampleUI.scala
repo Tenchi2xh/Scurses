@@ -74,16 +74,16 @@ object ExampleUI extends App {
 
     colC2.title = "Scatter plot"
 
-//    clockTimer.scheduleAtFixedRate(new TimerTask {
-//      var s = 1
-//      val r = Random
-//      override def run(): Unit = {
-//        val column = if (s % 2 == 0) ":" else " "
-//        ss.text := "%02d%s%02d".format(s / 60, column, s % 60)
-//        bars.values := refValues.map(n => n + r.nextInt(5) - 2)
-//        s += 1
-//      }
-//    }, 1000, 1000)
+    clockTimer.scheduleAtFixedRate(new TimerTask {
+      var s = 1
+      val r = Random
+      override def run(): Unit = {
+        val column = if (s % 2 == 0) ":" else " "
+        ss.text := "%02d%s%02d".format(s / 60, column, s % 60)
+        bars.values := refValues.map(n => n + r.nextInt(5) - 2)
+        s += 1
+      }
+    }, 1000, 1000)
     frame.show()
   }
 

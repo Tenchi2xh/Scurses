@@ -300,10 +300,10 @@ case class FramePanel(parent: Component)
   private[components] def drawDebug(theme: ColorScheme): Unit = {
     propagateDraw(_.drawDebug(theme))
 
-    val neighbours = "%s%s%s%s".format(if (top.isDefined) "↑" else "",
+    val neighbours = "%s%s%s%s".format(if (top.isDefined)    "↑" else "",
                                        if (bottom.isDefined) "↓" else "",
-                                       if (left.isDefined) "←" else "",
-                                       if (right.isDefined) "→" else "")
+                                       if (left.isDefined)   "←" else "",
+                                       if (right.isDefined)  "→" else "")
 
     val line = s"(#$id|${width}x$height|$neighbours)"
     screen.put(width - 1 - line.length, 0, line, foreground = theme.accent2, background = theme.background)
