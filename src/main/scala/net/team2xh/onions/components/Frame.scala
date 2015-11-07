@@ -39,8 +39,10 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, theme: Co
   def eventLoop(): Unit = {
     val tree = panel.getTreeWalk
 
+    var running = true
+
     var k = screen.keypress()
-    while (k != Keys.ENTER) {
+    while (running) {
       lastKeypress = k
       k match {
         case Keys.UP =>
@@ -81,6 +83,9 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, theme: Co
       redraw()
 
       k = screen.keypress()
+      if (k == Keys.Q && lastKeypress == Keys.Q)
+        running = false
+      lastKeypress = k
     }
   }
 
@@ -95,7 +100,7 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, theme: Co
 
         val key = if (lastKeypress >= 0) s"Keypress: $lastKeypress (${lastKeypress.toChar})" else "No key pressed"
         val time = s"Render time: ${ms}ms"
-        val line = "%-17s | %-19s".format(key, time)
+        val line = "%-18s | %-19s".format(key, time)
 
         if (title.isDefined) screen.translateOffset(y = titleOffset)
         screen.put(0, innerHeight + 1, line + " " * (innerWidth + 1 - line.length),

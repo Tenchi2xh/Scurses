@@ -19,9 +19,10 @@ class Varying[T](initialValue: T) {
   var storedValue = initialValue
   private var callbacks: List[() => Unit] = Nil
 
-  def :=(newValue: T): Unit = {
+  def :=(newValue: T): Varying[T] = {
     storedValue = newValue
     for (callback <- callbacks) callback()
+    this
   }
 
   def subscribe(callback: () => Unit): Unit = {

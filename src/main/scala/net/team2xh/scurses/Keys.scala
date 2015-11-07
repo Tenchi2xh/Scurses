@@ -5,6 +5,7 @@ object Keys {
   val TAB = 9
   val ENTER = 10
   val BACKSPACE = 8
+  val SPACE = 32
 
   val UP    = 16
   val DOWN  = 14

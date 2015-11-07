@@ -6,7 +6,7 @@ import net.team2xh.onions.{Palettes, Themes}
 import net.team2xh.onions.components.Frame
 import net.team2xh.onions.components.widgets._
 import net.team2xh.onions.utils.{Varying, Lorem, TextWrap}
-import net.team2xh.scurses.Scurses
+import net.team2xh.scurses.{Colors, Scurses}
 
 import scala.util.Random
 
@@ -49,7 +49,18 @@ object ExampleUI extends App {
     colB.title = "Misc. widgets"
     Label(colB, "Enter your name here:")
     val input = Input(colB, "Name")
-    BigText(colB, Varying.from(input.text, "Your name", s => s"$s"))
+    val big = BigText(colB, Varying.from(input.text, "Your name", s => s"$s"))
+    Separator(colB)
+    val radio = Radio(colB, Seq("Default", "Red", "Green", "Blue"))
+    radio.subscribe(() => {
+      val color = radio.value match {
+        case 0 => frame.theme.foreground
+        case 1 => Colors.BRIGHT_RED
+        case 2 => Colors.BRIGHT_GREEN
+        case 3 => Colors.BRIGHT_BLUE
+      }
+      big.color := color
+    })
 
     colB3B.title = "7-segment"
     val ss = SevenSegment(colB3B, "00:00")
@@ -63,16 +74,16 @@ object ExampleUI extends App {
 
     colC2.title = "Scatter plot"
 
-    clockTimer.scheduleAtFixedRate(new TimerTask {
-      var s = 1
-      val r = Random
-      override def run(): Unit = {
-        val column = if (s % 2 == 0) ":" else " "
-        ss.text := "%02d%s%02d".format(s / 60, column, s % 60)
-        bars.values := refValues.map(n => n + r.nextInt(5) - 2)
-        s += 1
-      }
-    }, 1000, 1000)
+//    clockTimer.scheduleAtFixedRate(new TimerTask {
+//      var s = 1
+//      val r = Random
+//      override def run(): Unit = {
+//        val column = if (s % 2 == 0) ":" else " "
+//        ss.text := "%02d%s%02d".format(s / 60, column, s % 60)
+//        bars.values := refValues.map(n => n + r.nextInt(5) - 2)
+//        s += 1
+//      }
+//    }, 1000, 1000)
     frame.show()
   }
 
