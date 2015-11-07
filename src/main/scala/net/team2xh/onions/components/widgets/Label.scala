@@ -1,6 +1,7 @@
 package net.team2xh.onions.components.widgets
 
 import net.team2xh.onions.Component
+import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.onions.components.{FramePanel, Widget}
 import net.team2xh.onions.utils.{Varying, TextWrap}
 import net.team2xh.scurses.{Colors, Scurses}
@@ -22,10 +23,8 @@ case class Label(parent: FramePanel, text: Varying[String],
     }
   }
 
-  override def draw(focus: Boolean): Unit = {
-    val fg = if (focus && focusable) Colors.DIM_BLACK else Colors.BRIGHT_WHITE
-    val bg = if (focus && focusable) Colors.BRIGHT_WHITE else Colors.DIM_BLACK
-    drawText(fg, bg)
+  override def draw(focus: Boolean, theme: ColorScheme): Unit = {
+    drawText(theme.foreground(focus), theme.background(focus))
   }
 
   override def handleKeypress(keypress: Int): Unit = {

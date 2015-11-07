@@ -2,7 +2,8 @@ package net.team2xh.onions.examples
 
 import java.util.{TimerTask, Timer}
 
-import net.team2xh.onions.components.{FramePanel, Frame}
+import net.team2xh.onions.Themes
+import net.team2xh.onions.components.Frame
 import net.team2xh.onions.components.widgets.{SevenSegment, Spacer, Separator, Label}
 import net.team2xh.onions.utils.TextWrap
 import net.team2xh.scurses.Scurses
@@ -13,7 +14,8 @@ object ExampleUI extends App {
 
   Scurses { implicit screen =>
     implicit val debug = true
-    val frame = Frame(title = Some("Example Onions UI - Powered by Scurses"), debug = true)
+    val frame = Frame(title = Some("Example Onions UI - Powered by Scurses"),
+                      debug = true, theme = Themes.DOS)
 
     val colA = frame.panel
     val colB = colA.splitRight

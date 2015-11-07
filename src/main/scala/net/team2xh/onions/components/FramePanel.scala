@@ -1,5 +1,6 @@
 package net.team2xh.onions.components
 
+import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.onions.{Symbols, Component}
 import net.team2xh.scurses.Scurses
 
@@ -205,29 +206,41 @@ case class FramePanel(parent: Component)
     case Some(panel) => true
   }
 
-  private[FramePanel] def drawEdges(): Unit = {
-    propagateDraw(_.drawEdges())
+  private[FramePanel] def drawEdges(theme: ColorScheme): Unit = {
+    propagateDraw(_.drawEdges(theme))
 
+    // Fill center
+    for (y <- 1 to height - 1) {
+      screen.put(1, y, " " * width, background = theme.background)
+    }
     // Vertical edges
     for (y <- 1 to height - 1) {
-      screen.put(width, y, Symbols.SV)
+      screen.put(width, y, Symbols.SV,
+                 foreground = theme.foreground, background = theme.background)
       if (left.isEmpty)
-        screen.put(0, y, Symbols.SV)
+        screen.put(0, y, Symbols.SV,
+                   foreground = theme.foreground, background = theme.background)
     }
     // Horizontal edges
-    screen.put(1, 0, Symbols.SH * (width - 1))
+    screen.put(1, 0, Symbols.SH * (width - 1),
+               foreground = theme.foreground, background = theme.background)
     if (bottom.isEmpty)
-      screen.put(1, height, Symbols.SH * (width - 1))
+      screen.put(1, height, Symbols.SH * (width - 1),
+        foreground = theme.foreground, background = theme.background)
     // Focus indicator
-    val indicator = if (focus) 237 else 0
-    screen.put(1, 1, Symbols.BLOCK + Symbols.BLOCK_UPPER, foreground = indicator)
-    screen.put(1, height - 1, Symbols.BLOCK + Symbols.BLOCK_LOWER, foreground = indicator)
-    screen.put(width - 2, 1, Symbols.BLOCK_UPPER + Symbols.BLOCK, foreground = indicator)
-    screen.put(width - 2, height - 1, Symbols.BLOCK_LOWER + Symbols.BLOCK, foreground = indicator)
+    val indicator = if (focus) theme.accent1 else theme.background
+    screen.put(1, 1, Symbols.BLOCK + Symbols.BLOCK_UPPER,
+               foreground = indicator, background = theme.background)
+    screen.put(1, height - 1, Symbols.BLOCK + Symbols.BLOCK_LOWER,
+               foreground = indicator, background = theme.background)
+    screen.put(width - 2, 1, Symbols.BLOCK_UPPER + Symbols.BLOCK,
+               foreground = indicator, background = theme.background)
+    screen.put(width - 2, height - 1, Symbols.BLOCK_LOWER + Symbols.BLOCK,
+               foreground = indicator, background = theme.background)
   }
 
-  private[FramePanel] def drawCorners(): Unit = {
-    propagateDraw(_.drawCorners())
+  private[FramePanel] def drawCorners(theme: ColorScheme): Unit = {
+    propagateDraw(_.drawCorners(theme))
 
     // Top-left corner
     val tlc = if (left.isEmpty)
@@ -239,7 +252,6 @@ case class FramePanel(parent: Component)
       Symbols.SH_TO_SD
     else
       Symbols.SH_X_SV
-    screen.put(0, 0, tlc)
     // Bottom-left corner
     // ┼ not supported
     val blc = if (hasAnyLeft)
@@ -249,7 +261,6 @@ case class FramePanel(parent: Component)
         Symbols.SV_TO_SR
     else
       Symbols.BLC_S_TO_S
-    screen.put(0, height, blc)
     // Bottom-right corner
     val brc = if (hasAnyRight)
       if (bottom.isEmpty)
@@ -260,7 +271,6 @@ case class FramePanel(parent: Component)
       Symbols.BRC_S_TO_S
     else
       Symbols.SV_TO_SL
-    screen.put(width, height, brc)
     // Top-right corner
     val trc = if (top.isEmpty)
       if (right.isEmpty)
@@ -271,20 +281,24 @@ case class FramePanel(parent: Component)
       Symbols.SV_TO_SL
     else
       Symbols.SH_TO_SD
-    screen.put(width, 0, trc)
+    // Draw
+    screen.put(0, 0, tlc, foreground = theme.foreground, background = theme.background)
+    screen.put(0, height, blc, foreground = theme.foreground, background = theme.background)
+    screen.put(width, height, brc, foreground = theme.foreground, background = theme.background)
+    screen.put(width, 0, trc, foreground = theme.foreground, background = theme.background)
 
   }
 
-  private[FramePanel] def drawTitles(): Unit = {
-    propagateDraw(_.drawTitles())
+  private[FramePanel] def drawTitles(theme: ColorScheme): Unit = {
+    propagateDraw(_.drawTitles(theme))
 
     if (title != "") {
-      screen.put(2, 0, s"[$title]")
+      screen.put(2, 0, s"[$title]", foreground = theme.foreground, background = theme.background)
     }
   }
 
-  private[components] def drawDebug(): Unit = {
-    propagateDraw(_.drawDebug())
+  private[components] def drawDebug(theme: ColorScheme): Unit = {
+    propagateDraw(_.drawDebug(theme))
 
     val neighbours = "%s%s%s%s".format(if (top.isDefined) "↑" else "",
                                        if (bottom.isDefined) "↓" else "",
@@ -292,26 +306,25 @@ case class FramePanel(parent: Component)
                                        if (right.isDefined) "→" else "")
 
     val line = s"(#$id|${width}x$height|$neighbours)"
-    screen.put(width - 1 - line.length, 0, line, foreground = 248)
+    screen.put(width - 1 - line.length, 0, line, foreground = theme.accent2, background = theme.background)
   }
 
-  override def redraw(): Unit = {
+  def redraw(theme: ColorScheme): Unit = {
     updateDimensions(parent.innerWidth, parent.innerHeight)
 
-    drawEdges()
-    drawCorners()
-    drawTitles()
-//    drawDebug()
-    drawWidgets()
+    drawEdges(theme)
+    drawCorners(theme)
+    drawTitles(theme)
+    drawWidgets(theme)
   }
 
-  def drawWidgets(): Unit = {
-    propagateDraw(_.drawWidgets())
+  def drawWidgets(theme: ColorScheme): Unit = {
+    propagateDraw(_.drawWidgets(theme))
 
     var y = 2
     for ((widget, i) <- widgets.zipWithIndex) {
       screen.translateOffset(x = 2, y = y)
-      widget.draw(focus && widgetFocus == i)
+      widget.draw(focus && widgetFocus == i, theme)
       screen.translateOffset(x = -2, y = -y)
       y += widget.innerHeight
     }

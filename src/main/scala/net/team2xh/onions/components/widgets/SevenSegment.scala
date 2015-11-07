@@ -1,18 +1,18 @@
 package net.team2xh.onions.components.widgets
 
+import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.onions.components.{Widget, FramePanel}
 import net.team2xh.onions.components.widgets.SevenSegment.{symbols, empty}
 import net.team2xh.onions.utils.Varying
 import net.team2xh.scurses.{Colors, Scurses}
 
 case class SevenSegment(parent: FramePanel, var text: Varying[String],
-                        var foreground: Varying[Int] = Colors.BRIGHT_GREEN,
-                        var background: Varying[Int] = Colors.DIM_BLACK)
-                  (implicit screen: Scurses) extends Widget(parent, text, foreground, background) {
+                        var color: Varying[Int] = Colors.BRIGHT_GREEN)
+                  (implicit screen: Scurses) extends Widget(parent, text, color) {
 
   override def focusable: Boolean = false
 
-  override def draw(focus: Boolean): Unit = {
+  override def draw(focus: Boolean, theme: ColorScheme): Unit = {
     val t = text.value
     if (!t.isEmpty) {
       val wrapped = t.grouped(innerWidth / 4).toList
@@ -21,7 +21,7 @@ case class SevenSegment(parent: FramePanel, var text: Varying[String],
         val chars = chunk.toLowerCase.map(symbols.getOrElse(_, empty) ++ Seq("    "))
         for (y <- 0 until 4) {
           screen.put((innerWidth - width) / 2, y + i * 3, ("" /: chars)((line, char) => line + char(y)),
-            foreground = foreground.value, background = background.value)
+            foreground = color.value, background = theme.background)
         }
       }
     }

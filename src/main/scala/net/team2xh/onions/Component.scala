@@ -1,5 +1,7 @@
 package net.team2xh.onions
 
+import net.team2xh.onions.Themes.ColorScheme
+
 abstract class Component(parent: Option[Component]) {
 
   def innerWidth: Int

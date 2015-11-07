@@ -1,11 +1,14 @@
 package net.team2xh.onions.components
 
+import net.team2xh.onions.Themes.ColorScheme
+
 import scala.language.implicitConversions
 
-import net.team2xh.onions.{Symbols, Component}
+import net.team2xh.onions.{Themes, Symbols, Component}
 import net.team2xh.scurses.{Keys, Scurses}
 
-case class Frame(title: Option[String] = None, debug: Boolean = false)(implicit screen: Scurses) extends Component(None) {
+case class Frame(title: Option[String] = None, debug: Boolean = false, theme: ColorScheme = Themes.default)
+                (implicit screen: Scurses) extends Component(None) {
 
   val panel = FramePanel(this)
   panel.focus = true
@@ -95,8 +98,9 @@ case class Frame(title: Option[String] = None, debug: Boolean = false)(implicit 
         val line = "%-17s | %-19s".format(key, time)
 
         if (title.isDefined) screen.translateOffset(y = titleOffset)
-        screen.put(0, innerHeight + 1, line + " " * (innerWidth + 1 - line.length))
-        panel.drawDebug()
+        screen.put(0, innerHeight + 1, line + " " * (innerWidth + 1 - line.length),
+                   foreground = theme.foreground, background = theme.background)
+        panel.drawDebug(theme)
         if (title.isDefined) screen.translateOffset(y = -titleOffset)
 
       }
@@ -107,7 +111,7 @@ case class Frame(title: Option[String] = None, debug: Boolean = false)(implicit 
   def draw(): Unit = {
     if (title.isDefined) screen.translateOffset(y = titleOffset)
     // Draw panels recursively
-    panel.redraw()
+    panel.redraw(theme)
     if (title.isDefined) {
       screen.translateOffset(y = -titleOffset)
       drawTitle()
@@ -116,14 +120,26 @@ case class Frame(title: Option[String] = None, debug: Boolean = false)(implicit 
 
   private[Frame] def drawTitle(): Unit = {
     title.foreach { t =>
-      screen.put(0, 0, Symbols.TLC_S_TO_D)
-      screen.put(innerWidth + 1, 0, Symbols.TRC_D_TO_S)
-      screen.put(1, 0, Symbols.DH * (innerWidth - 1))
-      screen.put(0, 1, Symbols.SV)
-      screen.put(innerWidth + 1, 1, Symbols.SV)
-      screen.put((innerWidth + 1 - t.length) / 2, 1, t)
-      screen.put(0, 2, Symbols.SV_TO_SR)
-      screen.put(innerWidth + 1, 2, Symbols.SV_TO_SL)
+      screen.put(0, 0, Symbols.TLC_S_TO_D,
+                 foreground = theme.foreground, background = theme.background)
+      screen.put(innerWidth + 1, 0, Symbols.TRC_D_TO_S,
+        foreground = theme.foreground, background = theme.background)
+      screen.put(1, 0, Symbols.DH * (innerWidth - 1),
+        foreground = theme.foreground, background = theme.background)
+      screen.put(0, 1, Symbols.SV,
+        foreground = theme.foreground, background = theme.background)
+      screen.put(innerWidth + 1, 1, Symbols.SV,
+        foreground = theme.foreground, background = theme.background)
+      screen.put(0, 2, Symbols.SV_TO_SR,
+        foreground = theme.foreground, background = theme.background)
+      screen.put(innerWidth + 1, 2, Symbols.SV_TO_SL,
+        foreground = theme.foreground, background = theme.background)
+
+      val spaceLeft = (innerWidth - 1 - t.length) / 2
+      val spaceRight = innerWidth - 1 - spaceLeft - t.length
+      screen.put(1, 1, " " * spaceLeft + t + " " * spaceRight,
+        foreground = theme.foreground, background = theme.background)
+
     }
   }
 
