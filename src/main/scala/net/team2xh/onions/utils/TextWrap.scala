@@ -52,11 +52,14 @@ object TextWrap {
           l.mkString(" ")
         } else {
           val spaceWidth = s / (l.length - 1)
-          val rest = s - (spaceWidth * (l.length - 1))
+          var rest = s - (spaceWidth * (l.length - 1))
           l.zipWithIndex.map { case (word, j) =>
-            if (j < l.length - 1)
-              word + " " * (spaceWidth + 1)
-            else " " * rest + word
+            if (rest > 0) {
+              rest -= 1
+              word + " " * (spaceWidth + 2)
+            } else if (j == l.length - 1) {
+              word
+            } else word + " " * (spaceWidth + 1)
           }.mkString
         }
       }
