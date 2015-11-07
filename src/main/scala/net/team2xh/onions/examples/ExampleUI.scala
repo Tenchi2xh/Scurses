@@ -1,15 +1,19 @@
 package net.team2xh.onions.examples
 
+import java.util.{TimerTask, Timer}
+
 import net.team2xh.onions.components.{FramePanel, Frame}
 import net.team2xh.onions.components.widgets.{SevenSegment, Spacer, Separator, Label}
 import net.team2xh.onions.utils.TextWrap
 import net.team2xh.scurses.Scurses
 
 object ExampleUI extends App {
-  
+
+  val clockTimer = new Timer()
+
   Scurses { implicit screen =>
-    val frame = Frame("Example Onions UI - Powered by Scurses")
-    frame.debug = true
+    implicit val debug = true
+    val frame = Frame(title = Some("Example Onions UI - Powered by Scurses"), debug = true)
 
     val colA = frame.panel
     val colB = colA.splitRight
@@ -40,8 +44,18 @@ object ExampleUI extends App {
     Label(colA, "Etiam sit amet lacinia quam, sed efficitur lorem. Integer sit amet diam at tortor molestie pellentesque eget euismod lorem. Vivamus varius purus sed ex aliquam lacinia.", TextWrap.CENTER)
 
     colB3B.title = "7-segment"
-    SevenSegment(colB3B, "13:37")
+    val ss = SevenSegment(colB3B, "00:00")
+    clockTimer.scheduleAtFixedRate(new TimerTask {
+      var s = 1
+      override def run(): Unit = {
+        val column = if (s % 2 == 0) ":" else " "
+        ss.text := "%02d%s%02d".format(s / 60, column, s % 60)
+        s += 1
+      }
+    }, 1000, 1000)
 
     frame.show()
   }
+
+  clockTimer.cancel()
 }

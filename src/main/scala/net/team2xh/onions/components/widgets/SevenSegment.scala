@@ -2,21 +2,26 @@ package net.team2xh.onions.components.widgets
 
 import net.team2xh.onions.components.{Widget, FramePanel}
 import net.team2xh.onions.components.widgets.SevenSegment.{symbols, empty}
+import net.team2xh.onions.utils.Varying
 import net.team2xh.scurses.{Colors, Scurses}
 
-case class SevenSegment(parent: FramePanel, var text: String, var color: Int = Colors.DIM_GREEN)
-                  (implicit screen: Scurses) extends Widget(parent) {
+case class SevenSegment(parent: FramePanel, var text: Varying[String],
+                        var foreground: Varying[Int] = Colors.BRIGHT_GREEN,
+                        var background: Varying[Int] = Colors.DIM_BLACK)
+                  (implicit screen: Scurses) extends Widget(parent, text, foreground, background) {
 
   override def focusable: Boolean = false
 
   override def draw(focus: Boolean): Unit = {
-    if (!text.isEmpty) {
-      val wrapped = text.grouped(innerWidth / 4).toList
+    val t = text.value
+    if (!t.isEmpty) {
+      val wrapped = t.grouped(innerWidth / 4).toList
       val width = wrapped.head.length * 4
       for ((chunk, i) <- wrapped.zipWithIndex) {
-        val chars = chunk.toLowerCase.map(symbols.getOrElse(_, empty))
-        for (y <- 0 until 3) {
-          screen.put((innerWidth - width) / 2, y + i * 3, ("" /: chars)((line, char) => line + char(y)), foreground = color)
+        val chars = chunk.toLowerCase.map(symbols.getOrElse(_, empty) ++ Seq("    "))
+        for (y <- 0 until 4) {
+          screen.put((innerWidth - width) / 2, y + i * 3, ("" /: chars)((line, char) => line + char(y)),
+            foreground = foreground.value, background = background.value)
         }
       }
     }
@@ -181,6 +186,14 @@ object SevenSegment {
     '.' -> Seq(
       "    ",
       "    ",
-      " .  ")
+      " .  "),
+    ' ' -> Seq(
+      "    ",
+      "    ",
+      "    "),
+    '-' -> Seq(
+      "    ",
+      " -  ",
+      "    ")
   )
 }
