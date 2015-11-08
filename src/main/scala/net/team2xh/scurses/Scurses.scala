@@ -2,8 +2,6 @@ package net.team2xh.scurses
 
 import java.io.BufferedOutputStream
 
-import scala.tools.jline.console.ConsoleReader
-
 object Scurses {
 
   /**
@@ -32,7 +30,6 @@ class Scurses {
 
   val out = new BufferedOutputStream(System.out, 1048576)
   val csi = new EscapeCodes(out)
-  val console = new ConsoleReader()
 
   var offsetX = 0
   var offsetY = 0
@@ -105,12 +102,31 @@ class Scurses {
     csi.showCursor()
   }
 
+  val delay = 20
+
   /**
    * Polls the terminal for a keypress (does not echo the keypress on the terminal)
    * @return Character number of the pressed key
    */
   def keypress(): Int = {
-    console.readVirtualKey()
+    val n = System.in.read()
+    if (n == 27) {
+      Thread.sleep(delay)
+      if (System.in.available() != 0) {
+        val k = System.in.read()
+        if (k == 91) {
+          val o = System.in.read()
+          o match {
+            case 65 => Keys.UP
+            case 66 => Keys.DOWN
+            case 67 => Keys.RIGHT
+            case 68 => Keys.LEFT
+            case 90 => Keys.SHIFT_TAB
+            case _ => 10000 + o
+          }
+        } else 20000 + k
+      } else n
+    } else n
   }
 
   /**
@@ -139,6 +155,8 @@ class Scurses {
     csi.clear()
     csi.hideCursor()
     refresh()
+
+    Runtime.getRuntime.exec(Array("sh", "-c", "stty raw -echo < /dev/tty"))
   }
 
   /**
@@ -149,5 +167,7 @@ class Scurses {
     csi.normalBuffer()
     csi.showCursor()
     refresh()
+
+    Runtime.getRuntime.exec(Array("sh", "-c", "stty sane < /dev/tty"))
   }
 }

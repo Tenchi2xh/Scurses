@@ -39,10 +39,8 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, var theme
   def eventLoop(): Unit = {
     val tree = panel.getTreeWalk
 
-    var running = true
-
     var k = screen.keypress()
-    while (running) {
+    while (k != Keys.ESC && k != Keys.CTRL_C) {
       lastKeypress = k
       k match {
         case Keys.UP =>
@@ -67,8 +65,9 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, var theme
         case Keys.RIGHT =>
           val next = focusedPanel.getNextDirection(_.right, _.top)
           next foreach (panel => switchFocusTo(panel))
-        case Keys.TAB =>
-          val next = tree.dropWhile(_.id != focusedPanel.id).tail.headOption
+        case k if k == Keys.TAB || k == Keys.SHIFT_TAB =>
+          val t = if (k == Keys.TAB) tree else tree.reverse
+          val next = t.dropWhile(_.id != focusedPanel.id).tail.headOption
           next match {
             case Some(panel) =>
               switchFocusTo(panel)
@@ -83,9 +82,6 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, var theme
       redraw()
 
       k = screen.keypress()
-      if (k == Keys.Q && lastKeypress == Keys.Q)
-        running = false
-      lastKeypress = k
     }
   }
 
@@ -100,11 +96,11 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, var theme
 
         val key = if (lastKeypress >= 0) s"Keypress: $lastKeypress (${Keys.repr(lastKeypress)})" else "No key pressed"
         val time = s"Render time: ${ms}ms"
-        val left = "%-18s | %-19s".format(key, time)
+        val left = "%-23s | %-19s".format(key, time)
         val widget = if (focusedPanel.widgets.isEmpty) "Ø" else focusedPanel.widgets(focusedPanel.widgetFocus)
         val right = s"Panel $focusedPanel, $widget"
         val n = innerWidth + 1 - left.length
-        val line = (s"%s%${n}s").format(left, right)
+        val line = s"%s%${n}s".format(left, right)
 
         if (title.isDefined) screen.translateOffset(y = titleOffset)
         screen.put(0, innerHeight + 1, line,
@@ -131,7 +127,7 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, var theme
   private[Frame] def drawTitle(): Unit = {
     title.foreach { t =>
       screen.put(0, 0, Symbols.TLC_S_TO_D,
-                 foreground = theme.foreground, background = theme.background)
+        foreground = theme.foreground, background = theme.background)
       screen.put(innerWidth + 1, 0, Symbols.TRC_D_TO_S,
         foreground = theme.foreground, background = theme.background)
       screen.put(1, 0, Symbols.DH * (innerWidth - 1),

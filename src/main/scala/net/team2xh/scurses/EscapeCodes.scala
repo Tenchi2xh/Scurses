@@ -13,8 +13,6 @@ import scala.tools.jline.console.ConsoleReader
  */
 class EscapeCodes(out: OutputStream) {
 
-  val console = new ConsoleReader()
-
   // Output an Escape Sequence
   private def ESC(command: Char) { out.write(s"\033$command".getBytes) }
   // Output a Control Sequence Inroducer
@@ -83,12 +81,15 @@ class EscapeCodes(out: OutputStream) {
 
     val results = Array.fill(args)("")
     val separators = Array.fill(args - 1)(';') :+ terminator
+    // Parse CSI
+    System.in.read()
+    System.in.read()
     // Parse each Ps
     for (i <- 0 until args) {
-      var n = console.readVirtualKey()
+      var n = System.in.read()
       while (n != separators(i).toInt) {
         results(i) += n.toChar
-        n = console.readVirtualKey()
+        n = System.in.read()
       }
     }
     results.map(_.toInt)

@@ -12,12 +12,14 @@ abstract class FontMapper(parent: FramePanel, empty: Seq[String],
 
   override def focusable: Boolean = false
 
+  var height = empty.length
+
   override def draw(focus: Boolean, theme: ColorScheme): Unit = {
     val t = text.value
     val h = empty.length
     if (!t.isEmpty) {
-      val x1 = t.toLowerCase.map(c => (c, symbols.getOrElse(c, empty).head.length))
-      val x2 = x1.foldLeft(Seq[(String, Int)](("", 0))) { case (accu, (c, l)) =>
+      val charsSymbols = t.toLowerCase.map(c => (c, symbols.getOrElse(c, empty).head.length))
+      val wrapped = charsSymbols.foldLeft(Seq[(String, Int)](("", 0))) { case (accu, (c, l)) =>
         val current = accu.last
         if (current._2 + l > innerWidth) {
           accu :+ (s"$c", l)
@@ -25,10 +27,11 @@ abstract class FontMapper(parent: FramePanel, empty: Seq[String],
           accu.init :+ (current._1 + c, current._2 + l)
         }
       }
-      val wrapped = x2.map(_._1)
-      val width = x2.maxBy(_._2)._2
+      val wrappedText = wrapped.map(_._1)
+      height = wrapped.length * empty.length
+      val width = wrapped.maxBy(_._2)._2
       val c = if (color.value < 0) theme.foreground else color.value
-      for ((chunk, i) <- wrapped.zipWithIndex) {
+      for ((chunk, i) <- wrappedText.zipWithIndex) {
         val chars = chunk.toLowerCase.map(symbols.getOrElse(_, empty) ++ Seq("    "))
         for (y <- 0 until h) {
           screen.put((innerWidth - width) / 2, y + i * 3, ("" /: chars)((line, char) => line + char(y)),
@@ -40,5 +43,5 @@ abstract class FontMapper(parent: FramePanel, empty: Seq[String],
 
   override def handleKeypress(keypress: Int): Unit = { }
 
-  override def innerHeight: Int = 3
+  override def innerHeight: Int = height
 }
