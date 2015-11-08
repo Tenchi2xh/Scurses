@@ -2,8 +2,6 @@ package net.team2xh.scurses
 
 import java.io.OutputStream
 
-import scala.tools.jline.console.ConsoleReader
-
 /**
  * ANSI Escape Codes manager
  * Reference: http://www.vt100.net/docs/vt510-rm/contents
