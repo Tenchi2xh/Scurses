@@ -2,6 +2,9 @@ package net.team2xh.scurses
 
 import java.io.BufferedOutputStream
 
+import net.team2xh.onions.Themes.ColorScheme
+import net.team2xh.scurses.RichText._
+
 object Scurses {
 
   /**
@@ -29,7 +32,7 @@ object Scurses {
 class Scurses {
 
   val out = new BufferedOutputStream(System.out, 1048576)
-  val csi = new EscapeCodes(out)
+  val ec = new EscapeCodes(out)
 
   var offsetX = 0
   var offsetY = 0
@@ -46,25 +49,64 @@ class Scurses {
    */
   def put(x: Int, y: Int, string: String,
           foreground: Int = Colors.BRIGHT_WHITE,
-          background: Int = Colors.DIM_BLACK) {
-    csi.move(x + offsetX, y + offsetY)
-    csi.setForeground(foreground)
-    csi.setBackground(background)
+          background: Int = Colors.DIM_BLACK): Unit = {
+    ec.move(x + offsetX, y + offsetY)
+    ec.setForeground(foreground)
+    ec.setBackground(background)
     out.write(string.map(b => if (b >= 32) b else '?').getBytes)
-//    csi.resetColors()
   }
+  
+  def put(x: Int, y: Int, richText: RichText, theme: ColorScheme): Unit = {
+    ec.move(x + offsetX, y + offsetY)
+    ec.resetColors()
+    ec.setForeground(theme.foreground)
+    ec.setBackground(theme.background)
+    for (instruction <- richText.instructions) {
+      instruction match {
+        case Text(text) => out.write(text.getBytes)
+        case StartAttribute(attribute) => attribute match {
+          case Bold      => ec.startBold()
+          case Underline => ec.startUnderline()
+          case Blink     => ec.startBlink()
+          case Reverse   => ec.startReverse()
+          case Foreground(color) => color match {
+            case NamedColor(name)   => ec.setForeground(Colors.byName(name))
+            case IndexedColor(code) => ec.setForeground(code)
+            case HexColor(hex)      =>
+          }
+          case Background(color) => color match {
+            case NamedColor(name)   => ec.setBackground(Colors.byName(name))
+            case IndexedColor(code) => ec.setBackground(code)
+            case HexColor(hex)      =>
+          }
+          case _ =>
+        }
+        case StopAttribute(attribute) => attribute match {
+          case Bold       => ec.stopBold()
+          case Underline  => ec.stopUnderline()
+          case Blink      => ec.stopBlink()
+          case Reverse    => ec.stopReverse()
+          case Foreground => ec.setForeground(theme.foreground)
+          case Background => ec.setBackground(theme.background)
+          case _ =>
+        }
+        case ResetAttributes => ec.resetColors()
+      }
+    }
+  }
+  
 
   def translateOffset(x: Int = 0, y: Int = 0): Unit = {
     offsetX += x
     offsetY += y
   }
 
-  def setOffset(x: Int, y: Int) {
+  def setOffset(x: Int, y: Int): Unit = {
     offsetX = x
     offsetY = y
   }
 
-  def resetOffset() {
+  def resetOffset(): Unit = {
     offsetX = 0
     offsetY = 0
   }
@@ -72,15 +114,15 @@ class Scurses {
   /**
    * Refreshes the terminal screen.
    */
-  def refresh() {
+  def refresh(): Unit = {
     out.flush()
   }
 
   /**
    * Clears the terminal screen.
    */
-  def clear() {
-    csi.clear()
+  def clear(): Unit = {
+    ec.clear()
   }
 
   /**
@@ -89,17 +131,17 @@ class Scurses {
    * @param x X coordinate of the desired cursor position (0 indexed)
    * @param y Y coordinate of the desired cursor position (0 indexed)
    */
-  def move(x: Int, y: Int) {
-    csi.showCursor()
-    csi.move(x + offsetX, y + offsetY)
+  def move(x: Int, y: Int): Unit = {
+    ec.showCursor()
+    ec.move(x + offsetX, y + offsetY)
   }
 
-  def hideCursor() {
-    csi.hideCursor()
+  def hideCursor(): Unit = {
+    ec.hideCursor()
   }
 
-  def showCursor() {
-    csi.showCursor()
+  def showCursor(): Unit = {
+    ec.showCursor()
   }
 
   val delay = 20
@@ -134,7 +176,7 @@ class Scurses {
    * @return Tuple containing the width and height of the terminal screen in characters
    */
   def size: (Int, Int) = {
-    val (width, height) = csi.screenSize()
+    val (width, height) = ec.screenSize()
     (width, height)
   }
 
@@ -143,7 +185,7 @@ class Scurses {
    * @return Tuple containing the width and height of the terminal window in pixels
    */
   def dimensions: (Int, Int) = {
-    val (width, height) = csi.windowSize()
+    val (width, height) = ec.windowSize()
     (width, height)
   }
 
@@ -151,9 +193,9 @@ class Scurses {
    * Prepares the terminal screen for Scurses
    */
   def init(): Unit = {
-    csi.alternateBuffer()
-    csi.clear()
-    csi.hideCursor()
+    ec.alternateBuffer()
+    ec.clear()
+    ec.hideCursor()
     refresh()
 
     Runtime.getRuntime.exec(Array("sh", "-c", "stty raw -echo < /dev/tty"))
@@ -163,9 +205,9 @@ class Scurses {
    * Resets the terminal screen
    */
   def close(): Unit = {
-    csi.clear()
-    csi.normalBuffer()
-    csi.showCursor()
+    ec.clear()
+    ec.normalBuffer()
+    ec.showCursor()
     refresh()
 
     Runtime.getRuntime.exec(Array("sh", "-c", "stty sane < /dev/tty"))

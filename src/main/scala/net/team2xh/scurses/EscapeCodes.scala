@@ -62,7 +62,15 @@ class EscapeCodes(out: OutputStream) {
   // Color management
   /* ISO-8613-3 */ def setForeground(color: Int) { CSI(38, 5, color, 'm') }
   /* ISO-8613-3 */ def setBackground(color: Int) { CSI(48, 5, color, 'm') }
-  /*     SGR    */ def resetColors() { CSI(0, 'm') }
+  /*     SGR    */ def startBold()      { CSI(1, 'm') }
+  /*     SGR    */ def startUnderline() { CSI(4, 'm') }
+  /*     SGR    */ def startBlink()     { CSI(5, 'm') }
+  /*     SGR    */ def startReverse()   { CSI(7, 'm') }
+  /*     SGR    */ def stopBold()       { CSI(22, 'm') }
+  /*     SGR    */ def stopUnderline()  { CSI(24, 'm') }
+  /*     SGR    */ def stopBlink()      { CSI(25, 'm') }
+  /*     SGR    */ def stopReverse()    { CSI(27, 'm') }
+  /*     SGR    */ def resetColors()    { CSI(0, 'm') }
 
   /**
    * Executes a request and parses the response report.
@@ -112,4 +120,16 @@ object Colors {
   val BRIGHT_MAGENTA = 13
   val BRIGHT_CYAN    = 14
   val BRIGHT_WHITE   = 15
+
+  def byName(name: String) = name match {
+    case "black"   => DIM_BLACK
+    case "red"     => BRIGHT_RED
+    case "green"   => BRIGHT_GREEN
+    case "yellow"  => BRIGHT_YELLOW
+    case "blue"    => BRIGHT_BLUE
+    case "magenta" => BRIGHT_MAGENTA
+    case "cyan"    => BRIGHT_CYAN
+    case "white"   => BRIGHT_WHITE
+    case "gray"    => BRIGHT_BLACK
+  }
 }

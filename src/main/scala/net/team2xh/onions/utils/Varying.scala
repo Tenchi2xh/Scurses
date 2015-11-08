@@ -1,9 +1,12 @@
 package net.team2xh.onions.utils
 
+import net.team2xh.scurses.RichText.RichText
+
 import scala.language.implicitConversions
 
 object Varying {
   implicit def stringToVarying(value: String): Varying[String] = new Varying(value)
+  implicit def richTextToVarying(value: RichText): Varying[RichText] = new Varying(value)
   implicit def intToVarying(value: Int): Varying[Int] = new Varying(value)
   implicit def seqIntToVarying(values: Seq[Int]): Varying[Seq[Int]] = new Varying(values)
 

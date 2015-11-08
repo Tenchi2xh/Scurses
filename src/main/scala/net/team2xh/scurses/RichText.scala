@@ -42,7 +42,7 @@ object RichText {
     }
   }
 
-  case class RichText(elements: Instruction*)
+  case class RichText(instructions: Instruction*)
 
   sealed trait Instruction
   case class Text(text: String) extends Instruction
@@ -65,43 +65,43 @@ object RichText {
   case class IndexedColor(code: Int) extends Color
   case class HexColor(hex: String) extends Color
 
-  val letter   = P( CharIn('a' to 'z') )
-  val digit    = P( CharIn('0' to '9') )
-  val hexDigit = P( CharIn('0' to '9', 'a' to 'f', 'A' to 'F') )
+  private val letter   = P( CharIn('a' to 'z') )
+  private val digit    = P( CharIn('0' to '9') )
+  private val hexDigit = P( CharIn('0' to '9', 'a' to 'f', 'A' to 'F') )
 
-  val name  = P( letter.rep(1).! )
-  val index = P( digit.rep(1).! ) map (_.toInt)
-  val hex   = P( ("#" ~! hexDigit ~! hexDigit ~! hexDigit ~! hexDigit ~! hexDigit ~! hexDigit).! )
+  private val name  = P( letter.rep(1).! )
+  private val index = P( digit.rep(1).! ) map (_.toInt)
+  private val hex   = P( ("#" ~! hexDigit ~! hexDigit ~! hexDigit ~! hexDigit ~! hexDigit ~! hexDigit).! )
 
-  val bold       = P( "b" )  map (_ => Bold)
-  val underline  = P( "u" )  map (_ => Underline)
-  val blink      = P( "bl" ) map (_ => Blink)
-  val reverse    = P( "r" )  map (_ => Reverse)
-  val foreground = P( "fg" ) map (_ => Foreground)
-  val background = P( "bg" ) map (_ => Background)
+  private val bold       = P( "b" )  map (_ => Bold)
+  private val underline  = P( "u" )  map (_ => Underline)
+  private val blink      = P( "bl" ) map (_ => Blink)
+  private val reverse    = P( "r" )  map (_ => Reverse)
+  private val foreground = P( "fg" ) map (_ => Foreground)
+  private val background = P( "bg" ) map (_ => Background)
 
-  val attribute  = P( bold | underline | blink | reverse | foreground | background )
+  private val attribute  = P( underline | blink | bold | reverse | foreground | background )
 
-  val namedColor   = P( name ) map NamedColor
-  val indexedColor = P( index ) map IndexedColor
-  val hexColor     = P( hex ) map HexColor
+  private val namedColor   = P( name ) map NamedColor
+  private val indexedColor = P( index ) map IndexedColor
+  private val hexColor     = P( hex ) map HexColor
 
-  val color = P( namedColor | indexedColor | hexColor )
+  private val color = P( namedColor | indexedColor | hexColor )
 
-  val startAttribute = P( attribute ) map StartAttribute
-  val beginColor = P( ("fg" | "bg").! ~ ":" ~! color ) map {
+  private val startAttribute = P( attribute ) map StartAttribute
+  private val beginColor = P( ("fg" | "bg").! ~ ":" ~! color ) map {
     case ("fg", aColor) => StartAttribute(Foreground(aColor))
     case (_, aColor)    => StartAttribute(Background(aColor))
   }
-  val stop = P( "/" ~! ("*".! | attribute) ) map {
+  private val stop = P( "/" ~! ("*".! | attribute) ) map {
     case "*" => ResetAttributes
     case attr: Attribute => StopAttribute(attr)
   }
 
-  val block = P( "[" ~! (beginColor | startAttribute | stop) ~! "]" )
-  val escape = P( "[[".! ) map (_ => Text("["))
-  val text = P( CharsWhile(c => c != '[').! ) map Text
+  private val block = P( "[" ~! (beginColor | startAttribute | stop) ~! "]" )
+  private val escape = P( "[[".! ) map (_ => Text("["))
+  private val text = P( CharsWhile(c => c != '[').! ) map Text
 
-  val richText = P( (text | escape | block).rep ) map (RichText(_: _*))
+  private val richText = P( (text | escape | block).rep ) map (RichText(_: _*))
 
 }

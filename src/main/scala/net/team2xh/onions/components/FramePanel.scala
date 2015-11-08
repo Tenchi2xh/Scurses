@@ -216,27 +216,29 @@ case class FramePanel(parent: Component)
     // Vertical edges
     for (y <- 1 to height - 1) {
       screen.put(width, y, Symbols.SV,
-                 foreground = theme.foreground, background = theme.background)
+        foreground = theme.foreground, background = theme.background)
       if (left.isEmpty)
         screen.put(0, y, Symbols.SV,
-                   foreground = theme.foreground, background = theme.background)
+          foreground = theme.foreground, background = theme.background)
     }
     // Horizontal edges
     screen.put(1, 0, Symbols.SH * (width - 1),
-               foreground = theme.foreground, background = theme.background)
+      foreground = theme.foreground, background = theme.background)
     if (bottom.isEmpty)
       screen.put(1, height, Symbols.SH * (width - 1),
         foreground = theme.foreground, background = theme.background)
     // Focus indicator
-    val indicator = if (focus) theme.accent1 else theme.background
-    screen.put(1, 1, Symbols.BLOCK + Symbols.BLOCK_UPPER,
-               foreground = indicator, background = theme.background)
-    screen.put(1, height - 1, Symbols.BLOCK + Symbols.BLOCK_LOWER,
-               foreground = indicator, background = theme.background)
-    screen.put(width - 2, 1, Symbols.BLOCK_UPPER + Symbols.BLOCK,
-               foreground = indicator, background = theme.background)
-    screen.put(width - 2, height - 1, Symbols.BLOCK_LOWER + Symbols.BLOCK,
-               foreground = indicator, background = theme.background)
+    if (focus) {
+      val indicator = theme.accent1
+      screen.put(1, 1, Symbols.BLOCK + Symbols.BLOCK_UPPER,
+        foreground = indicator, background = theme.background)
+      screen.put(1, height - 1, Symbols.BLOCK + Symbols.BLOCK_LOWER,
+        foreground = indicator, background = theme.background)
+      screen.put(width - 2, 1, Symbols.BLOCK_UPPER + Symbols.BLOCK,
+        foreground = indicator, background = theme.background)
+      screen.put(width - 2, height - 1, Symbols.BLOCK_LOWER + Symbols.BLOCK,
+        foreground = indicator, background = theme.background)
+    }
   }
 
   private[FramePanel] def drawCorners(theme: ColorScheme): Unit = {

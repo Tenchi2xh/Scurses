@@ -7,6 +7,7 @@ import net.team2xh.onions.components.Frame
 import net.team2xh.onions.components.widgets._
 import net.team2xh.onions.utils.{Varying, Lorem, TextWrap}
 import net.team2xh.scurses.{Colors, Scurses}
+import net.team2xh.scurses.RichText._
 
 import scala.util.Random
 
@@ -45,6 +46,8 @@ object ExampleUI extends App {
     Label(colA, "Centered text: ")
     Separator(colA)
     Label(colA, Lorem.Ipsum, TextWrap.CENTER)
+    Separator(colA)
+    RichLabel(colA, r"[bl]Supports[b] [u]rich[r] [fg:red]text!")
 
     colB.title = "Misc. widgets"
     Label(colB, "Enter your name here:")
