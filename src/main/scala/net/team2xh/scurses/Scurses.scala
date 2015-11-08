@@ -110,7 +110,7 @@ class Scurses {
    */
   def keypress(): Int = {
     val n = System.in.read()
-    if (n == 27) {
+    if (n == Keys.ESC) {
       Thread.sleep(delay)
       if (System.in.available() != 0) {
         val k = System.in.read()
@@ -125,7 +125,7 @@ class Scurses {
             case _ => 10000 + o
           }
         } else 20000 + k
-      } else n
+      } else Keys.ESC
     } else n
   }
 
