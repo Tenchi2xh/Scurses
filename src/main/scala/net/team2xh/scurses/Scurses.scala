@@ -48,19 +48,20 @@ class Scurses {
    * @param background Background color code
    */
   def put(x: Int, y: Int, string: String,
-          foreground: Int = Colors.BRIGHT_WHITE,
-          background: Int = Colors.DIM_BLACK): Unit = {
+          foreground: Int = -1,
+          background: Int = -1): Unit = {
     ec.move(x + offsetX, y + offsetY)
-    ec.setForeground(foreground)
-    ec.setBackground(background)
+    if (foreground >= 0) ec.setForeground(foreground)
+    if (background >= 0) ec.setBackground(background)
     out.write(string.map(b => if (b >= 32) b else '?').getBytes)
+    ec.stopForeground()
+    ec.stopBackground()
   }
   
   def put(x: Int, y: Int, richText: RichText, theme: ColorScheme): Unit = {
     ec.move(x + offsetX, y + offsetY)
-    ec.resetColors()
-    ec.setForeground(theme.foreground)
-    ec.setBackground(theme.background)
+    if (theme.foreground >= 0) ec.setForeground(theme.foreground)
+    if (theme.background >= 0) ec.setBackground(theme.background)
     for (instruction <- richText.instructions) {
       instruction match {
         case Text(text) => out.write(text.getBytes)
@@ -70,14 +71,15 @@ class Scurses {
           case Blink     => ec.startBlink()
           case Reverse   => ec.startReverse()
           case Foreground(color) => color match {
-            case NamedColor(name)   => ec.setForeground(Colors.byName(name))
+            case NamedColor(name)   => ec.setForeground(Colors.fromName(name))
             case IndexedColor(code) => ec.setForeground(code)
-            case HexColor(hex)      =>
+            case HexColor(hex)      => ec.setForeground(Colors.fromHex(hex))
+
           }
           case Background(color) => color match {
-            case NamedColor(name)   => ec.setBackground(Colors.byName(name))
+            case NamedColor(name)   => ec.setBackground(Colors.fromName(name))
             case IndexedColor(code) => ec.setBackground(code)
-            case HexColor(hex)      =>
+            case HexColor(hex)      => ec.setBackground(Colors.fromHex(hex))
           }
           case _ =>
         }
@@ -86,13 +88,14 @@ class Scurses {
           case Underline  => ec.stopUnderline()
           case Blink      => ec.stopBlink()
           case Reverse    => ec.stopReverse()
-          case Foreground => ec.setForeground(theme.foreground)
-          case Background => ec.setBackground(theme.background)
+          case Foreground => if (theme.foreground >= 0) ec.setForeground(theme.foreground)
+          case Background => if (theme.background >= 0) ec.setBackground(theme.background)
           case _ =>
         }
         case ResetAttributes => ec.resetColors()
       }
     }
+    ec.resetColors()
   }
   
 

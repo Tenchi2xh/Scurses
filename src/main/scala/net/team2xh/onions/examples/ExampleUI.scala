@@ -47,7 +47,7 @@ object ExampleUI extends App {
     Separator(colA)
     Label(colA, Lorem.Ipsum, TextWrap.CENTER)
     Separator(colA)
-    RichLabel(colA, r"[bl]Supports[b] [u]rich[r] [fg:red]text!")
+    RichLabel(colA, r"[b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice")
 
     colB.title = "Misc. widgets"
     Label(colB, "Enter your name here:")

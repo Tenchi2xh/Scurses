@@ -17,7 +17,7 @@ class EscapeCodes(out: OutputStream) {
   private def CSI(sequence: String) { out.write(s"\033[$sequence".getBytes) }
   // Execute commands
   private def CSI(command: Char) { CSI(s"$command") }
-  private def CSI(n: Int, command: Char) { CSI(s"$n;$command") }
+  private def CSI(n: Int, command: Char) { CSI(s"$n$command") }
   private def CSI(n: Int, m: Int, command: Char) { CSI(s"$n;$m$command") }
   private def CSI(n: Int, m: Int, o: Int, command: Char) { CSI(s"$n;$m;$o$command") }
   // Execute commands in private modes
@@ -70,6 +70,8 @@ class EscapeCodes(out: OutputStream) {
   /*     SGR    */ def stopUnderline()  { CSI(24, 'm') }
   /*     SGR    */ def stopBlink()      { CSI(25, 'm') }
   /*     SGR    */ def stopReverse()    { CSI(27, 'm') }
+  /*     SGR    */ def stopForeground() { CSI(39, 'm')}
+  /*     SGR    */ def stopBackground() { CSI(49, 'm')}
   /*     SGR    */ def resetColors()    { CSI(0, 'm') }
 
   /**
@@ -102,34 +104,4 @@ class EscapeCodes(out: OutputStream) {
   }
 }
 
-object Colors {
-  // Color codes
-  val DIM_BLACK      =  0
-  val DIM_RED        =  1
-  val DIM_GREEN      =  2
-  val DIM_YELLOW     =  3
-  val DIM_BLUE       =  4
-  val DIM_MAGENTA    =  5
-  val DIM_CYAN       =  6
-  val DIM_WHITE      =  7
-  val BRIGHT_BLACK   =  8
-  val BRIGHT_RED     =  9
-  val BRIGHT_GREEN   = 10
-  val BRIGHT_YELLOW  = 11
-  val BRIGHT_BLUE    = 12
-  val BRIGHT_MAGENTA = 13
-  val BRIGHT_CYAN    = 14
-  val BRIGHT_WHITE   = 15
 
-  def byName(name: String) = name match {
-    case "black"   => DIM_BLACK
-    case "red"     => BRIGHT_RED
-    case "green"   => BRIGHT_GREEN
-    case "yellow"  => BRIGHT_YELLOW
-    case "blue"    => BRIGHT_BLUE
-    case "magenta" => BRIGHT_MAGENTA
-    case "cyan"    => BRIGHT_CYAN
-    case "white"   => BRIGHT_WHITE
-    case "gray"    => BRIGHT_BLACK
-  }
-}
