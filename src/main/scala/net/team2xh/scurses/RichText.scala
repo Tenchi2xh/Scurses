@@ -38,7 +38,10 @@ object RichText {
     def r(args: Any*): RichText = {
       val input = sc.s(args: _*)
       val result = richText.parse(input)
-      result.get.value
+      result match {
+        case Result.Success(rt, _) => rt
+        case _: Result.Failure => RichText(Text(input))
+      }
     }
   }
 
