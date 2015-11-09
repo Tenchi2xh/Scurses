@@ -2,6 +2,8 @@ package net.team2xh.onions.utils
 
 import java.util.StringTokenizer
 
+import net.team2xh.scurses.RichText._
+
 import scala.collection.mutable
 
 object TextWrap {
@@ -11,32 +13,81 @@ object TextWrap {
   val CENTER      = 2
   val JUSTIFY     = 3
 
+  def wrapText(richText: RichText, width: Int): Seq[RichText] = {
+    wrapText(richText, width, ALIGN_LEFT)
+  }
+
+  def wrapText(richText: RichText, width: Int, alignment: Int): Seq[RichText] = {
+    val instructions = richText.instructions.iterator
+    var spaceLeft = width
+
+    var activeAttributes = mutable.Map[Attribute, Instruction]()
+    var lines = mutable.MutableList[(List[Instruction], Int)]()
+    var line = mutable.MutableList[Instruction]()
+    var chunk = ""
+
+    while (instructions.hasNext) {
+      val instruction = instructions.next()
+      instruction match {
+        case StartAttribute(attribute) =>
+          activeAttributes += attribute -> instruction
+          line += instruction
+        case StopAttribute(attribute) =>
+          attribute match {
+            case Foreground => activeAttributes.filterNot { case (k, v) => k.isInstanceOf[Foreground] }
+            case Background => activeAttributes.filterNot { case (k, v) => k.isInstanceOf[Background] }
+            case _ => activeAttributes -= attribute
+          }
+          line += instruction
+        case ResetAttributes =>
+          activeAttributes.clear()
+          line += instruction
+        case Text(text) =>
+          val tokenizer = new StringTokenizer(text)
+
+          while (tokenizer.hasMoreTokens) {
+            val word = tokenizer.nextToken
+
+            if ((word.length + 1) > spaceLeft) {
+              line += Text(chunk)
+              lines += ((line.toList, spaceLeft))
+              line = mutable.MutableList[Instruction]()
+              activeAttributes.foreach { case (k, v) => line += v }
+              chunk = word + " "
+              spaceLeft = width - (word.length + 1)
+            } else {
+              chunk += word + " "
+              spaceLeft -= (word.length + 1)
+            }
+          }
+          line += Text(chunk)
+          chunk = ""
+      }
+    }
+    lines += ((line.toList, spaceLeft))
+    lines.map(t => RichText(t._1: _*))
+  }
+
   def wrapText(text: String, width: Int, alignment: Int = ALIGN_LEFT): Seq[String] = {
     val tokenizer = new StringTokenizer(text)
     var spaceLeft = width
 
-    val lines = mutable.MutableList[(mutable.MutableList[String], Int)]()
+    val lines = mutable.MutableList[(List[String], Int)]()
     var line = mutable.MutableList[String]()
 
     while (tokenizer.hasMoreTokens) {
       val word = tokenizer.nextToken
 
       if ((word.length + 1) > spaceLeft) {
-        lines += ((line, spaceLeft))
+        lines += ((line.toList, spaceLeft))
         line = mutable.MutableList[String](word)
         spaceLeft = width - (word.length + 1)
-      } else if (word.length == spaceLeft) {
-        line += "word"
-
-        lines += ((line, 0))
-        line = mutable.MutableList[String]()
-        spaceLeft = width
       } else {
         line += word
         spaceLeft -= (word.length + 1)
       }
     }
-    lines += ((line, spaceLeft))
+    lines += ((line.toList, spaceLeft))
     alignment match {
       case ALIGN_LEFT => lines.map(_._1.mkString(" "))
       case ALIGN_RIGHT => lines.map { case (l, s) => " " * s + l.mkString(" ") }

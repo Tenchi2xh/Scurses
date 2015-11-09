@@ -9,12 +9,17 @@ import net.team2xh.scurses.Scurses
 case class RichLabel(parent: FramePanel, text: Varying[RichText])
                     (implicit screen: Scurses) extends Widget(parent, text) {
 
+  var lines = Seq[RichText]()
+
   override def draw(focus: Boolean, theme: ColorScheme): Unit = {
-    screen.put(0, 0, text.value, theme)
+    lines = TextWrap.wrapText(text.value, innerWidth - 1)
+    for ((line, i) <- lines.zipWithIndex) {
+      screen.put(1, i, lines(i), theme)
+    }
   }
 
   override def handleKeypress(keypress: Int): Unit = { }
 
   override def focusable: Boolean = false
-  override def innerHeight: Int = 1
+  override def innerHeight: Int = lines.length
 }

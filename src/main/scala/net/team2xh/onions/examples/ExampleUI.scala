@@ -47,7 +47,8 @@ object ExampleUI extends App {
     Separator(colA)
     Label(colA, Lorem.Ipsum, TextWrap.CENTER)
     Separator(colA)
-    RichLabel(colA, r"[b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice")
+    RichLabel(colA, r"[b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] [b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] [b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] [b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] [b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] ")
+//    RichLabel(colA, r"${Lorem.Ipsum}")
 
     colB.title = "Misc. widgets"
     Label(colB, "Enter your name here:")
@@ -81,7 +82,7 @@ object ExampleUI extends App {
     colC.title = "Bar graph"
     val refValues = Seq(15, 11, 2, 20, 8, 7, 4)
     val bars = BarGraph(colC, refValues, labels = Lorem.Ipsum.split(' '),
-                        palette = Palettes.rainbow, max = 24)
+                        palette = Palettes.default, max = 24)
 
     colB2.title = "Histogram"
 
