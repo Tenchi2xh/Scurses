@@ -1,5 +1,7 @@
 package net.team2xh.scurses
 
+import java.awt.Color
+
 object Colors {
   // Color codes
   val DIM_BLACK      =  0
@@ -37,6 +39,11 @@ object Colors {
   }
 
   def fromHex(hex: String): Int = fromRGB(hexToRGB(hex))
+
+  def fromRGBInt(int: Int): Int = {
+    val color = new Color(int)
+    fromRGB((color.getRed, color.getGreen, color.getBlue))
+  }
 
   private def hexToRGB(hex: String): (Int, Int, Int) = {
     val h = if (hex(0) == '#') hex.tail else hex

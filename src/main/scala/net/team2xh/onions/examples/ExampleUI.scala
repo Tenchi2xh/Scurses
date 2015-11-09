@@ -86,7 +86,8 @@ object ExampleUI extends App {
 
     colB2.title = "Histogram"
 
-    colC2.title = "Scatter plot"
+    colC2.title = "Bitmap"
+    BitMap(colC2, "/src/main/scala/net/team2xh/onions/examples/logo.png", relative = true)
 
     clockTimer.scheduleAtFixedRate(new TimerTask {
       var s = 1
