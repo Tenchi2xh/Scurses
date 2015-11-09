@@ -14,6 +14,7 @@ import scala.util.Random
 object ExampleUI extends App {
 
   val clockTimer = new Timer()
+  val r = Random
 
   Scurses { implicit screen =>
     implicit val debug = true
@@ -82,22 +83,26 @@ object ExampleUI extends App {
     colB3B.title = "7-segment"
     val ss = SevenSegment(colB3B, "00:00")
 
-    colC.title = "Bar graph"
-    val refValues = Seq(15, 11, 2, 20, 8, 7, 4)
-    val bars = BarGraph(colC, refValues, labels = Lorem.Ipsum.split(' '),
+    colC.title = "Graphs A"
+    val barValues = Seq(15, 11, 2, 20, 8, 7, 4)
+    val bars = BarGraph(colC, barValues, labels = Lorem.Ipsum.split(' '),
                         palette = Palettes.rainbow, max = 24)
 
     colB2.title = "Histogram"
 
-    colC2.title = "Scatter plot"
+    colC2.title = "Graphs B"
+    val scatterValues = (1 to 50) map (i => {
+      val x = r.nextInt(20)
+      (x, 20 - x + r.nextInt(5) - 2)
+    })
+    val scatter = ScatterPlot(colC2, scatterValues, "Time", "Foobars")
 
     clockTimer.scheduleAtFixedRate(new TimerTask {
       var s = 1
-      val r = Random
       override def run(): Unit = {
         val column = if (s % 2 == 0) ":" else " "
         ss.text := "%02d%s%02d".format(s / 60, column, s % 60)
-        bars.values := refValues.map(n => n + r.nextInt(5) - 2)
+        bars.values := barValues.map(n => n + r.nextInt(5) - 2)
         s += 1
       }
     }, 1000, 1000)
