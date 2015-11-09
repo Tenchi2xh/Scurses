@@ -33,6 +33,19 @@ case class ScatterPlot(parent: FramePanel, values: Varying[Seq[(Int, Int)]],
     Drawing.drawAxisLabels(x0 - valuesLength, 0, graphHeight, gridSize, maxY, theme.accent3, theme.background, horizontal = false)
     Drawing.drawAxisLabels(x0, graphHeight + 1, graphWidth, gridSize, maxX, theme.accent3, theme.background)
 
+    // Draw labels
+    if (showLabels) {
+      val lX = if (labelX.length > graphWidth) labelX.substring(0, graphWidth - 3) + "..."
+        else labelX
+      val lY = if (labelY.length > graphHeight) labelY.substring(0, graphHeight - 3) + "..."
+        else labelY
+      screen.put(x0 + (graphWidth - lX.length) / 2, graphHeight + 2, lX, theme.accent3, theme.background)
+      val y0 = (graphHeight - lY.length) / 2
+      for ((char, y) <- lY.zipWithIndex) {
+        screen.put(0, y0 + y, "" + char, theme.accent3, theme.background)
+      }
+    }
+
     // Prepare values (we use half vertical resolution)
     val points = mutable.MutableList.fill[Int](graphWidth+1, graphHeight+1)(0)
     val charHeight = maxY.toDouble / graphHeight

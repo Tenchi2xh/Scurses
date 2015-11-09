@@ -96,13 +96,13 @@ object ExampleUI extends App {
       val y = 50 - x + (r.nextGaussian() * 5).toInt - 2
       (x, y max 0)
     })
-    ScatterPlot(colC2, scatterValues, "Time", "Foobars")
+    ScatterPlot(colC2, scatterValues, "Time", "Sales")
     colC2.addTab()
     val scatterValues2 = (0 to 100) map (x => {
-      val y = math.round(0.05*math.pow(x-50, 2)).toInt
+      val y = math.round(0.04*math.pow(x-50, 2)).toInt
       (x, y)
     })
-    ScatterPlot(colC2, scatterValues2, "Time", "Foobars")
+    ScatterPlot(colC2, scatterValues2, "Price", "Popularity")
     colC2.showTab(0)
 
     clockTimer.scheduleAtFixedRate(new TimerTask {

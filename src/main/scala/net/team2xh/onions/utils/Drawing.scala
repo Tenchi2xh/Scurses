@@ -11,7 +11,8 @@ object Drawing {
 
     val step = if (horizontal) gridSize else gridSize / 2
     val start = (n: Int) => if (horizontal) n else length - n
-    for (i <- 0 until length by step) {
+    val lastIndex = if (horizontal) Seq() else Seq(length)
+    for (i <- (0 until length by step) ++ lastIndex) {
       val index = math.floor((start(i) * valueMax.toDouble) / length).toInt
       val x1 = if (horizontal) x0 + i else x0
       val y1 = if (horizontal) y0 else y0 + i
