@@ -65,6 +65,7 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, var theme
         case Keys.RIGHT =>
           val next = focusedPanel.getNextDirection(_.right, _.top)
           next foreach (panel => switchFocusTo(panel))
+        case Keys.CTRL_SPACE => focusedPanel.nextTab()
         case k if k == Keys.TAB || k == Keys.SHIFT_TAB =>
           val t = if (k == Keys.TAB) tree else tree.reverse
           val next = t.dropWhile(_.id != focusedPanel.id).tail.headOption
@@ -96,7 +97,7 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, var theme
 
         val key = if (lastKeypress >= 0) s"Keypress: $lastKeypress (${Keys.repr(lastKeypress)})" else "No key pressed"
         val time = s"Render time: ${ms}ms"
-        val left = "%-23s | %-19s".format(key, time)
+        val left = "%-24s | %-19s".format(key, time)
         val widget = if (focusedPanel.widgets.isEmpty) "Ø" else focusedPanel.widgets(focusedPanel.widgetFocus)
         val right = s"Panel $focusedPanel, $widget"
         val n = innerWidth + 1 - left.length

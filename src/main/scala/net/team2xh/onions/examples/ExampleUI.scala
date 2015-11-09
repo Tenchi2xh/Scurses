@@ -65,6 +65,9 @@ object ExampleUI extends App {
       }
       big.color := color
     })
+    colB.addTab()
+    BitMap(colB, "/src/main/scala/net/team2xh/onions/examples/logo.png", relative = true)
+    colB.showTab(0)
 
     Label(colB3, "Choose a theme:")
     val radio2 = Radio(colB3, Seq("Default", "Light", "MS-DOS"))
@@ -82,12 +85,11 @@ object ExampleUI extends App {
     colC.title = "Bar graph"
     val refValues = Seq(15, 11, 2, 20, 8, 7, 4)
     val bars = BarGraph(colC, refValues, labels = Lorem.Ipsum.split(' '),
-                        palette = Palettes.default, max = 24)
+                        palette = Palettes.rainbow, max = 24)
 
     colB2.title = "Histogram"
 
-    colC2.title = "Bitmap"
-    BitMap(colC2, "/src/main/scala/net/team2xh/onions/examples/logo.png", relative = true)
+    colC2.title = "Scatter plot"
 
     clockTimer.scheduleAtFixedRate(new TimerTask {
       var s = 1

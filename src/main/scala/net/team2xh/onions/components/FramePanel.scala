@@ -3,7 +3,9 @@ package net.team2xh.onions.components
 import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.onions.{Symbols, Component}
 import net.team2xh.scurses.Scurses
+import net.team2xh.scurses.RichText.RichTextHelper
 
+import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
 
 object FramePanel {
@@ -44,15 +46,35 @@ case class FramePanel(parent: Component)
   var right:  Option[FramePanel] = None
 
   var focus = false
-  var widgetFocus = 0
 
-  val widgets = ListBuffer[Widget]()
+  var currentTab = 0
+  var tabs = mutable.MutableList[(ListBuffer[Widget], Int)]((ListBuffer[Widget](), 0))
+
+  def widgets = tabs(currentTab)._1
+  def widgetFocus = tabs(currentTab)._2
 
   val id = FramePanel.idCounter
   FramePanel.idCounter += 1
 
   def innerWidth = width
   def innerHeight = height
+
+  def addTab(): Unit = {
+    tabs += ((ListBuffer[Widget](), 0))
+    currentTab += 1
+  }
+
+  def nextTab(): Unit = {
+    currentTab = (currentTab + 1) % tabs.length
+  }
+
+  def previousTab(): Unit = {
+    currentTab = (currentTab - 1 + tabs.length) % tabs.length
+  }
+
+  def showTab(n: Int): Unit = {
+    currentTab = (n + tabs.length) % tabs.length
+  }
 
   private[components] def updateDimensions(newWidth: Int, newHeight: Int): Unit = {
     val (_, nHorizontal) = totalHorizontal
@@ -92,13 +114,13 @@ case class FramePanel(parent: Component)
       None
   }
 
-  // TODO: Separate discovery and mutation
+  // TODO: Separate discovery and mutation to avoid selecting last widget when it's unselectable
   def focusPreviousWidget: Boolean = {
     val l = widgets.length
     if (l == 0 || widgetFocus == 0)
       false
     else {
-      widgetFocus -= 1
+      tabs(currentTab) = (widgets, widgetFocus - 1)
       if (widgets(widgetFocus).focusable)
         true
       else
@@ -111,7 +133,7 @@ case class FramePanel(parent: Component)
     if (l == 0 || widgetFocus == l - 1)
       false
     else {
-      widgetFocus += 1
+      tabs(currentTab) = (widgets, widgetFocus + 1)
       if (widgets(widgetFocus).focusable)
         true
       else
@@ -293,9 +315,20 @@ case class FramePanel(parent: Component)
 
   private[FramePanel] def drawTitles(theme: ColorScheme): Unit = {
     propagateDraw(_.drawTitles(theme))
+    val ts = tabs.zipWithIndex.map { case (t, i) =>
+      val s = if (i == currentTab) "[r]" else ""
+      val e = if (i == currentTab) "[/r]" else ""
+      s"$s#$i$e"
+    }.mkString("|")
+
+    val tabText =
+      if (tabs.length == 1) ""
+      else " " + ts
 
     if (title != "") {
-      screen.put(2, 0, s"[$title]", foreground = theme.foreground, background = theme.background)
+      screen.put(2, 0, r"[[$title$tabText]", theme)
+    } else if (tabText != "") {
+      screen.put(2, 0, r"[[$tabText]", theme)
     }
   }
 

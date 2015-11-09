@@ -5,12 +5,13 @@ object Keys {
   val PUA = 0xE000 // Unicode private use area, safe for our own codes
 
   // Normal keys
-  val CTRL_C    = 3
-  val TAB       = 9
-  val ENTER     = 13
-  val ESC       = 27
-  val SPACE     = 32
-  val BACKSPACE = 127
+  val CTRL_SPACE = 0
+  val CTRL_C     = 3
+  val TAB        = 9
+  val ENTER      = 13
+  val ESC        = 27
+  val SPACE      = 32
+  val BACKSPACE  = 127
 
   // CSI keys
   val UP        = PUA + 0
@@ -20,11 +21,12 @@ object Keys {
   val SHIFT_TAB = PUA + 4
 
   def repr(key: Int): String = key match {
+    case CTRL_SPACE=> "CTRL+SPACE"
     case CTRL_C    => "CTRL+C"
     case TAB       => "⇥ "
     case ENTER     => "↵ "
     case ESC       => "ESC"
-    case SPACE     => " "
+    case SPACE     => "SPACE"
     case BACKSPACE => "⇤ "
     case UP        => "↑"
     case DOWN      => "↓"
