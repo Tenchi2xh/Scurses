@@ -65,7 +65,8 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, var theme
         case Keys.RIGHT =>
           val next = focusedPanel.getNextDirection(_.right, _.top)
           next foreach (panel => switchFocusTo(panel))
-        case Keys.CTRL_SPACE => focusedPanel.nextTab()
+        case Keys.CTRL_SPACE =>
+          focusedPanel.nextTab()
         case k if k == Keys.TAB || k == Keys.SHIFT_TAB =>
           val t = if (k == Keys.TAB) tree else tree.reverse
           val next = t.dropWhile(_.id != focusedPanel.id).tail.headOption
@@ -73,7 +74,10 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, var theme
             case Some(panel) =>
               switchFocusTo(panel)
             case None =>
-              switchFocusTo(panel)
+              if (k == Keys.TAB)
+                switchFocusTo(panel)
+              else
+                switchFocusTo(tree.last)
           }
         case keypress =>
           focusedPanel.getFocusedWidget foreach {
