@@ -92,10 +92,18 @@ object ExampleUI extends App {
 
     colC2.title = "Graphs B"
     val scatterValues = (1 to 50) map (i => {
-      val x = r.nextInt(20)
-      (x, 20 - x + r.nextInt(5) - 2)
+      val x = r.nextInt(40)
+      val y = 50 - x + (r.nextGaussian() * 5).toInt - 2
+      (x, y max 0)
     })
-    val scatter = ScatterPlot(colC2, scatterValues, "Time", "Foobars")
+    ScatterPlot(colC2, scatterValues, "Time", "Foobars")
+    colC2.addTab()
+    val scatterValues2 = (0 to 100) map (x => {
+      val y = math.round(0.05*math.pow(x-50, 2)).toInt
+      (x, y)
+    })
+    ScatterPlot(colC2, scatterValues2, "Time", "Foobars")
+    colC2.showTab(0)
 
     clockTimer.scheduleAtFixedRate(new TimerTask {
       var s = 1
