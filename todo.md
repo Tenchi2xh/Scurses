@@ -40,8 +40,8 @@
     - [x] BitMap
     - [x] Scatter plot
     - [x] HeatMap
+    - [x] Slider
     - [ ] Progressbar, displays percentage
     - [ ] Histogram
     - [ ] TextBox
     - [ ] CheckBox
-    - [ ] Slider

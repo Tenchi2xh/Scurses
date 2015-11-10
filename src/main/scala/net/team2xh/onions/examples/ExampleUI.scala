@@ -71,7 +71,7 @@ object ExampleUI extends App {
     val big = BigText(colB, Varying.from(input.text, "Your name", s => s"$s"))
     Separator(colB)
     val radio = Radio(colB, Seq("Default", "Red", "Green", "Blue"))
-    radio.subscribe(() => {
+    radio.subscribe { () =>
       val color = radio.value match {
         case 0 => frame.theme.foreground
         case 1 => Colors.BRIGHT_RED
@@ -79,9 +79,12 @@ object ExampleUI extends App {
         case 3 => Colors.BRIGHT_BLUE
       }
       big.color := color
-    })
+    }
     colB.addTab()
     BitMap(colB, "/src/main/scala/net/team2xh/onions/examples/logo.png", relative = true)
+    Separator(colB)
+    Label(colB, "Heat maps blur radius:")
+    val slider = Slider(colB, 1, 10)(3)
     colB.showTab(0)
 
     Label(colB3, "Choose a theme:")
@@ -96,27 +99,27 @@ object ExampleUI extends App {
     Separator(colB3)
     Label(colB3, "Debug mode:")
     val radio3 = Radio(colB3, Seq("On", "Off"))
-    radio3.subscribe(() => {
+    radio3.subscribe{ () =>
       frame.debug = radio3.value match {
         case 0 => true
         case 1 => false
       }
-    })
+    }
 
     colB3B.title = "7-segment"
     val ss = SevenSegment(colB3B, "00:00")
 
     colC.title = "Graphs A"
-    HeatMap(colC, values_2d_1, "Time", "Sales")
+    val hm1 = HeatMap(colC, values_2d_1, "Time", "Sales")
     colC.addTab()
-    HeatMap(colC, values_2d_2, "Price", "Popularity")
+    val hm2 = HeatMap(colC, values_2d_2, "Price", "Popularity")
     colC.addTab()
     val bars = BarGraph(colC, values_1d_1, labels = Lorem.Ipsum.split(' '),
                         palette = Palettes.rainbow, min = 0, max = 24)
     colC.addTab()
     val bars2 = BarGraph(colC, values_1d_2, labels = Lorem.Ipsum.split(' '),
       palette = Palettes.default, min = -24, max = 24)
-    colC.showTab(0)
+    colC.showTab(3)
 
     colB2.title = "Histogram"
 
@@ -126,6 +129,11 @@ object ExampleUI extends App {
     colC2.addTab()
     ScatterPlot(colC2, values_2d_2, "Price", "Popularity")
     colC2.showTab(0)
+
+    slider.currentValue.subscribe { () =>
+      hm1.radius := slider.currentValue.value
+      hm2.radius := slider.currentValue.value
+    }
 
     clockTimer.scheduleAtFixedRate(new TimerTask {
       var s = 1

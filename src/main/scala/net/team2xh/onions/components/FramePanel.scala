@@ -318,7 +318,7 @@ case class FramePanel(parent: Component)
     val ts = tabs.zipWithIndex.map { case (t, i) =>
       val s = if (i == currentTab) "[r]" else ""
       val e = if (i == currentTab) "[/r]" else ""
-      s"$s#$i$e"
+      s"$s#${i+1}$e"
     }.mkString("|")
 
     val tabText =
