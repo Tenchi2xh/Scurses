@@ -7,7 +7,7 @@ import scala.language.implicitConversions
 import net.team2xh.onions.{Themes, Symbols, Component}
 import net.team2xh.scurses.{Keys, Scurses}
 
-case class Frame(title: Option[String] = None, debug: Boolean = false, var theme: ColorScheme = Themes.default)
+case class Frame(title: Option[String] = None, var debug: Boolean = false, var theme: ColorScheme = Themes.default)
                 (implicit screen: Scurses) extends Component(None) {
 
   val panel = FramePanel(this)
@@ -21,13 +21,13 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, var theme
   var height = 0
   def resize(size: (Int, Int)): Unit = {
     width = size._1 - 1
-    height = size._2 - 1 - (if (debug) 1 else 0) - (if (title.isDefined) titleOffset else 0)
+    height = size._2 - 1 - (if (title.isDefined) titleOffset else 0)
   }
 
   resize(screen.size)
 
   def innerWidth = width
-  def innerHeight = height
+  def innerHeight = height - (if (debug) 1 else 0)
 
   var lastKeypress = -1
 

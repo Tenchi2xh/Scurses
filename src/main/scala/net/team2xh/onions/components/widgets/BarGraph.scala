@@ -63,7 +63,7 @@ case class BarGraph(parent: FramePanel, values: Varying[Seq[Int]],
           foreground = theme.accent3, background = theme.background)
       }
     // Draw grid values
-    Drawing.drawAxisLabels(0, innerHeight - 1, graphWidth, gridWidth, valueMin, valueMax,
+    Drawing.drawAxisValues(0, innerHeight - 1, graphWidth, gridWidth, valueMin, valueMax,
                            theme.accent3, theme.background, horizontal = true)
   }
 

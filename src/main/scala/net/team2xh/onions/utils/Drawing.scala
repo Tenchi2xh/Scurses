@@ -1,11 +1,31 @@
 package net.team2xh.onions.utils
 
 import net.team2xh.onions.Symbols
+import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.scurses.Scurses
 
 object Drawing {
 
-  def drawAxisLabels(x0: Int, y0: Int, length: Int, gridSize: Int,
+  def drawAxisLabels(x0: Int, graphWidth: Int, graphHeight: Int,
+                     labelX: String = "", labelY: String = "", theme: ColorScheme)
+                    (implicit screen: Scurses): Unit = {
+
+    if (labelX != "") {
+      val lX = if (labelX.length > graphWidth) labelX.substring(0, graphWidth - 3) + "..."
+               else labelX
+      screen.put(x0 + (graphWidth - lX.length) / 2, graphHeight + 2, lX, theme.accent3, theme.background)
+    }
+    if (labelY != "") {
+      val lY = if (labelY.length > graphHeight) labelY.substring(0, graphHeight - 3) + "..."
+               else labelY
+      val y0 = (graphHeight - lY.length) / 2
+      for ((char, y) <- lY.zipWithIndex) {
+        screen.put(0, y0 + y, "" + char, theme.accent3, theme.background)
+      }
+    }
+  }
+
+  def drawAxisValues(x0: Int, y0: Int, length: Int, gridSize: Int,
                      valueMin: Int, valueMax: Int,
                      fg: Int, bg: Int, horizontal: Boolean = true)
                     (implicit screen: Scurses): Unit = {

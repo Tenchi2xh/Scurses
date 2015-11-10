@@ -15,6 +15,20 @@ object ExampleUI extends App {
 
   val clockTimer = new Timer()
   val r = Random
+  
+  // Fake data for plots
+  val values_1d_1 = Seq(15, 11, 2, 20, 8, 7, 4)
+  val values_1d_2 = Seq(15, -11, -2, 20, -8, 7, 4,
+                        10, 2, 13, -5, -8, 3, -15)
+  val values_2d_1 = (1 to 50) map (i => {
+    val x = r.nextInt(40)
+    val y = 50 - x + (r.nextGaussian() * 5).toInt - 2
+    (x, y max 0)
+  })
+  val values_2d_2 = (-50 to 50) map (x => {
+    val y = math.round(0.04*math.pow(x, 2)).toInt
+    (x, y)
+  })
 
   Scurses { implicit screen =>
     implicit val debug = true
@@ -79,36 +93,38 @@ object ExampleUI extends App {
         case 2 => Themes.MSDOS
       }
     })
+    Separator(colB3)
+    Label(colB3, "Debug mode:")
+    val radio3 = Radio(colB3, Seq("On", "Off"))
+    radio3.subscribe(() => {
+      frame.debug = radio3.value match {
+        case 0 => true
+        case 1 => false
+      }
+    })
 
     colB3B.title = "7-segment"
     val ss = SevenSegment(colB3B, "00:00")
 
     colC.title = "Graphs A"
-    val barValues = Seq(15, 11, 2, 20, 8, 7, 4)
-    val bars = BarGraph(colC, barValues, labels = Lorem.Ipsum.split(' '),
+    HeatMap(colC, values_2d_1, "Time", "Sales")
+    colC.addTab()
+    HeatMap(colC, values_2d_2, "Price", "Popularity")
+    colC.addTab()
+    val bars = BarGraph(colC, values_1d_1, labels = Lorem.Ipsum.split(' '),
                         palette = Palettes.rainbow, min = 0, max = 24)
     colC.addTab()
-    val barValues2 = Seq(15, -11, -2, 20, -8, 7, 4,
-                         10, 2, 13, -5, -8, 3, -15, 0)
-    val bars2 = BarGraph(colC, barValues2, labels = Lorem.Ipsum.split(' '),
+    val bars2 = BarGraph(colC, values_1d_2, labels = Lorem.Ipsum.split(' '),
       palette = Palettes.default, min = -24, max = 24)
     colC.showTab(0)
 
     colB2.title = "Histogram"
 
     colC2.title = "Graphs B"
-    val scatterValues = (1 to 50) map (i => {
-      val x = r.nextInt(40)
-      val y = 50 - x + (r.nextGaussian() * 5).toInt - 2
-      (x, y max 0)
-    })
-    ScatterPlot(colC2, scatterValues, "Time", "Sales")
+
+    ScatterPlot(colC2, values_2d_1, "Time", "Sales")
     colC2.addTab()
-    val scatterValues2 = (-50 to 50) map (x => {
-      val y = math.round(0.04*math.pow(x, 2)).toInt
-      (x, y)
-    })
-    ScatterPlot(colC2, scatterValues2, "Price", "Popularity")
+    ScatterPlot(colC2, values_2d_2, "Price", "Popularity")
     colC2.showTab(0)
 
     clockTimer.scheduleAtFixedRate(new TimerTask {
@@ -116,8 +132,8 @@ object ExampleUI extends App {
       override def run(): Unit = {
         val column = if (s % 2 == 0) ":" else " "
         ss.text := "%02d%s%02d".format(s / 60, column, s % 60)
-        bars.values := barValues.map(n => n + r.nextInt(5) - 2)
-        bars2.values := barValues2.map(n => n + r.nextInt(5) - 2)
+        bars.values := values_1d_1.map(n => n + r.nextInt(5) - 2)
+        bars2.values := values_1d_2.map(n => n + r.nextInt(5) - 2)
         s += 1
       }
     }, 1000, 1000)

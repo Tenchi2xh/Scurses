@@ -4,6 +4,7 @@
 - [x] Homemade key polling with more keys than JLine
 - [x] Handle resize event
 - [x] Custom ML for RichText
+- [ ] Clipping mode
   
 ### Onions:
 
@@ -22,13 +23,14 @@
     - Callback is just redraw for now
 - [x] Split panel into tabs
 - [x] Make all plot types handle negative values and indices
+- [x] Generalize graph grid + legends
 - [ ] .split() version with weight
 - [ ] Scrollbars for long content
-- [ ] Generalize graph grid + legends
 - [ ] Support multiple sets of values in scatter plot
 - [ ] Make all plot types handle floats
 - [ ] Generalize plot coordinate helpers
 - [ ] Convert current things to RichText
+- [ ] Only redraw needed
 - Widgets:
     - [x] Bar graph
     - [x] Big text display
@@ -37,8 +39,8 @@
     - [x] Radio and RadioGroup
     - [x] BitMap
     - [x] Scatter plot
+    - [x] HeatMap
     - [ ] Progressbar, displays percentage
     - [ ] Histogram
     - [ ] TextBox
-    - [ ] HeatMap
     - [ ] CheckBox
