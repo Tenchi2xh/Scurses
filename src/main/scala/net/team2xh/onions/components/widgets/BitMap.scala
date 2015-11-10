@@ -11,8 +11,6 @@ import net.team2xh.scurses.{Colors, Scurses}
 
 object BitMap {
 
-  System.setProperty("java.awt.headless", "true")
-
   def apply(parent: FramePanel, path: String, relative: Boolean = false)(implicit screen: Scurses): BitMap = {
     val fullPath = if (relative) new File("").getAbsolutePath + path else path
     val image = ImageIO.read(new File(fullPath))

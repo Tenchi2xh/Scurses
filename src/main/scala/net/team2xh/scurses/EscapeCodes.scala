@@ -24,6 +24,8 @@ class EscapeCodes(out: OutputStream) {
   private def CSI(mode: Char, command: Char) { CSI(s"$mode$command") }
   private def CSI(mode: Char, n: Int, command: Char) { CSI(s"$mode$n;$command") }
 
+  /* DSR */ def status() { CSI(5, 'n') }
+
   // Cursor movement
   /* CUU */ def moveUp   (n: Int = 1) { CSI(n, 'A') }
   /* CUD */ def moveDown (n: Int = 1) { CSI(n, 'B') }

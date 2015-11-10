@@ -17,8 +17,14 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, var theme
 
   private[Frame] val titleOffset = 2
 
-  var width = screen.size._1 - 1
-  var height = screen.size._2 - 1 - (if (debug) 1 else 0) - (if (title.isDefined) titleOffset else 0)
+  var width = 0
+  var height = 0
+  def resize(size: (Int, Int)): Unit = {
+    width = size._1 - 1
+    height = size._2 - 1 - (if (debug) 1 else 0) - (if (title.isDefined) titleOffset else 0)
+  }
+
+  resize(screen.size)
 
   def innerWidth = width
   def innerHeight = height
@@ -43,6 +49,10 @@ case class Frame(title: Option[String] = None, debug: Boolean = false, var theme
     while (k != Keys.ESC && k != Keys.CTRL_C) {
       lastKeypress = k
       k match {
+        case Keys.RESIZE =>
+          val s = screen.size
+          resize(s)
+          screen.clear()
         case Keys.UP =>
           val l = panel.widgets.length
           if (l > 0) {

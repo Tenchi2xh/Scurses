@@ -1,9 +1,14 @@
 package net.team2xh.scurses
 
 import java.io.BufferedOutputStream
+import java.util.{TimerTask, Timer}
 
 import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.scurses.RichText._
+import sun.misc.{SignalHandler, Signal}
+
+import scala.collection.mutable
+import scala.concurrent.Future
 
 object Scurses {
 
@@ -162,6 +167,9 @@ class Scurses {
         if (k == 91) {
           val o = System.in.read()
           o match {
+            case 48 => // Status OK from status, used as a resize signal
+              System.in.read()
+              Keys.RESIZE
             case 65 => Keys.UP
             case 66 => Keys.DOWN
             case 67 => Keys.RIGHT
@@ -192,10 +200,26 @@ class Scurses {
     (width, height)
   }
 
+  var resizesInProgress = 0
   /**
    * Prepares the terminal screen for Scurses
    */
   def init(): Unit = {
+    System.setProperty("java.awt.headless", "true")
+    Signal.handle(new Signal("WINCH"), new SignalHandler {
+      override def handle(signal: Signal): Unit = {
+        Scurses.this.synchronized { resizesInProgress += 1 }
+        new Timer().schedule(new TimerTask {
+          override def run(): Unit = {
+            if (resizesInProgress == 1) {
+              ec.status()
+              out.flush()
+            }
+            Scurses.this.synchronized { resizesInProgress -= 1 }
+          }
+        }, 100)
+      }
+    })
     ec.alternateBuffer()
     ec.clear()
     ec.hideCursor()
