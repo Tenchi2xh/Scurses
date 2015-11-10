@@ -20,14 +20,14 @@ object Math {
   }
 
   def simpleGauss1d(x: Double, σ: Double): Double = {
-    math.exp(-x*x / (2 * σ * σ))
+    math.exp(-x*x / (2*σ*σ))
   }
 
   def simpleGauss2d(x: Double, y: Double, σ: Double): Double = {
     math.exp(-(x*x / (2*σ*σ) + y*y / (2*σ*σ)))
   }
 
-  case class BlurredArray(width: Int, height: Int, kernelRadius: Int = 1) {
+  case class GaussianArray(width: Int, height: Int, kernelRadius: Int = 1) {
 
     val array = ArrayBuffer.fill[Double](width, height)(0.0)
 
