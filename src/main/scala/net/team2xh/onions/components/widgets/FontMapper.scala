@@ -14,7 +14,7 @@ abstract class FontMapper(parent: FramePanel, empty: Seq[String],
 
   var height = empty.length
 
-  override def draw(focus: Boolean, theme: ColorScheme): Unit = {
+  override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     val t = text.value
     val h = empty.length
     if (!t.isEmpty) {

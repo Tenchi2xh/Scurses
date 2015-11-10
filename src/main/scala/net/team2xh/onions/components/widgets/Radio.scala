@@ -24,6 +24,7 @@ private[widgets] case class Radio(parent: FramePanel, text: String, id: Int, cho
 
   choice.subscribe(() => {
     checked = id == choice.value
+    needsRedraw = true
   })
 
   def drawText(foreground: Int, background: Int): Unit = {
@@ -32,7 +33,7 @@ private[widgets] case class Radio(parent: FramePanel, text: String, id: Int, cho
       foreground = foreground, background = background)
   }
 
-  override def draw(focus: Boolean, theme: ColorScheme): Unit = {
+  override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     drawText(theme.foreground(focus), theme.background(focus))
   }
 

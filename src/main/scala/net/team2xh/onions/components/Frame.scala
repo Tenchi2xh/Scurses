@@ -1,15 +1,28 @@
 package net.team2xh.onions.components
 
 import net.team2xh.onions.Themes.ColorScheme
+import net.team2xh.onions.utils.Varying
 
 import scala.language.implicitConversions
 
 import net.team2xh.onions.{Themes, Symbols, Component}
 import net.team2xh.scurses.{Keys, Scurses}
 
-case class Frame(title: Option[String] = None, var debug: Boolean = false, var theme: ColorScheme = Themes.default)
+case class Frame(title: Option[String] = None, var debug: Varying[Boolean] = false,
+                 var theme: Varying[ColorScheme] = Themes.default)
                 (implicit screen: Scurses) extends Component(None) {
 
+  theme.subscribe { () =>
+    clear()
+    panel.markAllForRedraw()
+  }
+  debug.subscribe { () =>
+    clear()
+    panel.markAllForRedraw()
+  }
+
+  def currentTheme = theme.value
+  
   val panel = FramePanel(this)
   panel.focus = true
 
@@ -21,13 +34,13 @@ case class Frame(title: Option[String] = None, var debug: Boolean = false, var t
   var height = 0
   def resize(size: (Int, Int)): Unit = {
     width = size._1 - 1
-    height = size._2 - 1 - (if (title.isDefined) titleOffset else 0)
+    height = size._2 - 1
   }
 
   resize(screen.size)
 
   def innerWidth = width
-  def innerHeight = height - (if (debug) 1 else 0)
+  def innerHeight = height - (if (debug.value) 1 else 0) - (if (title.isDefined) titleOffset else 0)
 
   var lastKeypress = -1
 
@@ -36,10 +49,18 @@ case class Frame(title: Option[String] = None, var debug: Boolean = false, var t
     eventLoop()
   }
 
+  def clear(): Unit = {
+    for (y <- 0 until height) {
+      screen.put(0, y, " " * width, background = currentTheme.background)
+    }
+  }
+
   def switchFocusTo(panel: FramePanel): Unit = {
+    focusedPanel.getFocusedWidget.foreach(_.needsRedraw = true)
     focusedPanel.focus = false
     panel.focus = true
     focusedPanel = panel
+    focusedPanel.getFocusedWidget.foreach(_.needsRedraw = true)
   }
 
   def eventLoop(): Unit = {
@@ -52,7 +73,8 @@ case class Frame(title: Option[String] = None, var debug: Boolean = false, var t
         case Keys.RESIZE =>
           val s = screen.size
           resize(s)
-          screen.clear()
+          clear()
+          panel.markAllForRedraw()
         case Keys.UP =>
           val l = panel.widgets.length
           if (l > 0) {
@@ -102,7 +124,8 @@ case class Frame(title: Option[String] = None, var debug: Boolean = false, var t
 
   override def redraw(): Unit = {
     this.synchronized {
-      if (!debug)
+//      screen.clear()
+      if (!debug.value)
         draw()
       else {
         val start = System.currentTimeMillis
@@ -119,8 +142,8 @@ case class Frame(title: Option[String] = None, var debug: Boolean = false, var t
 
         if (title.isDefined) screen.translateOffset(y = titleOffset)
         screen.put(0, innerHeight + 1, line,
-                   foreground = theme.foreground, background = theme.background)
-        panel.drawDebug(theme)
+                   foreground = currentTheme.foreground, background = currentTheme.background)
+        panel.drawDebug(currentTheme)
         if (title.isDefined) screen.translateOffset(y = -titleOffset)
 
       }
@@ -132,7 +155,7 @@ case class Frame(title: Option[String] = None, var debug: Boolean = false, var t
     screen.hideCursor()
     if (title.isDefined) screen.translateOffset(y = titleOffset)
     // Draw panels recursively
-    panel.redraw(theme)
+    panel.redraw(currentTheme)
     if (title.isDefined) {
       screen.translateOffset(y = -titleOffset)
       drawTitle()
@@ -140,26 +163,26 @@ case class Frame(title: Option[String] = None, var debug: Boolean = false, var t
   }
 
   private[Frame] def drawTitle(): Unit = {
-    title.foreach { t =>
+    title.foreach { title =>
       screen.put(0, 0, Symbols.TLC_S_TO_D,
-        foreground = theme.foreground, background = theme.background)
+        foreground = currentTheme.foreground, background = currentTheme.background)
       screen.put(innerWidth + 1, 0, Symbols.TRC_D_TO_S,
-        foreground = theme.foreground, background = theme.background)
+        foreground = currentTheme.foreground, background = currentTheme.background)
       screen.put(1, 0, Symbols.DH * (innerWidth - 1),
-        foreground = theme.foreground, background = theme.background)
+        foreground = currentTheme.foreground, background = currentTheme.background)
       screen.put(0, 1, Symbols.SV,
-        foreground = theme.foreground, background = theme.background)
+        foreground = currentTheme.foreground, background = currentTheme.background)
       screen.put(innerWidth + 1, 1, Symbols.SV,
-        foreground = theme.foreground, background = theme.background)
+        foreground = currentTheme.foreground, background = currentTheme.background)
       screen.put(0, 2, Symbols.SV_TO_SR,
-        foreground = theme.foreground, background = theme.background)
+        foreground = currentTheme.foreground, background = currentTheme.background)
       screen.put(innerWidth + 1, 2, Symbols.SV_TO_SL,
-        foreground = theme.foreground, background = theme.background)
+        foreground = currentTheme.foreground, background = currentTheme.background)
 
-      val spaceLeft = (innerWidth - 1 - t.length) / 2
-      val spaceRight = innerWidth - 1 - spaceLeft - t.length
-      screen.put(1, 1, " " * spaceLeft + t + " " * spaceRight,
-        foreground = theme.foreground, background = theme.background)
+      val spaceLeft = (innerWidth - 1 - title.length) / 2
+      val spaceRight = innerWidth - 1 - spaceLeft - title.length
+      screen.put(1, 1, " " * spaceLeft + title + " " * spaceRight,
+        foreground = currentTheme.foreground, background = currentTheme.background)
 
     }
   }

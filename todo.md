@@ -24,13 +24,15 @@
 - [x] Split panel into tabs
 - [x] Make all plot types handle negative values and indices
 - [x] Generalize graph grid + legends
+- [x] Only redraw needed
+- [ ] Detect height changes -> request redraw
 - [ ] `split()` version with weight
 - [ ] Scrollbars for long content
 - [ ] Support multiple sets of values in scatter plot
 - [ ] Make all plot types handle floats
 - [ ] Generalize plot coordinate helpers
 - [ ] Convert current things to RichText
-- [ ] Only redraw needed
+- [ ] Handle out of bound values for plots
 - Widgets:
     - [x] Bar graph
     - [x] Big text display

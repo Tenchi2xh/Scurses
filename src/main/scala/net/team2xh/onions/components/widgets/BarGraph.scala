@@ -14,7 +14,7 @@ case class BarGraph(parent: FramePanel, values: Varying[Seq[Int]],
 
   val gridWidth = 4
 
-  override def draw(focus: Boolean, theme: ColorScheme): Unit = {
+  override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     val vs = values.value
     val ls = labels.take(vs.length) ++ (labels.length until vs.length).map(n => "#" + (n+1).toString)
     val labelLength = ls.map(_.length).max

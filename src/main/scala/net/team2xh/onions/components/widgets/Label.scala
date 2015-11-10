@@ -23,7 +23,7 @@ case class Label(parent: FramePanel, text: Varying[String],
     }
   }
 
-  override def draw(focus: Boolean, theme: ColorScheme): Unit = {
+  override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     drawText(theme.foreground(focus), theme.background(focus))
   }
 

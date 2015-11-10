@@ -61,19 +61,23 @@ case class FramePanel(parent: Component)
 
   def addTab(): Unit = {
     tabs += ((ListBuffer[Widget](), 0))
-    currentTab += 1
+    currentTab = tabs.length - 1
+    widgets.foreach(_.needsRedraw = true)
   }
 
   def nextTab(): Unit = {
     currentTab = (currentTab + 1) % tabs.length
+    widgets.foreach(_.needsRedraw = true)
   }
 
   def previousTab(): Unit = {
     currentTab = (currentTab - 1 + tabs.length) % tabs.length
+    widgets.foreach(_.needsRedraw = true)
   }
 
   def showTab(n: Int): Unit = {
     currentTab = (n + tabs.length) % tabs.length
+    widgets.foreach(_.needsRedraw = true)
   }
 
   private[components] def updateDimensions(newWidth: Int, newHeight: Int): Unit = {
@@ -114,30 +118,50 @@ case class FramePanel(parent: Component)
       None
   }
 
-  // TODO: Separate discovery and mutation to avoid selecting last widget when it's unselectable
-  def focusPreviousWidget: Boolean = {
+  def previousFocusableWidget: Option[Int] = {
     val l = widgets.length
     if (l == 0 || widgetFocus == 0)
-      false
+      None
     else {
-      tabs(currentTab) = (widgets, widgetFocus - 1)
-      if (widgets(widgetFocus).focusable)
-        true
-      else
-        focusPreviousWidget
+      for (i <- widgetFocus - 1 to 0 by -1) {
+        if (widgets(i).focusable)
+          return Some(i)
+      }
+      None
     }
   }
 
-  def focusNextWidget: Boolean = {
+  def nextFocusableWidget: Option[Int] = {
     val l = widgets.length
-    if (l == 0 || widgetFocus == l - 1)
-      false
+    if (l == 0 || widgetFocus >= l - 1)
+      None
     else {
-      tabs(currentTab) = (widgets, widgetFocus + 1)
-      if (widgets(widgetFocus).focusable)
+      for (i <- widgetFocus + 1 until l) {
+        if (widgets(i).focusable)
+          return Some(i)
+      }
+      None
+    }
+  }
+
+  def focusSomeWidget(which: Option[Int]): Boolean = {
+    which match {
+      case None => false
+      case Some(i) =>
+        widgets(widgetFocus).needsRedraw = true
+        widgets(i).needsRedraw = true
+        tabs(currentTab) = (widgets, i)
         true
-      else
-        focusNextWidget
+    }
+  }
+
+  def focusPreviousWidget = focusSomeWidget(previousFocusableWidget)
+
+  def focusNextWidget = focusSomeWidget(nextFocusableWidget)
+
+  def markAllForRedraw(): Unit = {
+    getTreeWalk.foreach { panel =>
+      panel.widgets.foreach(_.needsRedraw = true)
     }
   }
 
@@ -231,10 +255,6 @@ case class FramePanel(parent: Component)
   private[FramePanel] def drawEdges(theme: ColorScheme): Unit = {
     propagateDraw(_.drawEdges(theme))
 
-    // Fill center
-    for (y <- 1 to height - 1) {
-      screen.put(1, y, " " * width, background = theme.background)
-    }
     // Vertical edges
     for (y <- 1 to height - 1) {
       screen.put(width, y, Symbols.SV,
@@ -250,17 +270,15 @@ case class FramePanel(parent: Component)
       screen.put(1, height, Symbols.SH * (width - 1),
         foreground = theme.foreground, background = theme.background)
     // Focus indicator
-    if (focus) {
-      val indicator = theme.accent1
-      screen.put(1, 1, Symbols.BLOCK + Symbols.BLOCK_UPPER,
-        foreground = indicator, background = theme.background)
-      screen.put(1, height - 1, Symbols.BLOCK + Symbols.BLOCK_LOWER,
-        foreground = indicator, background = theme.background)
-      screen.put(width - 2, 1, Symbols.BLOCK_UPPER + Symbols.BLOCK,
-        foreground = indicator, background = theme.background)
-      screen.put(width - 2, height - 1, Symbols.BLOCK_LOWER + Symbols.BLOCK,
-        foreground = indicator, background = theme.background)
-    }
+    val indicator = theme.accent1
+    screen.put(1, 1, if (focus) Symbols.BLOCK + Symbols.BLOCK_UPPER else "  ",
+      foreground = indicator, background = theme.background)
+    screen.put(1, height - 1, if (focus) Symbols.BLOCK + Symbols.BLOCK_LOWER else "  ",
+      foreground = indicator, background = theme.background)
+    screen.put(width - 2, 1, if (focus) Symbols.BLOCK_UPPER + Symbols.BLOCK else "  ",
+      foreground = indicator, background = theme.background)
+    screen.put(width - 2, height - 1, if (focus) Symbols.BLOCK_LOWER + Symbols.BLOCK else "  ",
+      foreground = indicator, background = theme.background)
   }
 
   private[FramePanel] def drawCorners(theme: ColorScheme): Unit = {
@@ -358,9 +376,15 @@ case class FramePanel(parent: Component)
 
     var y = 2
     for ((widget, i) <- widgets.zipWithIndex) {
-      screen.translateOffset(x = 2, y = y)
-      widget.draw(focus && widgetFocus == i, theme)
-      screen.translateOffset(x = -2, y = -y)
+      if (widget.needsRedraw) {
+        screen.translateOffset(x = 2, y = y)
+        // clear widget's space first
+        for (y <- 0 until widget.innerHeight) {
+          screen.put(0, y, " " * widget.innerWidth, background = theme.background)
+        }
+        widget.draw(focus && widgetFocus == i, theme)
+        screen.translateOffset(x = -2, y = -y)
+      }
       y += widget.innerHeight
     }
   }

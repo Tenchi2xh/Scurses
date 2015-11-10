@@ -26,16 +26,26 @@ object BitMap {
 class BitMap(parent: FramePanel, image: BufferedImage)
                  (implicit screen: Scurses) extends Widget(parent) {
 
-  override def draw(focus: Boolean, theme: ColorScheme): Unit = {
+  val colors = {
+    val width = image.getWidth
+    val height = image.getHeight
+    for (x <- 0 until width)
+      yield for (y <- 0 until height / 2) yield {
+        // Read two rows at a time
+        val upper = Colors.fromRGBInt(image.getRGB(x, y * 2))
+        val lower = if (height % 2 == 1) -1 else Colors.fromRGBInt(image.getRGB(x, y * 2 + 1))
+        (upper, lower)
+      }
+  }
+
+  override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     val width = image.getWidth min innerWidth
-    val height = innerHeight * 2
     val x0 = (innerWidth - width) / 2
     for (x <- 0 until width) {
       for (y <- 0 until innerHeight) {
         // Read two rows at a time
-        val upper = Colors.fromRGBInt(image.getRGB(x, y * 2))
-        val lower = if (height % 2 == 1) -1 else Colors.fromRGBInt(image.getRGB(x, y * 2 + 1))
-        screen.put(x0 + x, y, Symbols.BLOCK_UPPER, upper, lower)
+        val c = colors(x)(y)
+        screen.put(x0 + x, y, Symbols.BLOCK_UPPER, c._1, c._2)
       }
     }
   }

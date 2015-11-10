@@ -73,7 +73,7 @@ object ExampleUI extends App {
     val radio = Radio(colB, Seq("Default", "Red", "Green", "Blue"))
     radio.subscribe { () =>
       val color = radio.value match {
-        case 0 => frame.theme.foreground
+        case 0 => frame.currentTheme.foreground
         case 1 => Colors.BRIGHT_RED
         case 2 => Colors.BRIGHT_GREEN
         case 3 => Colors.BRIGHT_BLUE
@@ -90,20 +90,20 @@ object ExampleUI extends App {
     Label(colB3, "Choose a theme:")
     val radio2 = Radio(colB3, Seq("Default", "Light", "MS-DOS"))
     radio2.subscribe(() => {
-      frame.theme = radio2.value match {
+      frame.theme := (radio2.value match {
         case 0 => Themes.default
         case 1 => Themes.light
         case 2 => Themes.MSDOS
-      }
+      })
     })
     Separator(colB3)
     Label(colB3, "Debug mode:")
     val radio3 = Radio(colB3, Seq("On", "Off"))
     radio3.subscribe{ () =>
-      frame.debug = radio3.value match {
+      frame.debug := (radio3.value match {
         case 0 => true
         case 1 => false
-      }
+      })
     }
 
     colB3B.title = "7-segment"

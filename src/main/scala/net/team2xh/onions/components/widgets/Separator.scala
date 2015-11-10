@@ -16,7 +16,7 @@ class Separator(parent: FramePanel, symbol: String = Symbols.SH)
 
   val focusable = false
 
-  override def draw(focus: Boolean, theme: ColorScheme): Unit = {
+  override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     screen.put(0, 0, symbol * innerWidth, foreground = theme.accent3, background = theme.background)
   }
 

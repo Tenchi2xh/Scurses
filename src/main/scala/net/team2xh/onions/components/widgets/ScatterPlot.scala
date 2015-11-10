@@ -15,7 +15,7 @@ case class ScatterPlot(parent: FramePanel, values: Varying[Seq[(Int, Int)]],
 
   val gridSize = 4
 
-  override def draw(focus: Boolean, theme: ColorScheme): Unit = {
+  override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     val (xs, ys) = values.value.unzip
 
     val maxX = Math.aBitMoreThanMax(xs)
@@ -26,7 +26,7 @@ case class ScatterPlot(parent: FramePanel, values: Varying[Seq[(Int, Int)]],
     val valuesLength = maxY.toString.length max minY.toString.length
     val x0 = valuesLength + (if (showLabels) 2 else 0)
     val graphWidth = (if (showLabels) innerWidth - 3 else innerWidth - 1) - valuesLength
-    val graphHeight = innerHeight - 2
+    val graphHeight = if (showLabels) innerHeight - 3 else innerHeight - 2
 
     // Draw grid
     Drawing.drawGrid(x0, 0, graphWidth, graphHeight, gridSize, theme.accent1, theme.background,

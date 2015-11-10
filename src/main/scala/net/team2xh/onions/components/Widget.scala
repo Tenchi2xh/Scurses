@@ -11,11 +11,22 @@ abstract class Widget(parent: FramePanel, values: Varying[_] *)
   parent.widgets += this
 
   for (value <- values)
-    value.subscribe(topLevel.redraw)
+    value.subscribe(() => {
+      needsRedraw = true
+      topLevel.redraw()
+    })
 
   def focusable: Boolean
 
-  def draw(focus: Boolean, theme: ColorScheme): Unit
+  var needsRedraw = true
+
+  def draw(focus: Boolean, theme: ColorScheme): Unit = {
+    redraw(focus, theme)
+    needsRedraw = false
+  }
+
+  def redraw(focus: Boolean, theme: ColorScheme): Unit
+
   def handleKeypress(keypress: Int): Unit
 
   override def innerWidth: Int = parent.innerWidth - 3

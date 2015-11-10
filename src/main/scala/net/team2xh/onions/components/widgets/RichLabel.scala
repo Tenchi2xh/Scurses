@@ -11,7 +11,7 @@ case class RichLabel(parent: FramePanel, text: Varying[RichText])
 
   var lines = Seq[RichText]()
 
-  override def draw(focus: Boolean, theme: ColorScheme): Unit = {
+  override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     lines = TextWrap.wrapText(text.value, innerWidth - 1)
     for ((line, i) <- lines.zipWithIndex) {
       screen.put(1, i, lines(i), theme)

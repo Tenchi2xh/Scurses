@@ -10,7 +10,7 @@ case class Slider(parent: FramePanel, minValue: Int, maxValue: Int)
                  (var currentValue: Varying[Int] = minValue)
                  (implicit screen: Scurses) extends Widget(parent, minValue) {
 
-  override def draw(focus: Boolean, theme: ColorScheme): Unit = {
+  override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     val width = innerWidth - 2
     val v = currentValue.value
     val nx = math.round((width.toDouble * (v - minValue)) / (maxValue - minValue)).toInt
@@ -34,6 +34,7 @@ case class Slider(parent: FramePanel, minValue: Int, maxValue: Int)
     } else if (keypress == '>') {
       currentValue := (currentValue.value + 1) min maxValue
     }
+    needsRedraw = true
   }
 
   override def focusable: Boolean = true

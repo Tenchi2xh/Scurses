@@ -11,30 +11,30 @@ import scala.collection.mutable
 
 case class HeatMap(parent: FramePanel, values: Varying[Seq[(Int, Int)]],
                    labelX: String = "", labelY: String = "",
-                   radius: Varying[Int] = 3, showLabels: Boolean = true)
+                   radius: Varying[Int] = 3, showLabels: Boolean = false)
                   (implicit screen: Scurses) extends Widget(parent, values, radius) {
 
-  val gridSize = 4
+  val gridSize = 8
 
-  override def draw(focus: Boolean, theme: ColorScheme): Unit = {
+  override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     val (xs, ys) = values.value.unzip
 
-    val maxX = xs.max
-    val maxY = ys.max
-    val minX = xs.min
-    val minY = ys.min
+    val maxX = Math.aBitMoreThanMax(xs)
+    val maxY = Math.aBitMoreThanMax(ys)
+    val minX = Math.aBitLessThanMin(xs)
+    val minY = Math.aBitLessThanMin(ys)
 
     val valuesLength = maxY.toString.length max minY.toString.length
     val x0 = valuesLength + (if (showLabels) 2 else 0)
-    val graphWidth = (if (showLabels) innerWidth - 3 else innerWidth - 1) - valuesLength
-    val graphHeight = innerHeight - 2
+    val graphWidth = (if (showLabels) innerWidth - 2 else innerWidth) - valuesLength
+    val graphHeight = if (showLabels) innerHeight - 3 else innerHeight - 2
 
     // Draw grid
 //    Drawing.drawGrid(x0, 0, graphWidth, graphHeight, gridSize, theme.accent1, theme.background,
 //      showVertical = false, showHorizontal = false)
     // Draw axis values
     Drawing.drawAxisValues(x0 - valuesLength, 0, graphHeight, gridSize, minY, maxY, theme.accent3, theme.background, horizontal = false)
-    Drawing.drawAxisValues(x0 + 1, graphHeight + 1, graphWidth - 1, gridSize, minX, maxX, theme.accent3, theme.background)
+    Drawing.drawAxisValues(x0, graphHeight + 1, graphWidth, gridSize, minX, maxX, theme.accent3, theme.background)
 
     // Draw labels
     if (showLabels) {
@@ -57,7 +57,7 @@ case class HeatMap(parent: FramePanel, values: Varying[Seq[(Int, Int)]],
       val v2 = if (y != dh + 1) array(x, y + 1) else -1
       val c1 = Palettes.mapToPalette(max - v1, max, Palettes.rainbow)
       val c2 = if (v2 != -1) Palettes.mapToPalette(max - v2, max, Palettes.rainbow) else -1
-      screen.put(x0 + 1 + x, y / 2, Symbols.BLOCK_UPPER, c1, c2)
+      screen.put(x0 + x, y / 2, Symbols.BLOCK_UPPER, c1, c2)
     }
   }
 
