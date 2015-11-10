@@ -5,15 +5,17 @@ import net.team2xh.scurses.Scurses
 
 object Drawing {
 
-  def drawAxisLabels(x0: Int, y0: Int, length: Int, gridSize: Int, valueMax: Int,
+  def drawAxisLabels(x0: Int, y0: Int, length: Int, gridSize: Int,
+                     valueMin: Int, valueMax: Int,
                      fg: Int, bg: Int, horizontal: Boolean = true)
                     (implicit screen: Scurses): Unit = {
 
     val step = if (horizontal) gridSize else gridSize / 2
     val start = (n: Int) => if (horizontal) n else length - n
+    val span = valueMax - valueMin
     val lastIndex = if (horizontal) Seq() else Seq(length)
     for (i <- (0 until length by step) ++ lastIndex) {
-      val index = math.floor((start(i) * valueMax.toDouble) / length).toInt
+      val index = math.floor((start(i) * span.toDouble) / length).toInt + valueMin
       val x1 = if (horizontal) x0 + i else x0
       val y1 = if (horizontal) y0 else y0 + i
       screen.put(x1, y1, index.toString, fg, bg)

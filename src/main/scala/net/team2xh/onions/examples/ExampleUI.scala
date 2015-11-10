@@ -86,7 +86,13 @@ object ExampleUI extends App {
     colC.title = "Graphs A"
     val barValues = Seq(15, 11, 2, 20, 8, 7, 4)
     val bars = BarGraph(colC, barValues, labels = Lorem.Ipsum.split(' '),
-                        palette = Palettes.rainbow, max = 24)
+                        palette = Palettes.rainbow, min = 0, max = 24)
+    colC.addTab()
+    val barValues2 = Seq(15, -11, -2, 20, -8, 7, 4,
+                         10, 2, 13, -5, -8, 3, -15, 0)
+    val bars2 = BarGraph(colC, barValues2, labels = Lorem.Ipsum.split(' '),
+      palette = Palettes.default, min = -24, max = 24)
+    colC.showTab(0)
 
     colB2.title = "Histogram"
 
@@ -98,8 +104,8 @@ object ExampleUI extends App {
     })
     ScatterPlot(colC2, scatterValues, "Time", "Sales")
     colC2.addTab()
-    val scatterValues2 = (0 to 100) map (x => {
-      val y = math.round(0.04*math.pow(x-50, 2)).toInt
+    val scatterValues2 = (-50 to 50) map (x => {
+      val y = math.round(0.04*math.pow(x, 2)).toInt
       (x, y)
     })
     ScatterPlot(colC2, scatterValues2, "Price", "Popularity")
@@ -111,6 +117,7 @@ object ExampleUI extends App {
         val column = if (s % 2 == 0) ":" else " "
         ss.text := "%02d%s%02d".format(s / 60, column, s % 60)
         bars.values := barValues.map(n => n + r.nextInt(5) - 2)
+        bars2.values := barValues2.map(n => n + r.nextInt(5) - 2)
         s += 1
       }
     }, 1000, 1000)

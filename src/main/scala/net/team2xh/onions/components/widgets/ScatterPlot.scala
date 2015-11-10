@@ -20,8 +20,10 @@ case class ScatterPlot(parent: FramePanel, values: Varying[Seq[(Int, Int)]],
 
     val maxX = Math.aBitMoreThanMax(xs)
     val maxY = Math.aBitMoreThanMax(ys)
+    val minX = Math.aBitLessThanMin(xs)
+    val minY = Math.aBitLessThanMin(ys)
 
-    val valuesLength = maxX.toString.length
+    val valuesLength = maxY.toString.length max minY.toString.length
     val x0 = valuesLength + (if (showLabels) 2 else 0)
     val graphWidth = (if (showLabels) innerWidth - 3 else innerWidth - 1) - valuesLength
     val graphHeight = innerHeight - 2
@@ -30,8 +32,8 @@ case class ScatterPlot(parent: FramePanel, values: Varying[Seq[(Int, Int)]],
     Drawing.drawGrid(x0, 0, graphWidth, graphHeight, gridSize, theme.accent1, theme.background,
                      showVertical = true, showHorizontal = true)
     // Draw axis values
-    Drawing.drawAxisLabels(x0 - valuesLength, 0, graphHeight, gridSize, maxY, theme.accent3, theme.background, horizontal = false)
-    Drawing.drawAxisLabels(x0, graphHeight + 1, graphWidth, gridSize, maxX, theme.accent3, theme.background)
+    Drawing.drawAxisLabels(x0 - valuesLength, 0, graphHeight, gridSize, minY, maxY, theme.accent3, theme.background, horizontal = false)
+    Drawing.drawAxisLabels(x0, graphHeight + 1, graphWidth, gridSize, minX, maxX, theme.accent3, theme.background)
 
     // Draw labels
     if (showLabels) {
@@ -50,8 +52,8 @@ case class ScatterPlot(parent: FramePanel, values: Varying[Seq[(Int, Int)]],
     val points = mutable.MutableList.fill[Int](graphWidth+1, graphHeight+1)(0)
     val charHeight = maxY.toDouble / graphHeight
     for (value <- values.value) {
-      val nx = math.round((graphWidth.toDouble * value._1) / maxX).toInt
-      val ny = graphHeight - math.round((graphHeight.toDouble * value._2) / maxY).toInt
+      val nx = math.round((graphWidth.toDouble * (value._1 - minX)) / (maxX - minX)).toInt
+      val ny = graphHeight - math.round((graphHeight.toDouble * (value._2 - minY)) / (maxY - minY)).toInt
       val point = points(nx)(ny)
       val isLower = if ((value._2 % charHeight) < (charHeight / 2.0)) 1 else 2
       points(nx).update(ny, point | isLower)
