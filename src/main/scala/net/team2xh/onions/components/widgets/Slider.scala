@@ -29,9 +29,9 @@ case class Slider(parent: FramePanel, minValue: Int, maxValue: Int)
   }
 
   override def handleKeypress(keypress: Int): Unit = {
-    if (keypress == '<') {
+    if (keypress == '<' || keypress == Keys.SPACE) {
       currentValue := (currentValue.value - 1) max minValue
-    } else if (keypress == '>') {
+    } else if (keypress == '>' || keypress == Keys.ENTER) {
       currentValue := (currentValue.value + 1) min maxValue
     }
     needsRedraw = true
