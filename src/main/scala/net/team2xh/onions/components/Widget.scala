@@ -8,7 +8,7 @@ import net.team2xh.scurses.Scurses
 abstract class Widget(parent: FramePanel, values: Varying[_] *)
                      (implicit screen: Scurses) extends Component(Some(parent)) {
 
-  parent.widgets += this
+  parent.addWidget(this)
 
   for (value <- values)
     value.subscribe(() => {

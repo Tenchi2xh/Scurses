@@ -4,7 +4,10 @@
 - [x] Homemade key polling with more keys than JLine
 - [x] Handle resize event
 - [x] Custom ML for RichText
-- [ ] Clipping mode
+- [x] Clipping mode
+- [ ] Buffer concept where you can put things before printing them
+      -> widgets will update first, we know their height, then we can draw
+         from outside the widget
   
 ### Onions:
 
@@ -25,7 +28,7 @@
 - [x] Make all plot types handle negative values and indices
 - [x] Generalize graph grid + legends
 - [x] Only redraw needed
-- [ ] Detect height changes -> request redraw
+- [x] Detect height changes -> request redraw
 - [ ] `split()` version with weight
 - [ ] Scrollbars for long content
 - [ ] Support multiple sets of values in scatter plot

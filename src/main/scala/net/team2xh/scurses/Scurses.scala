@@ -42,6 +42,15 @@ class Scurses {
   var offsetX = 0
   var offsetY = 0
 
+  var isClipped = false
+  var clipX0 = 0
+  var clipY0 = 0
+  var clipX1 = 0
+  var clipY1 = 0
+
+  def outOfBounds(x: Int, y: Int) =
+    isClipped && (x + offsetX < clipX0 || x + offsetX >= clipX1 || y + offsetY < clipY0 || y + offsetY >= clipY1)
+
   init()
 
   /**
@@ -55,6 +64,8 @@ class Scurses {
   def put(x: Int, y: Int, string: String,
           foreground: Int = -1,
           background: Int = -1): Unit = {
+    if (outOfBounds(x, y))
+      return
     ec.move(x + offsetX, y + offsetY)
     if (foreground >= 0) ec.setForeground(foreground)
     if (background >= 0) ec.setBackground(background)
@@ -62,8 +73,10 @@ class Scurses {
     ec.stopForeground()
     ec.stopBackground()
   }
-  
+
   def put(x: Int, y: Int, richText: RichText, theme: ColorScheme): Unit = {
+    if (outOfBounds(x, y))
+      return
     ec.move(x + offsetX, y + offsetY)
     if (theme.foreground >= 0) ec.setForeground(theme.foreground)
     if (theme.background >= 0) ec.setBackground(theme.background)
@@ -102,7 +115,18 @@ class Scurses {
     }
     ec.resetColors()
   }
-  
+
+  def clip(width: Int, height: Int): Unit = {
+    isClipped = true
+    clipX0 = offsetX
+    clipY0 = offsetY
+    clipX1 = offsetX + width
+    clipY1 = offsetY + height
+  }
+
+  def unclip(): Unit = {
+    isClipped = false
+  }
 
   def translateOffset(x: Int = 0, y: Int = 0): Unit = {
     offsetX += x

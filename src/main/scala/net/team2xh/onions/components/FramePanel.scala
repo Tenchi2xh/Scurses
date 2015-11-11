@@ -50,10 +50,12 @@ case class FramePanel(parent: Component)
   var redrawBorders = true
 
   var currentTab = 0
-  var tabs = mutable.MutableList[(ListBuffer[Widget], Int)]((ListBuffer[Widget](), 0))
+  var tabs =
+    mutable.MutableList[(ListBuffer[Widget], Int, ListBuffer[Int])]((ListBuffer[Widget](), 0, ListBuffer[Int]()))
 
   def widgets = tabs(currentTab)._1
   def widgetFocus = tabs(currentTab)._2
+  def heights = tabs(currentTab)._3
 
   val id = FramePanel.idCounter
   FramePanel.idCounter += 1
@@ -61,8 +63,13 @@ case class FramePanel(parent: Component)
   def innerWidth = width
   def innerHeight = height
 
+  def addWidget(widget: Widget): Unit = {
+    widgets += widget
+    tabs(currentTab) = (widgets, widgetFocus, heights :+ 0)
+  }
+
   def addTab(): Unit = {
-    tabs += ((ListBuffer[Widget](), 0))
+    tabs += ((ListBuffer[Widget](), 0, ListBuffer[Int]()))
     currentTab = tabs.length - 1
     updateTab()
   }
@@ -159,7 +166,7 @@ case class FramePanel(parent: Component)
       case Some(i) =>
         widgets(widgetFocus).needsRedraw = true
         widgets(i).needsRedraw = true
-        tabs(currentTab) = (widgets, i)
+        tabs(currentTab) = (widgets, i, heights)
         true
     }
   }
@@ -396,16 +403,18 @@ case class FramePanel(parent: Component)
     if (redrawBorders) {
       drawEdges(theme)
       drawCorners(theme)
-      drawTitles(theme)
       redrawBorders = false
     }
+    drawTitles(theme)
     drawWidgets(theme)
   }
 
   def drawWidgets(theme: ColorScheme): Unit = {
     propagateDraw(_.drawWidgets(theme))
 
+    screen.clip(width, height)
     var y = 2
+    var heightChanged = false
     for ((widget, i) <- widgets.zipWithIndex) {
       if (widget.needsRedraw) {
         screen.translateOffset(x = 2, y = y)
@@ -416,8 +425,22 @@ case class FramePanel(parent: Component)
         widget.draw(focus && widgetFocus == i, theme)
         screen.translateOffset(x = -2, y = -y)
       }
-      y += widget.innerHeight
+      val newHeight = widget.innerHeight
+      y += newHeight
+      // If the height changed, redraw the rest
+      if (heights(i) != newHeight) {
+        heightChanged = true
+        for (j <- i + 1 until widgets.length) {
+          widgets(j).needsRedraw = true
+        }
+      }
+      heights(i) = newHeight
     }
+    // Clear the rest of the panel if heights have changed
+    for (y <- y to height - 1) {
+      screen.put(1, y, " " * (width - 1), background = theme.background)
+    }
+    screen.unclip()
   }
   
   def propagateDraw(drawMethod: (FramePanel) => Unit): Unit = {
