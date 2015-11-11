@@ -124,7 +124,6 @@ case class Frame(title: Option[String] = None, var debug: Varying[Boolean] = fal
 
   override def redraw(): Unit = {
     this.synchronized {
-//      screen.clear()
       if (!debug.value)
         draw()
       else {

@@ -18,7 +18,7 @@ object Themes {
 
   val default = new ColorScheme {
     override val foreground = 15
-    override val background = -1
+    override val background = 0
     override val focusForeground = 0
     override val focusBackground = 15
     override val accent1 = 237

@@ -82,7 +82,7 @@ case class FramePanel(parent: Component)
     updateTab()
   }
 
-  var needsClear = false
+  var needsClear = true
 
   def updateTab(): Unit = {
     widgets.foreach(_.needsRedraw = true)
@@ -265,13 +265,6 @@ case class FramePanel(parent: Component)
   private[FramePanel] def drawEdges(theme: ColorScheme): Unit = {
     propagateDraw(_.drawEdges(theme))
 
-    if (needsClear) {
-      for (y <- 1 to height - 1) {
-        screen.put(1, y, " " * (width - 2), background = theme.background)
-      }
-      needsClear = false
-    }
-
     // Vertical edges
     for (y <- 1 to height - 1) {
       screen.put(width, y, Symbols.SV,
@@ -374,7 +367,7 @@ case class FramePanel(parent: Component)
 
     if (needsClear) {
       for (y <- 1 to height - 1) {
-        screen.put(1, y, " " * (width - 2), background = theme.background)
+        screen.put(1, y, " " * (width - 1), background = theme.background)
       }
       needsClear = false
     }

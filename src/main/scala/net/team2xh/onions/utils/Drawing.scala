@@ -81,7 +81,8 @@ object Drawing {
 
   def clipText(text: String, limit: Int, before: Boolean = false) =
     if (text.length > limit) {
-      val clipped = text.substring(text.length - limit + 3, text.length)
+      val clipped = text.substring(if (before) text.length - limit + 3 else 0,
+                                   if (before) text.length else limit - 3)
       if (before)
         "..." + clipped
       else
