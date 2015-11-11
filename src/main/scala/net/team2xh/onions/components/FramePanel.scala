@@ -286,16 +286,6 @@ case class FramePanel(parent: Component)
     if (bottom.isEmpty)
       screen.put(1, height, Symbols.SH * (width - 1),
         foreground = theme.foreground, background = theme.background)
-    // Focus indicator
-    val indicator = theme.accent1
-    screen.put(1, 1, if (focus) Symbols.BLOCK + Symbols.BLOCK_UPPER else "  ",
-      foreground = indicator, background = theme.background)
-    screen.put(1, height - 1, if (focus) Symbols.BLOCK + Symbols.BLOCK_LOWER else "  ",
-      foreground = indicator, background = theme.background)
-    screen.put(width - 2, 1, if (focus) Symbols.BLOCK_UPPER + Symbols.BLOCK else "  ",
-      foreground = indicator, background = theme.background)
-    screen.put(width - 2, height - 1, if (focus) Symbols.BLOCK_LOWER + Symbols.BLOCK else "  ",
-      foreground = indicator, background = theme.background)
   }
 
   private[FramePanel] def drawCorners(theme: ColorScheme): Unit = {
@@ -390,10 +380,26 @@ case class FramePanel(parent: Component)
     }
   }
 
+  private[FramePanel] def drawFocusIndicator(theme: ColorScheme): Unit = {
+    propagateDraw(_.drawFocusIndicator(theme))
+
+    val indicator = theme.accent1
+    screen.put(1, 1, if (focus) Symbols.BLOCK + Symbols.BLOCK_UPPER else "  ",
+      foreground = indicator, background = theme.background)
+    screen.put(1, height - 1, if (focus) Symbols.BLOCK + Symbols.BLOCK_LOWER else "  ",
+      foreground = indicator, background = theme.background)
+    screen.put(width - 2, 1, if (focus) Symbols.BLOCK_UPPER + Symbols.BLOCK else "  ",
+      foreground = indicator, background = theme.background)
+    screen.put(width - 2, height - 1, if (focus) Symbols.BLOCK_LOWER + Symbols.BLOCK else "  ",
+      foreground = indicator, background = theme.background)
+
+  }
+
   def redraw(theme: ColorScheme): Unit = {
     updateDimensions(parent.innerWidth, parent.innerHeight)
 
     fillBoxes(theme)
+    drawFocusIndicator(theme)
     if (redrawBorders) {
       drawEdges(theme)
       drawCorners(theme)
