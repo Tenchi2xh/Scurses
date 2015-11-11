@@ -78,4 +78,15 @@ object Drawing {
            y <- y0 + gridHeight until y0 + h by gridHeight)
         screen.put(x, y, Symbols.SH_X_SV, fg, bg)
   }
+
+  def clipText(text: String, limit: Int, before: Boolean = false) =
+    if (text.length > limit) {
+      val clipped = text.substring(text.length - limit + 3, text.length)
+      if (before)
+        "..." + clipped
+      else
+        clipped + "..."
+    }
+    else text
+
 }

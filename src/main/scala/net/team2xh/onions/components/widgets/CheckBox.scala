@@ -5,30 +5,15 @@ import net.team2xh.onions.components.{Widget, FramePanel}
 import net.team2xh.onions.utils.{Drawing, Varying}
 import net.team2xh.scurses.{Keys, Scurses}
 
-object Radio {
-  def apply(parent: FramePanel, options: Seq[String])(implicit screen: Scurses): Varying[Int] = {
-    val choice: Varying[Int] = 0
-    for ((option, i) <- options.zipWithIndex) {
-      Radio(parent, option, i, choice)
-    }
-    choice := 0
-  }
-}
-
-private[widgets] case class Radio(parent: FramePanel, text: String, id: Int, choice: Varying[Int])
-                                 (implicit screen: Scurses) extends Widget(parent) {
+case class CheckBox(parent: FramePanel,
+                    text: String,
+                    checked: Varying[Boolean] = false)
+                   (implicit screen: Scurses) extends Widget(parent, checked) {
 
   def focusable = true
 
-  var checked: Boolean = false
-
-  choice.subscribe(() => {
-    checked = id == choice.value
-    needsRedraw = true
-  })
-
   def drawText(foreground: Int, background: Int): Unit = {
-    val line = " (%s) %s".format(if (checked) "●" else " ", Drawing.clipText(text, innerWidth - 7))
+    val line = " [%s] %s".format(if (checked.value) "√" else " ", Drawing.clipText(text, innerWidth - 7))
     screen.put(0, 0, line + " " * (innerWidth - line.length - 1),
       foreground = foreground, background = background)
   }
@@ -39,7 +24,7 @@ private[widgets] case class Radio(parent: FramePanel, text: String, id: Int, cho
 
   override def handleKeypress(keypress: Int): Unit = {
     if (keypress == Keys.ENTER || keypress == Keys.SPACE)
-        choice := id
+      checked := !checked.value
   }
 
   override def innerHeight: Int = 1

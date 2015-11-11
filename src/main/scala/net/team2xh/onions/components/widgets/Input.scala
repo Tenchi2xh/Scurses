@@ -3,7 +3,7 @@ package net.team2xh.onions.components.widgets
 import net.team2xh.onions.Symbols
 import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.onions.components.{Widget, FramePanel}
-import net.team2xh.onions.utils.Varying
+import net.team2xh.onions.utils.{Drawing, Varying}
 import net.team2xh.scurses.{Keys, Scurses}
 
 case class Input(parent: FramePanel, var defaultText: String = "Input")
@@ -18,11 +18,7 @@ case class Input(parent: FramePanel, var defaultText: String = "Input")
     val t = if (cursorIndex == 0 && !focus) "<" + defaultText + ">" else text.value
     val fg = if (cursorIndex == 0 && !focus) theme.background else theme.foreground(focus)
     val l = t.length
-    val clippedText = if (l > limit) {
-      "..." + t.substring(l - limit + 3, l)
-    } else {
-      t
-    }
+    val clippedText = Drawing.clipText(t, limit, before = true)
     screen.put(0, 0, " " + clippedText + cursorSymbol + " " * (innerWidth - l - 3) + " ",
       foreground = fg, background = if (focus) theme.background(focus) else theme.accent1)
   }

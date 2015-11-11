@@ -134,6 +134,10 @@ object ExampleUI extends App {
     ScatterPlot(colC2, values_2d_2, "Price", "Popularity")
     colC2.showTab(0)
 
+    CheckBox(colB3B2, "A checkbox")
+    CheckBox(colB3B2, "Another one")
+    CheckBox(colB3B2, "This one is looooooooooooooooooooooooooooooooong")
+
     slider.currentValue.subscribe { () =>
       hm1.radius := slider.currentValue.value
       hm2.radius := slider.currentValue.value
