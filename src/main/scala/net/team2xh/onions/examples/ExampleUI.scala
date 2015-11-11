@@ -118,10 +118,10 @@ object ExampleUI extends App {
     colC.addTab()
     val hm2 = HeatMap(colC, values_2d_2, "Price", "Popularity")
     colC.addTab()
-    val bars = BarGraph(colC, values_1d_1, labels = Lorem.Ipsum.split(' '),
+    val bars = BarChart(colC, values_1d_1, labels = Lorem.Ipsum.split(' '),
                         palette = Palettes.rainbow, min = 0, max = 24)
     colC.addTab()
-    val bars2 = BarGraph(colC, values_1d_2, labels = Lorem.Ipsum.split(' '),
+    val bars2 = BarChart(colC, values_1d_2, labels = Lorem.Ipsum.split(' '),
       palette = Palettes.default, min = -24, max = 24)
     colC.showTab(3)
 

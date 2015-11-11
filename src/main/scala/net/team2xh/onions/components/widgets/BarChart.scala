@@ -1,23 +1,45 @@
 package net.team2xh.onions.components.widgets
 
-import net.team2xh.onions.{Symbols, Palettes}
 import net.team2xh.onions.Themes.ColorScheme
-import net.team2xh.onions.components.{Widget, FramePanel}
-import net.team2xh.onions.utils.{Drawing, Varying, Math}
+import net.team2xh.onions.components.{FramePanel, Widget}
+import net.team2xh.onions.utils.{Drawing, Math, Varying}
+import net.team2xh.onions.{Palettes, Symbols}
 import net.team2xh.scurses.Scurses
 
-case class BarGraph(parent: FramePanel, values: Varying[Seq[Int]],
-                     labels: Seq[String] = Seq(),
-                     min: Int = -1, max: Int = -1, palette: Seq[Int] = Palettes.default,
-                     showLabels: Boolean = true, showValues: Boolean = true)
-                    (implicit screen: Scurses) extends Widget(parent, values) {
+/**
+ * Widget that displays a horizontal bar chart, given a sequence of values.
+ *
+ * @param parent     Parent panel in which the widget will be added
+ * @param values     Sequence of values to display on the chart
+ * @param labels     Sequence of names (labels) associated with each value, in order
+ * @param min        Minimum value to display on the chart (scales to content by default)
+ * @param max        Maximum value to display on the chart (scales to content by default)
+ * @param palette    Color palette to use for the bars
+ * @param showLabels Enables the display of the labels
+ * @param showValues Enables the display of the axis values
+ * @param screen     Implicit Scurses screen
+ */
+case class BarChart(parent: FramePanel,
+                    values: Varying[Seq[Int]],
+                    labels: Seq[String] = Seq(),
+                    min: Int = -1,
+                    max: Int = -1,
+                    palette: Seq[Int] = Palettes.default,
+                    showLabels: Boolean = true,
+                    showValues: Boolean = true)
+                   (implicit screen: Scurses) extends Widget(parent, values) {
 
   val gridWidth = 4
+  override def focusable: Boolean = false
+  override def innerHeight: Int = parent.innerHeight - 3
 
   override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     val vs = values.value
+    // If not enough labels were specified, name them according to their order
     val ls = labels.take(vs.length) ++ (labels.length until vs.length).map(n => "#" + (n+1).toString)
+    // Width of the largest label
     val labelLength = ls.map(_.length).max
+    // Width of the chart itself
     val graphWidth = if (showLabels) innerWidth - labelLength - 4 else innerWidth - 1
     val graphHeight = innerHeight - 2
     val valueMin =
@@ -39,7 +61,7 @@ case class BarGraph(parent: FramePanel, values: Varying[Seq[Int]],
     val zero = math.floor(((0 - valueMin) * graphWidth.toDouble) / (valueMax - valueMin)).toInt
     for ((y, i) <- (spaceTop until spaceTop + vs.length * spacing by spacing).zipWithIndex) {
       val length = math.floor(((vs(i) - valueMin) * graphWidth.toDouble) / (valueMax - valueMin)).toInt
-      // Draw bars
+      // Draw the bars themselves
       if (vs(i) >= 0) {
         screen.put(zero, 1 + y, Symbols.BLOCK_RIGHT + Symbols.BLOCK * (length-zero) + Symbols.BLOCK_LEFT,
           foreground = palette(i % palette.length), background = theme.background)
@@ -69,6 +91,4 @@ case class BarGraph(parent: FramePanel, values: Varying[Seq[Int]],
 
   override def handleKeypress(keypress: Int): Unit = { }
 
-  override def focusable: Boolean = false
-  override def innerHeight: Int = parent.innerHeight - 3
 }

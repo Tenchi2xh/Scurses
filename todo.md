@@ -33,6 +33,7 @@
 - [ ] Generalize plot coordinate helpers
 - [ ] Convert current things to RichText
 - [ ] Handle out of bound values for plots
+- [ ] Fixed width column mode that puts exceeding widgets on a new column
 - Widgets:
     - [x] Bar graph
     - [x] Big text display
