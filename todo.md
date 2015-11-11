@@ -46,4 +46,6 @@
     - [ ] Progressbar, displays percentage
     - [ ] Histogram
     - [ ] TextBox
+        - Console, grabs stdout and stderr
+        - Terminal, along with an input field, spawns a bash
     - [ ] CheckBox

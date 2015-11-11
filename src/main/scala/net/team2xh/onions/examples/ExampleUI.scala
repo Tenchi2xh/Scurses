@@ -20,15 +20,18 @@ object ExampleUI extends App {
   val values_1d_1 = Seq(15, 11, 2, 20, 8, 7, 4)
   val values_1d_2 = Seq(15, -11, -2, 20, -8, 7, 4,
                         10, 2, 13, -5, -8, 3, -15)
-  val values_2d_1 = (1 to 50) map (i => {
-    val x = r.nextInt(40)
-    val y = 50 - x + (r.nextGaussian() * 5).toInt - 2
-    (x, y max 0)
-  })
+  var values_2d_1: Varying[Seq[(Int, Int)]] = Seq()
+  def generateData(): Unit =
+    values_2d_1 := (1 to 50) map (i => {
+      val x = r.nextInt(40)
+      val y = 50 - x + (r.nextGaussian() * 5).toInt - 2
+      (x, y max 0)
+    })
   val values_2d_2 = (-50 to 50) map (x => {
     val y = math.round(0.04*math.pow(x, 2)).toInt
     (x, y)
   })
+  generateData()
 
   Scurses { implicit screen =>
     implicit val debug = true
@@ -85,6 +88,7 @@ object ExampleUI extends App {
     Separator(colB)
     Label(colB, "Heat maps blur radius:")
     val slider = Slider(colB, 1, 10)(3)
+    Label(colB, "> Generate new data!", action = generateData)
     colB.showTab(0)
 
     Label(colB3, "Choose a theme:")

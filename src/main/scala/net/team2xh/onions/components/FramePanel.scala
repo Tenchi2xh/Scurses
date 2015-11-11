@@ -62,22 +62,29 @@ case class FramePanel(parent: Component)
   def addTab(): Unit = {
     tabs += ((ListBuffer[Widget](), 0))
     currentTab = tabs.length - 1
-    widgets.foreach(_.needsRedraw = true)
+    updateTab()
   }
 
   def nextTab(): Unit = {
     currentTab = (currentTab + 1) % tabs.length
-    widgets.foreach(_.needsRedraw = true)
+    updateTab()
   }
 
   def previousTab(): Unit = {
     currentTab = (currentTab - 1 + tabs.length) % tabs.length
-    widgets.foreach(_.needsRedraw = true)
+    updateTab()
   }
 
   def showTab(n: Int): Unit = {
     currentTab = (n + tabs.length) % tabs.length
+    updateTab()
+  }
+
+  var needsClear = false
+
+  def updateTab(): Unit = {
     widgets.foreach(_.needsRedraw = true)
+    needsClear = true
   }
 
   private[components] def updateDimensions(newWidth: Int, newHeight: Int): Unit = {
@@ -254,6 +261,13 @@ case class FramePanel(parent: Component)
 
   private[FramePanel] def drawEdges(theme: ColorScheme): Unit = {
     propagateDraw(_.drawEdges(theme))
+
+    if (needsClear) {
+      for (y <- 1 to height - 1) {
+        screen.put(1, y, " " * (width - 2), background = theme.background)
+      }
+      needsClear = false
+    }
 
     // Vertical edges
     for (y <- 1 to height - 1) {
