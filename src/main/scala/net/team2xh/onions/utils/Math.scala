@@ -1,12 +1,26 @@
 package net.team2xh.onions.utils
 
 import scala.collection.mutable.ArrayBuffer
+import scala.language.implicitConversions
 
 object Math {
 
-  def aBitMoreThanMax(ns: Seq[Int]) = ns.max + math.pow(10, math.log10(ns.max / 10.0)).toInt
+  object ImplicitConversions {
+    implicit def intToNumber(int: Int): Number = new java.lang.Integer(int)
+    implicit def doubleToNumber(double: Double): Number = new java.lang.Double(double)
+    implicit def IntSeqToNumberSeq(seq: Seq[Int]): Seq[Number] = seq.map(new java.lang.Integer(_))
+    implicit def DoubleSeqToNumberSeq(seq: Seq[Double]): Seq[Number] = seq.map(new java.lang.Double(_))
+  }
 
-  def aBitLessThanMin(ns: Seq[Int]) = ns.min - math.pow(10, math.log10(ns.min.abs / 10.0)).toInt
+  implicit def ordering[A <: Number]: Ordering[A] = new Ordering[A] {
+    override def compare(x: A, y: A): Int = {
+      x.doubleValue().compareTo(y.doubleValue())
+    }
+  }
+
+  def aBitMoreThanMax(ns: Seq[Number]) = ns.max.intValue + math.pow(10, math.log10(ns.max.intValue / 10.0)).toInt
+
+  def aBitLessThanMin(ns: Seq[Number]) = ns.min.intValue - math.pow(10, math.log10(ns.min.intValue.abs / 10.0)).toInt
 
   val `√2π` = math.sqrt(2 * math.Pi)
 

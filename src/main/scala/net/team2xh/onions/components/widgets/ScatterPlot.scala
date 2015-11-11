@@ -2,9 +2,10 @@ package net.team2xh.onions.components.widgets
 
 import net.team2xh.onions.Symbols
 import net.team2xh.onions.Themes.ColorScheme
-import net.team2xh.onions.components.{Widget, FramePanel}
-import net.team2xh.onions.utils.{Drawing, Varying, Math}
-import net.team2xh.scurses.{Colors, Scurses}
+import net.team2xh.onions.components.{FramePanel, Widget}
+import net.team2xh.onions.utils.Math.ImplicitConversions._
+import net.team2xh.onions.utils.{Drawing, Math, Varying}
+import net.team2xh.scurses.Scurses
 
 import scala.collection.mutable
 

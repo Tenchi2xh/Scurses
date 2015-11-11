@@ -2,9 +2,11 @@ package net.team2xh.onions.components.widgets
 
 import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.onions.components.{FramePanel, Widget}
+import net.team2xh.onions.utils.Math.ImplicitConversions._
 import net.team2xh.onions.utils.{Drawing, Math, Varying}
 import net.team2xh.onions.{Palettes, Symbols}
 import net.team2xh.scurses.Scurses
+
 
 /**
  * Widget that displays a horizontal bar chart, given a sequence of values.
