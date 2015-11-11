@@ -412,7 +412,7 @@ case class FramePanel(parent: Component)
   def drawWidgets(theme: ColorScheme): Unit = {
     propagateDraw(_.drawWidgets(theme))
 
-    screen.clip(width, height)
+    screen.clip(width, height - 1)
     var y = 2
     var heightChanged = false
     for ((widget, i) <- widgets.zipWithIndex) {
