@@ -47,6 +47,8 @@ case class FramePanel(parent: Component)
 
   var focus = false
 
+  var redrawBorders = true
+
   var currentTab = 0
   var tabs = mutable.MutableList[(ListBuffer[Widget], Int)]((ListBuffer[Widget](), 0))
 
@@ -168,6 +170,7 @@ case class FramePanel(parent: Component)
 
   def markAllForRedraw(): Unit = {
     getTreeWalk.foreach { panel =>
+      panel.redrawBorders = true
       panel.widgets.foreach(_.needsRedraw = true)
     }
   }
@@ -376,12 +379,27 @@ case class FramePanel(parent: Component)
     screen.put(width - 1 - line.length, 0, line, foreground = theme.accent2, background = theme.background)
   }
 
+  private[FramePanel] def fillBoxes(theme: ColorScheme): Unit = {
+    propagateDraw(_.fillBoxes(theme))
+
+    if (needsClear) {
+      for (y <- 1 to height - 1) {
+        screen.put(1, y, " " * (width - 2), background = theme.background)
+      }
+      needsClear = false
+    }
+  }
+
   def redraw(theme: ColorScheme): Unit = {
     updateDimensions(parent.innerWidth, parent.innerHeight)
 
-    drawEdges(theme)
-    drawCorners(theme)
-    drawTitles(theme)
+    fillBoxes(theme)
+    if (redrawBorders) {
+      drawEdges(theme)
+      drawCorners(theme)
+      drawTitles(theme)
+      redrawBorders = false
+    }
     drawWidgets(theme)
   }
 
