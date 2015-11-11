@@ -1,12 +1,14 @@
 package net.team2xh.onions.components.widgets
 
+import java.text.DecimalFormat
+
 import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.onions.components.{FramePanel, Widget}
-import net.team2xh.onions.utils.Math.ImplicitConversions._
 import net.team2xh.onions.utils.{Drawing, Math, Varying}
 import net.team2xh.onions.{Palettes, Symbols}
 import net.team2xh.scurses.Scurses
 
+import scala.Numeric.Implicits._
 
 /**
  * Widget that displays a horizontal bar chart, given a sequence of values.
@@ -21,19 +23,16 @@ import net.team2xh.scurses.Scurses
  * @param showValues Enables the display of the axis values
  * @param screen     Implicit Scurses screen
  */
-case class BarChart(parent: FramePanel,
-                    values: Varying[Seq[Int]],
-                    labels: Seq[String] = Seq(),
-                    min: Int = -1,
-                    max: Int = -1,
-                    palette: Seq[Int] = Palettes.default,
-                    showLabels: Boolean = true,
-                    showValues: Boolean = true)
-                   (implicit screen: Scurses) extends Widget(parent, values) {
+case class BarChart[T: Numeric](parent: FramePanel, values: Varying[Seq[T]], labels: Seq[String] = Seq(),
+                                min: Int = -1, max: Int = -1, palette: Seq[Int] = Palettes.default,
+                                showLabels: Boolean = true, showValues: Boolean = true)
+                               (implicit screen: Scurses) extends Widget(parent, values) {
 
   val gridWidth = 4
   override def focusable: Boolean = false
   override def innerHeight: Int = parent.innerHeight - 3
+
+  val df = new DecimalFormat("#.#")
 
   override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     val vs = values.value
@@ -62,19 +61,23 @@ case class BarChart(parent: FramePanel,
     val spaceTop = (graphHeight - (vs.length - 1) * spacing - 1) / 2
     val zero = math.floor(((0 - valueMin) * graphWidth.toDouble) / (valueMax - valueMin)).toInt
     for ((y, i) <- (spaceTop until spaceTop + vs.length * spacing by spacing).zipWithIndex) {
-      val length = math.floor(((vs(i) - valueMin) * graphWidth.toDouble) / (valueMax - valueMin)).toInt
+      val length = math.round(((vs(i).toDouble - valueMin) * graphWidth) / (valueMax - valueMin)).toInt
       // Draw the bars themselves
-      if (vs(i) >= 0) {
+      if (vs(i).toDouble >= 0) {
         screen.put(zero, 1 + y, Symbols.BLOCK_RIGHT + Symbols.BLOCK * (length-zero) + Symbols.BLOCK_LEFT,
           foreground = palette(i % palette.length), background = theme.background)
       } else {
-        screen.put(zero - length - 1, 1 + y, Symbols.BLOCK_RIGHT + Symbols.BLOCK * length + Symbols.BLOCK_LEFT,
+        screen.put(length - 1, 1 + y, Symbols.BLOCK_RIGHT + Symbols.BLOCK * (zero-length) + Symbols.BLOCK_LEFT,
           foreground = palette(i % palette.length), background = theme.background)
       }
       // Draw values
-      val valuePos = if (vs(i) >= 0) length + 2 else zero + 1
+      val valuePos = if (vs(i).toInt >= 0) length + 2 else zero + 1
+      val text = vs(i) match {
+        case _: Double => df.format(vs(i).toDouble)
+        case _: Int => vs(i).toString
+      }
       if (showValues)
-        screen.put(valuePos, 1 + y, vs(i).toString, foreground = theme.foreground, background = theme.background)
+        screen.put(valuePos, 1 + y, text, foreground = theme.foreground, background = theme.background)
 
     }
     // Draw legends

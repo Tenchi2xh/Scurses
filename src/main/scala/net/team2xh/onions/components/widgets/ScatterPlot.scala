@@ -3,16 +3,16 @@ package net.team2xh.onions.components.widgets
 import net.team2xh.onions.Symbols
 import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.onions.components.{FramePanel, Widget}
-import net.team2xh.onions.utils.Math.ImplicitConversions._
 import net.team2xh.onions.utils.{Drawing, Math, Varying}
 import net.team2xh.scurses.Scurses
 
+import scala.Numeric.Implicits._
 import scala.collection.mutable
 
-case class ScatterPlot(parent: FramePanel, values: Varying[Seq[(Int, Int)]],
-                  labelX: String = "", labelY: String = "",
-                  color: Int = 81, showLabels: Boolean = true)
-                 (implicit screen: Scurses) extends Widget(parent, values) {
+case class ScatterPlot[T: Numeric](parent: FramePanel, values: Varying[Seq[(T, T)]],
+                                   labelX: String = "", labelY: String = "",
+                                   color: Int = 81, showLabels: Boolean = true)
+                                  (implicit screen: Scurses) extends Widget(parent, values) {
 
   val gridSize = 4
 
@@ -45,10 +45,10 @@ case class ScatterPlot(parent: FramePanel, values: Varying[Seq[(Int, Int)]],
     val points = mutable.MutableList.fill[Int](graphWidth+1, graphHeight+1)(0)
     val charHeight = maxY.toDouble / graphHeight
     for (value <- values.value) {
-      val nx = math.round((graphWidth.toDouble * (value._1 - minX)) / (maxX - minX)).toInt
-      val ny = graphHeight - math.round((graphHeight.toDouble * (value._2 - minY)) / (maxY - minY)).toInt
+      val nx = math.round((graphWidth * (value._1.toDouble - minX)) / (maxX - minX)).toInt
+      val ny = graphHeight - math.round((graphHeight * (value._2.toDouble - minY)) / (maxY - minY)).toInt
       val point = points(nx)(ny)
-      val isLower = if ((value._2 % charHeight) < (charHeight / 2.0)) 1 else 2
+      val isLower = if ((math.round(value._2.toDouble).toInt % charHeight) < (charHeight / 2.0)) 1 else 2
       points(nx).update(ny, point | isLower)
     }
     // Plot values

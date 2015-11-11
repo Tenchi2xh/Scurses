@@ -17,7 +17,7 @@ object ExampleUI extends App {
   val r = Random
   
   // Fake data for plots
-  val values_1d_1 = Seq(15, 11, 2, 20, 8, 7, 4)
+  val values_1d_1 = Seq(15.7, 11.2, 2.4, 20.7, 8.2, 7.1, 4.4)
   val values_1d_2 = Seq(15, -11, -2, 20, -8, 7, 4,
                         10, 2, 13, -5, -8, 3, -15)
   var values_2d_1: Varying[Seq[(Int, Int)]] = Seq()
@@ -28,8 +28,8 @@ object ExampleUI extends App {
       (x, y max 0)
     })
   val values_2d_2 = (-50 to 50) map (x => {
-    val y = math.round(0.04*math.pow(x, 2)).toInt
-    (x, y)
+    val y = 0.04 * math.pow(x, 2)
+    (x.toDouble, y)
   })
   generateData()
 
@@ -119,10 +119,10 @@ object ExampleUI extends App {
     val hm2 = HeatMap(colC, values_2d_2, "Price", "Popularity")
     colC.addTab()
     val bars = BarChart(colC, values_1d_1, labels = Lorem.Ipsum.split(' '),
-                        palette = Palettes.rainbow, min = 0, max = 24)
+                        palette = Palettes.rainbow, min = 0, max = 26)
     colC.addTab()
     val bars2 = BarChart(colC, values_1d_2, labels = Lorem.Ipsum.split(' '),
-      palette = Palettes.default, min = -24, max = 24)
+      palette = Palettes.default, min = -18, max = 26)
     colC.showTab(3)
 
     colB2.title = "Histogram"
@@ -148,7 +148,7 @@ object ExampleUI extends App {
       override def run(): Unit = {
         val column = if (s % 2 == 0) ":" else " "
         ss.text := "%02d%s%02d".format(s / 60, column, s % 60)
-        bars.values := values_1d_1.map(n => n + r.nextInt(5) - 2)
+        bars.values := values_1d_1.map(n => n + r.nextDouble()*4 - 2)
         bars2.values := values_1d_2.map(n => n + r.nextInt(5) - 2)
         s += 1
       }

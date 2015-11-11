@@ -3,15 +3,16 @@ package net.team2xh.onions.components.widgets
 import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.onions.components.{FramePanel, Widget}
 import net.team2xh.onions.utils.Math.GaussianArray
-import net.team2xh.onions.utils.Math.ImplicitConversions._
 import net.team2xh.onions.utils.{Drawing, Math, Varying}
 import net.team2xh.onions.{Palettes, Symbols}
 import net.team2xh.scurses.Scurses
 
-case class HeatMap(parent: FramePanel, values: Varying[Seq[(Int, Int)]],
-                   labelX: String = "", labelY: String = "",
-                   radius: Varying[Int] = 3, showLabels: Boolean = false)
-                  (implicit screen: Scurses) extends Widget(parent, values, radius) {
+import scala.Numeric.Implicits._
+
+case class HeatMap[T: Numeric](parent: FramePanel, values: Varying[Seq[(T, T)]],
+                               labelX: String = "", labelY: String = "",
+                               radius: Varying[Int] = 3, showLabels: Boolean = false)
+                              (implicit screen: Scurses) extends Widget(parent, values, radius) {
 
   val gridSize = 8
 
@@ -45,8 +46,8 @@ case class HeatMap(parent: FramePanel, values: Varying[Seq[(Int, Int)]],
     val dh = graphHeight * 2
     val array = GaussianArray(graphWidth, dh + 2, kernelRadius = radius.value)
     for (value <- values.value) {
-      val nx = math.round((graphWidth.toDouble * (value._1 - minX)) / (maxX - minX)).toInt
-      val ny = dh - math.round((dh.toDouble * (value._2 - minY)) / (maxY - minY)).toInt
+      val nx = math.round((graphWidth * (value._1.toDouble - minX)) / (maxX - minX)).toInt
+      val ny = dh - math.round((dh * (value._2.toDouble - minY)) / (maxY - minY)).toInt
       array.add(nx, ny)
     }
     // then take min/max of everything and draw colors

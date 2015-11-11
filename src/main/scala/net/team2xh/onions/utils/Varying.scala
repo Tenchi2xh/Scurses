@@ -8,11 +8,11 @@ import scala.language.implicitConversions
 object Varying {
   implicit def stringToVarying(value: String): Varying[String] = new Varying(value)
   implicit def richTextToVarying(value: RichText): Varying[RichText] = new Varying(value)
-  implicit def intToVarying(value: Int): Varying[Int] = new Varying(value)
+  implicit def numericToVarying[T: Numeric](value: T): Varying[T] = new Varying(value)
   implicit def booleanToVarying(value: Boolean): Varying[Boolean] = new Varying(value)
   implicit def colorSchemeToVarying(value: ColorScheme): Varying[ColorScheme] = new Varying(value)
-  implicit def seqIntToVarying(values: Seq[Int]): Varying[Seq[Int]] = new Varying(values)
-  implicit def seqTupleIntsToVarying(values: Seq[(Int, Int)]): Varying[Seq[(Int, Int)]] = new Varying(values)
+  implicit def seqNumericToVarying[T: Numeric](values: Seq[T]): Varying[Seq[T]] = new Varying(values)
+  implicit def seqTuple2NumericToVarying[T: Numeric](values: Seq[(T, T)]): Varying[Seq[(T, T)]] = new Varying(values)
 
   def from[T](varying: Varying[T], initial: T, result: T => T): Varying[T] = new Varying[T](initial) {
     varying.subscribe(() => {
