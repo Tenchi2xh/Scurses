@@ -24,7 +24,8 @@ import scala.Numeric.Implicits._
  * @param screen     Implicit Scurses screen
  */
 case class BarChart[T: Numeric](parent: FramePanel, values: Varying[Seq[T]], labels: Seq[String] = Seq(),
-                                min: Int = -1, max: Int = -1, palette: Seq[Int] = Palettes.default,
+                                min: Option[Int] = None, max: Option[Int] = None,
+                                palette: Seq[Int] = Palettes.default,
                                 showLabels: Boolean = true, showValues: Boolean = true)
                                (implicit screen: Scurses) extends Widget(parent, values) {
 
@@ -43,16 +44,8 @@ case class BarChart[T: Numeric](parent: FramePanel, values: Varying[Seq[T]], lab
     // Width of the chart itself
     val graphWidth = if (showLabels) innerWidth - labelLength - 4 else innerWidth - 1
     val graphHeight = innerHeight - 2
-    val valueMin =
-      if (min == -1)
-        Math.aBitLessThanMin(vs)
-      else
-        min
-    val valueMax =
-      if (max == -1)
-        Math.aBitMoreThanMax(vs)
-      else
-        max
+    val valueMin = min.getOrElse(Math.aBitLessThanMin(vs))
+    val valueMax = max.getOrElse(Math.aBitMoreThanMax(vs))
     // Draw grid
     Drawing.drawGrid(0, 0, graphWidth, graphHeight, gridWidth, theme.accent1, theme.background,
                      showVertical = true, showHorizontal = false)

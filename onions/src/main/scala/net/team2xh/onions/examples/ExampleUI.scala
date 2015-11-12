@@ -87,7 +87,7 @@ object ExampleUI extends App {
     BitMap(colB, "/onions/src/main/scala/net/team2xh/onions/examples/logo.png", relative = true)
     Separator(colB)
     Label(colB, "Heat maps blur radius:")
-    val slider = Slider(colB, 1, 10)(3)
+    val slider = Slider(colB, 1, 10)(5)
     Label(colB, "> Generate new data!", action = generateData)
     colB.showTab(0)
 
@@ -119,13 +119,14 @@ object ExampleUI extends App {
     val hm2 = HeatMap(colC, values_2d_2, "Price", "Popularity")
     colC.addTab()
     val bars = BarChart(colC, values_1d_1, labels = Lorem.Ipsum.split(' '),
-                        palette = Palettes.rainbow, min = 0, max = 26)
+                        palette = Palettes.rainbow, min = Some(0), max = Some(26))
     colC.addTab()
     val bars2 = BarChart(colC, values_1d_2, labels = Lorem.Ipsum.split(' '),
-      palette = Palettes.default, min = -18, max = 26)
+      palette = Palettes.default, min = Some(-18), max = Some(26))
     colC.showTab(3)
 
     colB2.title = "Histogram"
+    val h = Histogram[Double](colB2, labelY = "hits/s", min = Some(0), max = Some(10))
 
     colC2.title = "Graphs B"
 
@@ -143,6 +144,8 @@ object ExampleUI extends App {
       hm2.radius := slider.currentValue.value
     }
 
+    var hValue = 0.0
+
     clockTimer.scheduleAtFixedRate(new TimerTask {
       var s = 1
       override def run(): Unit = {
@@ -150,7 +153,11 @@ object ExampleUI extends App {
         ss.text := "%02d%s%02d".format(s / 60, column, s % 60)
         bars.values := values_1d_1.map(n => n + r.nextDouble()*4 - 2)
         bars2.values := values_1d_2.map(n => n + r.nextInt(5) - 2)
+        val direction = 0.8 * math.sin(s/7.0)
+        hValue = ((hValue + direction + 0.4 * r.nextGaussian()) min 10) max 0
+        h.push(hValue)
         s += 1
+        frame.redraw()
       }
     }, 1000, 1000)
     frame.show()

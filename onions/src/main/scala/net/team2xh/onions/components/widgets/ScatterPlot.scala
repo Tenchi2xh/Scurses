@@ -43,7 +43,7 @@ case class ScatterPlot[T: Numeric](parent: FramePanel, values: Varying[Seq[(T, T
 
     // Prepare values (we use half vertical resolution)
     val points = mutable.MutableList.fill[Int](graphWidth+1, graphHeight+1)(0)
-    val charHeight = maxY.toDouble / graphHeight
+    val charHeight = (maxY - minY).toDouble / graphHeight
     for (value <- values.value) {
       val nx = math.round((graphWidth * (value._1.toDouble - minX)) / (maxX - minX)).toInt
       val ny = graphHeight - math.round((graphHeight * (value._2.toDouble - minY)) / (maxY - minY)).toInt

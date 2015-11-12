@@ -11,7 +11,7 @@ import scala.Numeric.Implicits._
 
 case class HeatMap[T: Numeric](parent: FramePanel, values: Varying[Seq[(T, T)]],
                                labelX: String = "", labelY: String = "",
-                               radius: Varying[Int] = 3, showLabels: Boolean = false)
+                               radius: Varying[Int] = 5, showLabels: Boolean = false)
                               (implicit screen: Scurses) extends Widget(parent, values, radius) {
 
   val gridSize = 8
@@ -55,8 +55,8 @@ case class HeatMap[T: Numeric](parent: FramePanel, values: Varying[Seq[(T, T)]],
     for (x <- 0 until graphWidth; y <- 0 to dh by 2) {
       val v1 = array(x, y)
       val v2 = if (y != dh + 1) array(x, y + 1) else -1
-      val c1 = Palettes.mapToPalette(max - v1, max, Palettes.rainbow)
-      val c2 = if (v2 != -1) Palettes.mapToPalette(max - v2, max, Palettes.rainbow) else -1
+      val c1 = Palettes.mapToRGB(v1, max, quadratic = true)
+      val c2 = if (v2 != -1) Palettes.mapToRGB(v2, max, quadratic = true) else -1
       screen.put(x0 + x, y / 2, Symbols.BLOCK_UPPER, c1, c2)
     }
   }

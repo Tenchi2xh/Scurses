@@ -13,7 +13,6 @@ abstract class Widget(parent: FramePanel, values: Varying[_] *)
   for (value <- values)
     value.subscribe(() => {
       needsRedraw = true
-      topLevel.redraw()
     })
 
   def focusable: Boolean

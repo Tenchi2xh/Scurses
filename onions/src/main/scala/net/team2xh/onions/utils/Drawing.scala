@@ -44,11 +44,13 @@ object Drawing {
 
   def drawGrid(x0: Int, y0: Int, w: Int, h: Int, gridWidth: Int,
                fg: Int, bg: Int, showVertical: Boolean = true,
-               showHorizontal: Boolean = true)(implicit screen: Scurses): Unit = {
+               showHorizontal: Boolean = true,
+               gridOffsetX: Int = 0, gridOffsetY: Int = 0)
+              (implicit screen: Scurses): Unit = {
 
     val gridHeight = gridWidth / 2
-    val horizontalPositions = x0 + gridWidth until x0 + w by gridWidth
-    val verticalPositions = y0 + gridHeight until y0 + h by gridHeight
+    val horizontalPositions = (x0 + (gridOffsetX + gridWidth) % gridWidth until x0 + w by gridWidth).filter(_ != x0)
+    val verticalPositions = (y0 + (gridOffsetY + gridHeight) % gridHeight until y0 + h by gridHeight).filter(_ != y0)
     // Corners
     screen.put(x0, y0, Symbols.TLC_S_TO_S, fg, bg)
     screen.put(x0 + w, y0, Symbols.TRC_S_TO_S, fg, bg)
@@ -74,8 +76,8 @@ object Drawing {
       for (x <- x0 + 1 until x0 + w; y <- verticalPositions)
         screen.put(x, y, Symbols.SH, fg, bg)
     if (showHorizontal && showVertical)
-      for (x <- x0 + gridWidth until x0 + w by gridWidth;
-           y <- y0 + gridHeight until y0 + h by gridHeight)
+      for (x <- horizontalPositions;
+           y <- verticalPositions)
         screen.put(x, y, Symbols.SH_X_SV, fg, bg)
   }
 
