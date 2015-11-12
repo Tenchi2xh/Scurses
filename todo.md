@@ -29,14 +29,20 @@
 - [x] Generalize graph grid + legends
 - [x] Only redraw needed
 - [x] Detect height changes -> request redraw
+- [x] Make all plot types handle floats
 - [ ] `split()` version with weight
 - [ ] Scrollbars for long content
 - [ ] Support multiple sets of values in scatter plot
-- [ ] Make all plot types handle floats
 - [ ] Generalize plot coordinate helpers
 - [ ] Convert current things to RichText
 - [ ] Handle out of bound values for plots
-- [ ] Fixed width column mode that puts exceeding widgets on a new column
+- [ ] Transition from FramePanel to SplitLayout
+    - Inherit from new Layout class with markAll, redraw
+    - ColumnLayout
+    - AbsoluteLayout
+- [ ] In widget `draw()`, compute all lengths first to determine if enough room
+    -> Display "Not enough room"
+- [ ] Graph widgets have optional height parameter
 - Widgets:
     - [x] Bar graph
     - [x] Big text display
