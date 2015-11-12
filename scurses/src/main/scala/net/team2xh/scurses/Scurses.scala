@@ -3,7 +3,6 @@ package net.team2xh.scurses
 import java.io.BufferedOutputStream
 import java.util.{TimerTask, Timer}
 
-import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.scurses.RichText._
 import sun.misc.{SignalHandler, Signal}
 
@@ -74,12 +73,12 @@ class Scurses {
     ec.stopBackground()
   }
 
-  def put(x: Int, y: Int, richText: RichText, theme: ColorScheme): Unit = {
+  def putRichText(x: Int, y: Int, richText: RichText, foreground: Int = -1, background: Int = -1): Unit = {
     if (outOfBounds(x, y))
       return
     ec.move(x + offsetX, y + offsetY)
-    if (theme.foreground >= 0) ec.setForeground(theme.foreground)
-    if (theme.background >= 0) ec.setBackground(theme.background)
+    if (foreground >= 0) ec.setForeground(foreground)
+    if (background >= 0) ec.setBackground(background)
     for (instruction <- richText.instructions) {
       instruction match {
         case Text(text) => out.write(text.getBytes)
@@ -106,8 +105,8 @@ class Scurses {
           case Underline  => ec.stopUnderline()
           case Blink      => ec.stopBlink()
           case Reverse    => ec.stopReverse()
-          case Foreground => if (theme.foreground >= 0) ec.setForeground(theme.foreground)
-          case Background => if (theme.background >= 0) ec.setBackground(theme.background)
+          case Foreground => if (foreground >= 0) ec.setForeground(foreground)
+          case Background => if (background >= 0) ec.setBackground(background)
           case _ =>
         }
         case ResetAttributes => ec.resetColors()

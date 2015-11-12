@@ -84,7 +84,7 @@ object ExampleUI extends App {
       big.color := color
     }
     colB.addTab()
-    BitMap(colB, "/src/main/scala/net/team2xh/onions/examples/logo.png", relative = true)
+    BitMap(colB, "/onions/src/main/scala/net/team2xh/onions/examples/logo.png", relative = true)
     Separator(colB)
     Label(colB, "Heat maps blur radius:")
     val slider = Slider(colB, 1, 10)(3)

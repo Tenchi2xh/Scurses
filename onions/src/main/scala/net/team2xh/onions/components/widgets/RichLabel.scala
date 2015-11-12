@@ -14,7 +14,7 @@ case class RichLabel(parent: FramePanel, text: Varying[RichText])
   override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
     lines = TextWrap.wrapText(text.value, innerWidth - 1)
     for ((line, i) <- lines.zipWithIndex) {
-      screen.put(1, i, lines(i), theme)
+      screen.putRichText(1, i, lines(i), theme.foreground, theme.background)
     }
   }
 

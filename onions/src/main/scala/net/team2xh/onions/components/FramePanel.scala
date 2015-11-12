@@ -351,9 +351,9 @@ case class FramePanel(parent: Component)
       else " " + ts
 
     if (title != "") {
-      screen.put(2, 0, r"[[$title$tabText]", theme)
+      screen.putRichText(2, 0, r"[[$title$tabText]", theme.foreground, theme.background)
     } else if (tabText != "") {
-      screen.put(2, 0, r"[[$tabText]", theme)
+      screen.putRichText(2, 0, r"[[$tabText]", theme.foreground, theme.background)
     }
   }
 

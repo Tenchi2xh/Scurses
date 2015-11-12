@@ -8,22 +8,21 @@ Terminal drawing API for Scala
 
 - Hello World:
 
-  ```R
-  $ sbt
-  > run net.team2xh.scurses.examples.HelloWorld
-  ```
+```R
+$ sbt "scurses/run-main net.team2xh.scurses.examples.HelloWorld"
+```
+  
 - Game of life:
 
-  ```R
-  $ sbt
-  > run net.teamx2h.scurses.examples.GameOfLife
-  ```
+```R
+$ sbt scurses/run
+```
+  
 - Stress test:
 
-  ```R
-  $ sbt
-  > run net.teamx2h.scurses.examples.StressTest
-  ```
+```R
+$ sbt "scurses/run-main net.team2xh.scurses.examples.StressTest"
+```
 
 ### How to use
 
@@ -62,13 +61,10 @@ Scurses framework for easy terminal UI
 What's been done so far:
 
 ```R
-$ sbt
-> run net.teamx2h.onions.examples.ExampleUI
+$ sbt onions/run
 ```
 
 Goal is to provide an API full of widgets to make it really easy for users to quickly set up a dashboard to monitor their services in the terminal (graphs, histograms, logs, etc.)
-
-Currently taking "raw" input from keyboard with JLine, need to find something more powerful to grab inputs like ESC and key combinations, and also detect terminal resize.
 
 ### How to use
 
@@ -76,18 +72,50 @@ Currently taking "raw" input from keyboard with JLine, need to find something mo
 Scurses { implicit screen =>
   val frame = Frame("Example UI")
   // Three columns
-  val p1 = frame.panel
-  val p2 = p1.splitRight
-  val p3 = p2.splitRight
-  // Split second column in three rows (p2 will point to first row of second column)
-  val p22 = p2.splitDown
-  val p23 = p22.splitDown
-  // Split third row of second column into two columns (p23 will point to the first column of the two)
-  val p232 = p23.splitRight
+  val colA = frame.panel
+  val colB = colA.splitRight
+  val colC = colB.splitRight
+  // Split second column in three rows
+  val colB2 = colB.splitDown
+  val colB3 = colB2.splitDown
+  // Split third row of second column into two columns
+  val colB3B = colB3.splitRight
+  val colB3B2 = colB3B.splitDown
   // Split last column into two rows
-  val p32 = p3.splitDown
+  val colC2 = colC.splitDown
+
+  // Add a label in the first column
+  Label(colA, Lorem.Ipsum, TextWrap.JUSTIFY)
+  
+  val r = Random
+  val points = (1 to 50) map (i => {
+    val x = r.nextInt(40)
+    val y = 50 - x + (r.nextGaussian() * 5).toInt - 2
+    (x, y max 0)
+  })
+  
+  // Add a scatter plot in the first row of third column
+  ScatterPlot(colC, points, "Time", "Sales")
+  
+  // Show a heat map of the same values in the second row
+  HeatMap(colC2, points, "Time", "Sales")
 
   // Display and launch event loop
   frame.show()
 }
 ```
+
+For examples about all widgets, see `ExampleUI.scala`
+
+### Keyboard controls
+
+Keys | Action
+:---:|:------
+<kbd>↑</kbd> / <kbd>↓</kbd> | Focus next widget in direction / Focus next panel in direction
+<kbd>←</kbd> / <kbd>→</kbd> | Focus next panel in direction
+<kbd>⇥</kbd> / <kbd>⇧</kbd>+<kbd>⇥</kbd> | Focus next / previous panel
+<kbd>CTRL</kbd>+<kbd>SPACE</kbd> | Switch to next tab (if panel has multiple tabs)
+<kbd>SPACE</kbd> / <kbd>↵</kbd> | Activate label action, check radio or checkbox
+<kbd>&lt;</kbd> / <kbd>&gt;</kbd> | Move slider left / right (also with <kbd>SPACE</kbd> / <kbd>↵</kbd>)
+<kbd>ESC</kbd> / <kbd>CTRL</kbd>+<kbd>C</kbd> | Exit
+
