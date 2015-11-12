@@ -1,58 +1,14 @@
-# Scurses
+# Scurses / Onions
 
-Terminal drawing API for Scala
+[Scurses](#scurses) and [Onions](#onions) are frameworks for drawing nice things in your terminal using simple, elegant Scala. [Scurses](#scurses) provides a low-level drawing and event handling API while [Onions](#onions) provides a high-level UI API with useful widgets.
 
----
+## Onions
 
-### Examples
+High-level Scurses framework for easy terminal UI
 
-- Hello World:
-
-```R
-$ sbt "scurses/run-main net.team2xh.scurses.examples.HelloWorld"
-```
-  
-- Game of life:
-
-```R
-$ sbt scurses/run
-```
-  
-- Stress test:
-
-```R
-$ sbt "scurses/run-main net.team2xh.scurses.examples.StressTest"
-```
-
-### How to use
-
-```scala
-import net.team2xh.scurses.Scurses
-
-Scurses { screen =>
-  // The screen will only be in Scurses mode inside this block
-  // Scurses will reset the terminal buffer and everything when outside
-  
-  // Get the current terminal size
-  val (w, h) = screen.size
-  
-  val greeting = "Hello, world!"
-  val prompt = "Press a key to continue..."
-  // Put some strings in the middle of the screen
-  screen.put(w/2 - greeting.length/2, h/2, greeting)
-  screen.put(w/2 - prompt.length/2, h/2 + 1, prompt, Colors.BRIGHT_BLACK)
-  // Flush the buffer
-  screen.refresh()
-  // Wait for an input without storing it
-  screen.keypress()
-}
-```
-
----
-
-# Onions
-
-Scurses framework for easy terminal UI
+<img width="1354" alt="screen shot 2015-11-12 at 10 58 51" src="https://cloud.githubusercontent.com/assets/4116708/11115697/b6168e20-892d-11e5-9eff-c1277db6256b.png">
+<img width="1354" alt="screen shot 2015-11-12 at 10 59 11" src="https://cloud.githubusercontent.com/assets/4116708/11115699/b630847e-892d-11e5-8ef8-fb486f4e09c4.png">
+<img width="1354" alt="screen shot 2015-11-12 at 10 59 40" src="https://cloud.githubusercontent.com/assets/4116708/11115700/b633fc58-892d-11e5-9a38-84772ab5141c.png">
 
 ---
 
@@ -119,3 +75,55 @@ Keys | Action
 <kbd>&lt;</kbd> / <kbd>&gt;</kbd> | Move slider left / right (also with <kbd>SPACE</kbd> / <kbd>↵</kbd>)
 <kbd>ESC</kbd> / <kbd>CTRL</kbd>+<kbd>C</kbd> | Exit
 
+
+
+## Scurses
+
+Low-level terminal drawing API for Scala
+
+<img width="1354" alt="screen shot 2015-11-12 at 11 07 32" src="https://cloud.githubusercontent.com/assets/4116708/11115698/b62abd28-892d-11e5-9be7-9286674e4add.png">
+---
+
+### Examples
+
+- Hello World:
+
+```R
+$ sbt "scurses/run-main net.team2xh.scurses.examples.HelloWorld"
+```
+  
+- Game of life:
+
+```R
+$ sbt scurses/run
+```
+  
+- Stress test:
+
+```R
+$ sbt "scurses/run-main net.team2xh.scurses.examples.StressTest"
+```
+
+### How to use
+
+```scala
+import net.team2xh.scurses.Scurses
+
+Scurses { screen =>
+  // The screen will only be in Scurses mode inside this block
+  // Scurses will reset the terminal buffer and everything when outside
+  
+  // Get the current terminal size
+  val (w, h) = screen.size
+  
+  val greeting = "Hello, world!"
+  val prompt = "Press a key to continue..."
+  // Put some strings in the middle of the screen
+  screen.put(w/2 - greeting.length/2, h/2, greeting)
+  screen.put(w/2 - prompt.length/2, h/2 + 1, prompt, Colors.BRIGHT_BLACK)
+  // Flush the buffer
+  screen.refresh()
+  // Wait for an input without storing it
+  screen.keypress()
+}
+```
