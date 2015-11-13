@@ -20,6 +20,8 @@ What's been done so far:
 $ sbt onions/run
 ```
 
+Be sure that your terminal is resized big enough, scrolling is not supported yet.
+
 Goal is to provide an API full of widgets to make it really easy for users to quickly set up a dashboard to monitor their services in the terminal (graphs, histograms, logs, etc.)
 
 ### How to use
