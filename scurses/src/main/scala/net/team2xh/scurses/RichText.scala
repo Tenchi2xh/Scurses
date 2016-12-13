@@ -39,8 +39,8 @@ object RichText {
       val input = sc.s(args: _*)
       val result = richText.parse(input)
       result match {
-        case Result.Success(rt, _) => rt
-        case _: Result.Failure => RichText(Text(input))
+        case Parsed.Success(rt, _) => rt
+        case _: Parsed.Failure => RichText(Text(input))
       }
     }
   }
@@ -74,7 +74,7 @@ object RichText {
 
   private val name  = P( letter.rep(1).! )
   private val index = P( digit.rep(1).! ) map (_.toInt)
-  private val hex   = P( ("#" ~! hexDigit ~! hexDigit ~! hexDigit ~! hexDigit ~! hexDigit ~! hexDigit).! )
+  private val hex   = P( ("#" ~/ hexDigit ~/ hexDigit ~/ hexDigit ~/ hexDigit ~/ hexDigit ~/ hexDigit).! )
 
   private val bold       = P( "b" )  map (_ => Bold)
   private val underline  = P( "u" )  map (_ => Underline)
@@ -92,16 +92,16 @@ object RichText {
   private val color = P( namedColor | indexedColor | hexColor )
 
   private val startAttribute = P( attribute ) map StartAttribute
-  private val beginColor = P( ("fg" | "bg").! ~ ":" ~! color ) map {
+  private val beginColor = P( ("fg" | "bg").! ~ ":" ~/ color ) map {
     case ("fg", aColor) => StartAttribute(Foreground(aColor))
     case (_, aColor)    => StartAttribute(Background(aColor))
   }
-  private val stop = P( "/" ~! ("*".! | attribute) ) map {
+  private val stop = P( "/" ~/ ("*".! | attribute) ) map {
     case "*" => ResetAttributes
     case attr: Attribute => StopAttribute(attr)
   }
 
-  private val block = P( "[" ~! (beginColor | startAttribute | stop) ~! "]" )
+  private val block = P( "[" ~/ (beginColor | startAttribute | stop) ~/ "]" )
   private val escape = P( "[[".! ) map (_ => Text("["))
   private val text = P( CharsWhile(c => c != '[').! ) map Text
 
