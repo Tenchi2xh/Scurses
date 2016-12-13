@@ -17,7 +17,7 @@ lazy val scurses = (project in file("scurses"))
   .settings(commonSettings: _*)
   .settings(
     name := "Scurses",
-    libraryDependencies += "com.lihaoyi" %% "fastparse" % "0.2.1",
+    libraryDependencies += "com.lihaoyi" %% "fastparse" % "0.4.2",
     mainClass in (Compile, run) := Some("net.team2xh.scurses.examples.GameOfLife")
   )
 
