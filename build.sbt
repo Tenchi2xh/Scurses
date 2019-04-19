@@ -6,7 +6,8 @@ lazy val commonSettings: Seq[Setting[_]]  = Seq(
   scalaVersion := "2.12.8",
   scalacOptions ++= Seq("-feature", "-unchecked"),
   organization := "net.team2xh",
-  publishTo := sonatypePublishTo.value
+  publishTo := sonatypePublishTo.value,
+  useGpg := true
 )
 
 lazy val root = (project in file("."))
@@ -18,7 +19,7 @@ lazy val scurses = (project in file("scurses"))
   .settings(commonSettings: _*)
   .settings(
     name := "scurses",
-    version := "1.0.0-SNAPSHOT",
+    version := "1.0.0",
     libraryDependencies += "com.lihaoyi" %% "fastparse" % "2.1.0",
     mainClass in (Compile, run) := Some("net.team2xh.scurses.examples.GameOfLife")
   )
@@ -28,6 +29,6 @@ lazy val onions = (project in file("onions"))
   .dependsOn(scurses)
   .settings(
     name := "onions",
-    version := "1.0.0-SNAPSHOT",
+    version := "1.0.0",
     mainClass in (Compile, run) := Some("net.team2xh.onions.examples.ExampleUI")
   )
