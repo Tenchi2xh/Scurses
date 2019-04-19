@@ -34,6 +34,7 @@
 - [ ] Scrollbars for long content
 - [ ] Support multiple sets of values in scatter plot
 - [ ] Generalize plot coordinate helpers
+    - MapTo function
 - [ ] Convert current things to RichText
 - [ ] Handle out of bound values for plots
 - [ ] Transition from FramePanel to SplitLayout
@@ -55,6 +56,8 @@
     - [x] Slider
     - [x] CheckBox
     - [x] Histogram
+    - [ ] Tab chooser widget
+    - [ ] Combo box
     - [ ] Progressbar, displays percentage
     - [ ] TextBox
         - Console, grabs stdout and stderr
