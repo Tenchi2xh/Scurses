@@ -5,7 +5,7 @@ import sbt._
 lazy val commonSettings: Seq[Setting[_]]  = Seq(
   name := "Scurses Project",
   version := "1.0",
-  scalaVersion := "2.11.7",
+  scalaVersion := "2.12.8",
   scalacOptions ++= Seq("-feature", "-unchecked")
 )
 
@@ -17,7 +17,7 @@ lazy val scurses = (project in file("scurses"))
   .settings(commonSettings: _*)
   .settings(
     name := "Scurses",
-    libraryDependencies += "com.lihaoyi" %% "fastparse" % "0.2.1",
+    libraryDependencies += "com.lihaoyi" %% "fastparse" % "2.1.0",
     mainClass in (Compile, run) := Some("net.team2xh.scurses.examples.GameOfLife")
   )
 
