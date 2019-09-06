@@ -4,7 +4,7 @@ import xerial.sbt.Sonatype._
 
 
 lazy val commonSettings: Seq[Setting[_]]  = Seq(
-  scalaVersion := "2.12.8",
+  scalaVersion := "2.13.0",
   scalacOptions ++= Seq("-feature", "-unchecked"),
   organization := "net.team2xh",
   publishTo := sonatypePublishTo.value,
@@ -28,7 +28,7 @@ lazy val scurses = (project in file("scurses"))
   .settings(
     name := "scurses",
     version := "1.0.1",
-    libraryDependencies += "com.lihaoyi" %% "fastparse" % "2.1.0",
+    libraryDependencies += "com.lihaoyi" %% "fastparse" % "2.1.3",
     mainClass in (Compile, run) := Some("net.team2xh.scurses.examples.GameOfLife")
   )
 
