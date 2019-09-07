@@ -51,7 +51,7 @@ case class FramePanel(parent: Component)
 
   var currentTab = 0
   var tabs =
-    mutable.MutableList[(ListBuffer[Widget], Int, ListBuffer[Int])]((ListBuffer[Widget](), 0, ListBuffer[Int]()))
+    mutable.ArrayDeque[(ListBuffer[Widget], Int, ListBuffer[Int])]((ListBuffer[Widget](), 0, ListBuffer[Int]()))
 
   def widgets = tabs(currentTab)._1
   def widgetFocus = tabs(currentTab)._2

@@ -122,7 +122,7 @@ libraryDependencies += "net.team2xh" %% "scurses" % "<version in the badge>"
 - Hello World:
 
 ```R
-$ sbt "scurses/run-main net.team2xh.scurses.examples.HelloWorld"
+$ sbt "scurses/runMain net.team2xh.scurses.examples.HelloWorld"
 ```
   
 - Game of life:
@@ -134,7 +134,7 @@ $ sbt scurses/run
 - Stress test:
 
 ```R
-$ sbt "scurses/run-main net.team2xh.scurses.examples.StressTest"
+$ sbt "scurses/runMain net.team2xh.scurses.examples.StressTest"
 ```
 
 ## How to use

@@ -12,7 +12,7 @@ case class RichLabel(parent: FramePanel, text: Varying[RichText])
   var lines = Seq[RichText]()
 
   override def redraw(focus: Boolean, theme: ColorScheme): Unit = {
-    lines = TextWrap.wrapText(text.value, innerWidth - 1)
+    lines = TextWrap.wrapText(text.value, innerWidth - 1).toSeq
     for ((line, i) <- lines.zipWithIndex) {
       screen.putRichText(1, i, lines(i), theme.foreground, theme.background)
     }

@@ -12,9 +12,9 @@ import java.io.OutputStream
 class EscapeCodes(out: OutputStream) {
 
   // Output an Escape Sequence
-  private def ESC(command: Char) { out.write(s"\033$command".getBytes) }
+  private def ESC(command: Char) { out.write(s"\u001b$command".getBytes) }
   // Output a Control Sequence Inroducer
-  private def CSI(sequence: String) { out.write(s"\033[$sequence".getBytes) }
+  private def CSI(sequence: String) { out.write(s"\u001b[$sequence".getBytes) }
   // Execute commands
   private def CSI(command: Char) { CSI(s"$command") }
   private def CSI(n: Int, command: Char) { CSI(s"$n$command") }
