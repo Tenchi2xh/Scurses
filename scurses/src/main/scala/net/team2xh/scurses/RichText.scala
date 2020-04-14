@@ -32,7 +32,7 @@ import NoWhitespace._
  *   [/*]       Stop all
  *
  * Tags don't have to be closed
- */*/
+ */
 object RichText {
 
   implicit class RichTextHelper(val sc: StringContext) extends AnyVal {
