@@ -2,6 +2,7 @@ package net.team2xh.scurses
 
 import java.io.BufferedOutputStream
 import java.util.{TimerTask, Timer}
+import java.util.concurrent.atomic.AtomicInteger
 
 import net.team2xh.scurses.RichText._
 import sun.misc.{SignalHandler, Signal}
@@ -223,7 +224,7 @@ class Scurses {
     (width, height)
   }
 
-  var resizesInProgress = 0
+  val resizesInProgress = new AtomicInteger(0)
   /**
    * Prepares the terminal screen for Scurses
    */
@@ -231,14 +232,13 @@ class Scurses {
     System.setProperty("java.awt.headless", "true")
     Signal.handle(new Signal("WINCH"), new SignalHandler {
       override def handle(signal: Signal): Unit = {
-        Scurses.this.synchronized { resizesInProgress += 1 }
+        resizesInProgress.incrementAndGet()
         new Timer().schedule(new TimerTask {
           override def run(): Unit = {
-            if (resizesInProgress == 1) {
+            if (resizesInProgress.decrementAndGet() == 0) {
               ec.status()
               out.flush()
             }
-            Scurses.this.synchronized { resizesInProgress -= 1 }
           }
         }, 100)
       }
