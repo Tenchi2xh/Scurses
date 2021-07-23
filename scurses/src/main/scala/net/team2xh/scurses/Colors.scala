@@ -4,16 +4,16 @@ import java.awt.Color
 
 object Colors {
   // Color codes
-  val DIM_BLACK      =  0
-  val DIM_RED        =  1
-  val DIM_GREEN      =  2
-  val DIM_YELLOW     =  3
-  val DIM_BLUE       =  4
-  val DIM_MAGENTA    =  5
-  val DIM_CYAN       =  6
-  val DIM_WHITE      =  7
-  val BRIGHT_BLACK   =  8
-  val BRIGHT_RED     =  9
+  val DIM_BLACK      = 0
+  val DIM_RED        = 1
+  val DIM_GREEN      = 2
+  val DIM_YELLOW     = 3
+  val DIM_BLUE       = 4
+  val DIM_MAGENTA    = 5
+  val DIM_CYAN       = 6
+  val DIM_WHITE      = 7
+  val BRIGHT_BLACK   = 8
+  val BRIGHT_RED     = 9
   val BRIGHT_GREEN   = 10
   val BRIGHT_YELLOW  = 11
   val BRIGHT_BLUE    = 12
@@ -49,9 +49,11 @@ object Colors {
     val h = if (hex(0) == '#') hex.tail else hex
     (Integer.parseInt("" + h(0) + h(1), 16),
      Integer.parseInt("" + h(2) + h(3), 16),
-     Integer.parseInt("" + h(4) + h(5), 16))
+     Integer.parseInt("" + h(4) + h(5), 16)
+    )
   }
 
+  // format: off
   private val xtermHex = Seq(
     "000000", "800000", "008000", "808000", "000080", "800080", "008080", "c0c0c0",
     "808080", "ff0000", "00ff00", "ffff00", "0000ff", "ff00ff", "00ffff", "ffffff",
@@ -85,6 +87,7 @@ object Colors {
     "080808", "121212", "1c1c1c", "262626", "303030", "3a3a3a", "444444", "4e4e4e",
     "585858", "606060", "666666", "767676", "808080", "8a8a8a", "949494", "9e9e9e",
     "a8a8a8", "b2b2b2", "bcbcbc", "c6c6c6", "d0d0d0", "dadada", "e4e4e4", "eeeeee")
+  // format: on
 
   private val xtermRGB = xtermHex map hexToRGB
 
@@ -92,7 +95,7 @@ object Colors {
     val x = a._1 - b._1
     val y = a._2 - b._2
     val z = a._3 - b._3
-    math.sqrt(x*x + y*y + z*z)
+    math.sqrt(x * x + y * y + z * z)
   }
 
 }

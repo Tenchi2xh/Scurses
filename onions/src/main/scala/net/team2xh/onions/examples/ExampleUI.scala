@@ -1,25 +1,23 @@
 package net.team2xh.onions.examples
 
-import java.util.{TimerTask, Timer}
-
-import net.team2xh.onions.{Palettes, Themes}
 import net.team2xh.onions.components.Frame
 import net.team2xh.onions.components.widgets._
-import net.team2xh.onions.utils.{Varying, Lorem, TextWrap}
-import net.team2xh.scurses.{Colors, Scurses}
+import net.team2xh.onions.utils.{Lorem, TextWrap, Varying}
+import net.team2xh.onions.{Palettes, Themes}
 import net.team2xh.scurses.RichText._
+import net.team2xh.scurses.{Colors, Scurses}
 
+import java.util.{Timer, TimerTask}
 import scala.util.Random
 
 object ExampleUI extends App {
 
   val clockTimer = new Timer()
-  val r = Random
-  
+  val r          = Random
+
   // Fake data for plots
-  val values_1d_1 = Seq(15.7, 11.2, 2.4, 20.7, 8.2, 7.1, 4.4)
-  val values_1d_2 = Seq(15, -11, -2, 20, -8, 7, 4,
-                        10, 2, 13, -5, -8, 3, -15)
+  val values_1d_1                           = Seq(15.7, 11.2, 2.4, 20.7, 8.2, 7.1, 4.4)
+  val values_1d_2                           = Seq(15, -11, -2, 20, -8, 7, 4, 10, 2, 13, -5, -8, 3, -15)
   var values_2d_1: Varying[Seq[(Int, Int)]] = Seq()
   def generateData(): Unit =
     values_2d_1 := (1 to 50) map (i => {
@@ -35,18 +33,17 @@ object ExampleUI extends App {
 
   Scurses { implicit screen =>
     implicit val debug = true
-    val frame = Frame(title = Some("Example Onions UI - Powered by Scurses"),
-                      debug = true, theme = Themes.default)
+    val frame          = Frame(title = Some("Example Onions UI - Powered by Scurses"), debug = true, theme = Themes.default)
 
     val colA = frame.panel
     val colB = colA.splitRight
     val colC = colB.splitRight
 
-    val colB2 = colB.splitDown
-    val colB3 = colB2.splitDown
-    val colB3B = colB3.splitRight
+    val colB2   = colB.splitDown
+    val colB3   = colB2.splitDown
+    val colB3B  = colB3.splitRight
     val colB3B2 = colB3B.splitDown
-    val colC2 = colC.splitDown
+    val colC2   = colC.splitDown
 
     colA.title = "Labels"
     Label(colA, "Left-aligned text: ")
@@ -65,13 +62,16 @@ object ExampleUI extends App {
     Separator(colA)
     Label(colA, Lorem.Ipsum, TextWrap.CENTER)
     Separator(colA)
-    RichLabel(colA, r"[b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] [b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] [b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] [b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] [b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] ")
+    RichLabel(
+      colA,
+      r"[b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] [b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] [b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] [b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] [b]Supports[/b] [u]rich[/u] [fg:#3366cc]text[/fg]! [bl]nice[/bl] "
+    )
 //    RichLabel(colA, r"${Lorem.Ipsum}")
 
     colB.title = "Misc. widgets"
     Label(colB, "Enter your name here:")
     val input = Input(colB, "Name")
-    val big = BigText(colB, Varying.from(input.text, "Your name", s => s"$s"))
+    val big   = BigText(colB, Varying.from(input.text, "Your name", s => s"$s"))
     Separator(colB)
     val radio = Radio(colB, Seq("Default", "Red", "Green", "Blue"))
     radio.subscribe { () =>
@@ -93,17 +93,17 @@ object ExampleUI extends App {
 
     Label(colB3, "Choose a theme:")
     val radio2 = Radio(colB3, Seq("Default", "Light", "MS-DOS"))
-    radio2.subscribe(() => {
+    radio2.subscribe { () =>
       frame.theme := (radio2.value match {
         case 0 => Themes.default
         case 1 => Themes.light
         case 2 => Themes.MSDOS
       })
-    })
+    }
     Separator(colB3)
     Label(colB3, "Debug mode:")
     val radio3 = Radio(colB3, Seq("On", "Off"))
-    radio3.subscribe{ () =>
+    radio3.subscribe { () =>
       frame.debug := (radio3.value match {
         case 0 => true
         case 1 => false
@@ -118,11 +118,21 @@ object ExampleUI extends App {
     colC.addTab()
     val hm2 = HeatMap(colC, values_2d_2, "Price", "Popularity")
     colC.addTab()
-    val bars = BarChart(colC, values_1d_1, labels = Lorem.Ipsum.split(' '),
-                        palette = Palettes.rainbow, min = Some(0), max = Some(26))
+    val bars = BarChart(colC,
+                        values_1d_1,
+                        labels = Lorem.Ipsum.split(' '),
+                        palette = Palettes.rainbow,
+                        min = Some(0),
+                        max = Some(26)
+    )
     colC.addTab()
-    val bars2 = BarChart(colC, values_1d_2, labels = Lorem.Ipsum.split(' '),
-      palette = Palettes.default, min = Some(-18), max = Some(26))
+    val bars2 = BarChart(colC,
+                         values_1d_2,
+                         labels = Lorem.Ipsum.split(' '),
+                         palette = Palettes.default,
+                         min = Some(-18),
+                         max = Some(26)
+    )
     colC.showTab(3)
 
     colB2.title = "Histogram"
@@ -146,20 +156,24 @@ object ExampleUI extends App {
 
     var hValue = 0.0
 
-    clockTimer.scheduleAtFixedRate(new TimerTask {
-      var s = 1
-      override def run(): Unit = {
-        val column = if (s % 2 == 0) ":" else " "
-        ss.text := "%02d%s%02d".format(s / 60, column, s % 60)
-        bars.values := values_1d_1.map(n => n + r.nextDouble()*4 - 2)
-        bars2.values := values_1d_2.map(n => n + r.nextInt(5) - 2)
-        val direction = 0.8 * math.sin(s/7.0)
-        hValue = ((hValue + direction + 0.4 * r.nextGaussian()) min 10) max 0
-        h.push(hValue)
-        s += 1
-        frame.redraw()
-      }
-    }, 1000, 1000)
+    clockTimer.scheduleAtFixedRate(
+      new TimerTask {
+        var s = 1
+        override def run(): Unit = {
+          val column = if (s % 2 == 0) ":" else " "
+          ss.text      := "%02d%s%02d".format(s / 60, column, s % 60)
+          bars.values  := values_1d_1.map(n => n + r.nextDouble() * 4 - 2)
+          bars2.values := values_1d_2.map(n => n + r.nextInt(5) - 2)
+          val direction = 0.8 * math.sin(s / 7.0)
+          hValue = ((hValue + direction + 0.4 * r.nextGaussian()) min 10) max 0
+          h.push(hValue)
+          s += 1
+          frame.redraw()
+        }
+      },
+      1000,
+      1000
+    )
     frame.show()
   }
 

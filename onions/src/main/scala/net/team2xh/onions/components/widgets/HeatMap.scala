@@ -9,10 +9,14 @@ import net.team2xh.scurses.Scurses
 
 import scala.Numeric.Implicits._
 
-case class HeatMap[T: Numeric](parent: FramePanel, values: Varying[Seq[(T, T)]],
-                               labelX: String = "", labelY: String = "",
-                               radius: Varying[Int] = 5, showLabels: Boolean = false)
-                              (implicit screen: Scurses) extends Widget(parent, values, radius) {
+case class HeatMap[T: Numeric](parent: FramePanel,
+                               values: Varying[Seq[(T, T)]],
+                               labelX: String = "",
+                               labelY: String = "",
+                               radius: Varying[Int] = 5,
+                               showLabels: Boolean = false
+)(implicit screen: Scurses)
+    extends Widget(parent, values, radius) {
 
   val gridSize = 8
 
@@ -25,15 +29,24 @@ case class HeatMap[T: Numeric](parent: FramePanel, values: Varying[Seq[(T, T)]],
     val minY = Math.aBitLessThanMin(ys)
 
     val valuesLength = maxY.toString.length max minY.toString.length
-    val x0 = valuesLength + (if (showLabels) 2 else 0)
-    val graphWidth = (if (showLabels) innerWidth - 2 else innerWidth) - valuesLength
-    val graphHeight = if (showLabels) innerHeight - 3 else innerHeight - 2
+    val x0           = valuesLength + (if (showLabels) 2 else 0)
+    val graphWidth   = (if (showLabels) innerWidth - 2 else innerWidth) - valuesLength
+    val graphHeight  = if (showLabels) innerHeight - 3 else innerHeight - 2
 
     // Draw grid
 //    Drawing.drawGrid(x0, 0, graphWidth, graphHeight, gridSize, theme.accent1, theme.background,
 //      showVertical = false, showHorizontal = false)
     // Draw axis values
-    Drawing.drawAxisValues(x0 - valuesLength, 0, graphHeight, gridSize, minY, maxY, theme.accent3, theme.background, horizontal = false)
+    Drawing.drawAxisValues(x0 - valuesLength,
+                           0,
+                           graphHeight,
+                           gridSize,
+                           minY,
+                           maxY,
+                           theme.accent3,
+                           theme.background,
+                           horizontal = false
+    )
     Drawing.drawAxisValues(x0, graphHeight + 1, graphWidth, gridSize, minX, maxX, theme.accent3, theme.background)
 
     // Draw labels
@@ -43,7 +56,7 @@ case class HeatMap[T: Numeric](parent: FramePanel, values: Varying[Seq[(T, T)]],
 
     // Prepare data
     // for each point of data, put a gaussian on the 2d array around its coordinate
-    val dh = graphHeight * 2
+    val dh    = graphHeight * 2
     val array = GaussianArray(graphWidth, dh + 2, kernelRadius = radius.value)
     for (value <- values.value) {
       val nx = math.round((graphWidth * (value._1.toDouble - minX)) / (maxX - minX)).toInt
@@ -61,8 +74,8 @@ case class HeatMap[T: Numeric](parent: FramePanel, values: Varying[Seq[(T, T)]],
     }
   }
 
-  override def handleKeypress(keypress: Int): Unit = { }
+  override def handleKeypress(keypress: Int): Unit = {}
 
   override def focusable: Boolean = false
-  override def innerHeight: Int = parent.innerHeight - 3
+  override def innerHeight: Int   = parent.innerHeight - 3
 }

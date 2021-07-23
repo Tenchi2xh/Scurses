@@ -2,7 +2,7 @@ package net.team2xh.scurses
 
 object Keys {
 
-  val PUA = 0xE000 // Unicode private use area, safe for our own codes
+  val PUA = 0xe000 // Unicode private use area, safe for our own codes
 
   // Resize signal
   val RESIZE = PUA + 1000
@@ -24,19 +24,19 @@ object Keys {
   val SHIFT_TAB = PUA + 4
 
   def repr(key: Int): String = key match {
-    case RESIZE    => "RESIZE"
-    case CTRL_SPACE=> "CTRL+SPACE"
-    case CTRL_C    => "CTRL+C"
-    case TAB       => "⇥ "
-    case ENTER     => "↵ "
-    case ESC       => "ESC"
-    case SPACE     => "SPACE"
-    case BACKSPACE => "⇤ "
-    case UP        => "↑"
-    case DOWN      => "↓"
-    case LEFT      => "←"
-    case RIGHT     => "→"
-    case SHIFT_TAB => "⇧ +⇥ "
-    case _ => key.toChar.toString
+    case RESIZE     => "RESIZE"
+    case CTRL_SPACE => "CTRL+SPACE"
+    case CTRL_C     => "CTRL+C"
+    case TAB        => "⇥ "
+    case ENTER      => "↵ "
+    case ESC        => "ESC"
+    case SPACE      => "SPACE"
+    case BACKSPACE  => "⇤ "
+    case UP         => "↑"
+    case DOWN       => "↓"
+    case LEFT       => "←"
+    case RIGHT      => "→"
+    case SHIFT_TAB  => "⇧ +⇥ "
+    case _          => key.toChar.toString
   }
 }
