@@ -7,9 +7,9 @@ import net.team2xh.scurses.{Keys, Scurses}
 
 import scala.language.implicitConversions
 
-case class Frame(title: Option[String] = None,
-                 var debug: Varying[Boolean] = false,
-                 var theme: Varying[ColorScheme] = Themes.default
+final case class Frame(title: Option[String] = None,
+                       debug: Varying[Boolean] = false,
+                       theme: Varying[ColorScheme] = Themes.default
 )(implicit screen: Scurses)
     extends Component(None) {
 

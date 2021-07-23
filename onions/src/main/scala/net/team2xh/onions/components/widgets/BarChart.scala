@@ -21,14 +21,14 @@ import scala.Numeric.Implicits._
   * @param showValues Enables the display of the axis values
   * @param screen     Implicit Scurses screen
   */
-case class BarChart[T: Numeric](parent: FramePanel,
-                                values: Varying[Seq[T]],
-                                labels: Seq[String] = Seq(),
-                                min: Option[Int] = None,
-                                max: Option[Int] = None,
-                                palette: Seq[Int] = Palettes.default,
-                                showLabels: Boolean = true,
-                                showValues: Boolean = true
+final case class BarChart[T: Numeric](parent: FramePanel,
+                                      values: Varying[Seq[T]],
+                                      labels: Seq[String] = Seq(),
+                                      min: Option[Int] = None,
+                                      max: Option[Int] = None,
+                                      palette: Seq[Int] = Palettes.default,
+                                      showLabels: Boolean = true,
+                                      showValues: Boolean = true
 )(implicit screen: Scurses)
     extends Widget(parent, values) {
 

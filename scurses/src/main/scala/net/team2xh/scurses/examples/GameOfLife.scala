@@ -5,9 +5,9 @@ import net.team2xh.scurses.Scurses
 import java.util.{Timer, TimerTask}
 import scala.util.Random
 
-case class GameOfLife(width: Int, height: Int, wrapAround: Boolean = false) {
+final case class GameOfLife(width: Int, height: Int, wrapAround: Boolean = false) {
 
-  var cells = for (y <- 0 until height) yield for (x <- 0 until width) yield 0
+  var cells = for (_ <- 0 until height) yield for (_ <- 0 until width) yield 0
 
   def field = cells
 

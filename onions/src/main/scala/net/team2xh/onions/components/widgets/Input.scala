@@ -6,7 +6,7 @@ import net.team2xh.onions.components.{FramePanel, Widget}
 import net.team2xh.onions.utils.{Drawing, Varying}
 import net.team2xh.scurses.{Keys, Scurses}
 
-case class Input(parent: FramePanel, var defaultText: String = "Input")(implicit screen: Scurses)
+final case class Input(parent: FramePanel, defaultText: String = "Input")(implicit screen: Scurses)
     extends Widget(parent) {
 
   var text: Varying[String] = ""

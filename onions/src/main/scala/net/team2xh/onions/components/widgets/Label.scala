@@ -5,10 +5,10 @@ import net.team2xh.onions.components.{FramePanel, Widget}
 import net.team2xh.onions.utils.{TextWrap, Varying}
 import net.team2xh.scurses.{Keys, Scurses}
 
-case class Label(parent: FramePanel,
-                 text: Varying[String],
-                 alignment: Varying[Int] = TextWrap.ALIGN_LEFT,
-                 var action: () => Unit = () => {}
+final case class Label(parent: FramePanel,
+                       text: Varying[String],
+                       alignment: Varying[Int] = TextWrap.ALIGN_LEFT,
+                       action: () => Unit = () => {}
 )(implicit screen: Scurses)
     extends Widget(parent, text, alignment) {
 

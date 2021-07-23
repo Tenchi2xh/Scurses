@@ -9,14 +9,14 @@ import net.team2xh.scurses.Scurses
 import java.text.DecimalFormat
 import scala.Numeric.Implicits._
 
-case class Histogram[T: Numeric](parent: FramePanel,
-                                 initialValues: Seq[T] = Seq[Double](),
-                                 palette: Seq[Int] = Palettes.rainbow,
-                                 min: Option[Int] = None,
-                                 max: Option[Int] = None,
-                                 labelY: String = "",
-                                 showLabels: Boolean = true,
-                                 showValues: Boolean = true
+final case class Histogram[T: Numeric](parent: FramePanel,
+                                       initialValues: Seq[T] = Seq[Double](),
+                                       palette: Seq[Int] = Palettes.rainbow,
+                                       min: Option[Int] = None,
+                                       max: Option[Int] = None,
+                                       labelY: String = "",
+                                       showLabels: Boolean = true,
+                                       showValues: Boolean = true
 )(implicit screen: Scurses)
     extends Widget(parent) {
 

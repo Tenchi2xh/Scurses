@@ -14,7 +14,7 @@ object Radio {
   }
 }
 
-private[widgets] case class Radio(parent: FramePanel, text: String, id: Int, choice: Varying[Int])(implicit
+private[widgets] final case class Radio(parent: FramePanel, text: String, id: Int, choice: Varying[Int])(implicit
     screen: Scurses
 ) extends Widget(parent) {
 
