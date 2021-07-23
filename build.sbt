@@ -14,14 +14,13 @@ lazy val commonSettings: Seq[Setting[_]]  = Seq(
   developers := List(
     Developer(id = "tenchi", name = "Hamza Haiken", email = "tenchi@team2xh.net", url = url("http://tenchi.me"))
   ),
-  licenses := Seq("MIT" -> url("https://github.com/Tenchi2xh/Scurses/blob/master/LICENSE")),
-  useGpg := true
+  licenses := Seq("MIT" -> url("https://github.com/Tenchi2xh/Scurses/blob/master/LICENSE"))
 )
 
 lazy val root = (project in file("."))
   .settings(commonSettings: _*)
   .aggregate(scurses, onions)
-  .settings(skip in publish := true)
+  .settings(publish / skip := true)
 
 lazy val scurses = (project in file("scurses"))
   .settings(commonSettings: _*)
@@ -29,7 +28,7 @@ lazy val scurses = (project in file("scurses"))
     name := "scurses",
     version := "1.0.1",
     libraryDependencies += "com.lihaoyi" %% "fastparse" % "2.1.3",
-    mainClass in (Compile, run) := Some("net.team2xh.scurses.examples.GameOfLife")
+    Compile / run / mainClass := Some("net.team2xh.scurses.examples.GameOfLife")
   )
 
 lazy val onions = (project in file("onions"))
@@ -38,5 +37,5 @@ lazy val onions = (project in file("onions"))
   .settings(
     name := "onions",
     version := "1.0.1",
-    mainClass in (Compile, run) := Some("net.team2xh.onions.examples.ExampleUI")
+    Compile / run / mainClass := Some("net.team2xh.onions.examples.ExampleUI")
   )
