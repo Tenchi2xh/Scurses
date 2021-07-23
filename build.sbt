@@ -1,3 +1,4 @@
+import com.jsuereth.sbtpgp.PgpKeys.publishSigned
 import sbt.Keys._
 import sbt._
 import xerial.sbt.Sonatype._
@@ -6,7 +7,7 @@ ThisBuild / scalaVersion := "2.13.0"
 ThisBuild / scalacOptions ++= Seq("-feature", "-unchecked")
 ThisBuild / organization := "net.team2xh"
 publishTo := sonatypePublishTo.value
-ThisBuild / publishMavenStyle := true
+publishMavenStyle := true
 ThisBuild / sonatypeProfileName := "net.team2xh"
 ThisBuild / sonatypeProjectHosting := Some(GitHubHosting(user="Tenchi2xh", repository="Scurses", email="tenchi@team2xh.net"))
 ThisBuild / developers := List(
@@ -16,7 +17,11 @@ ThisBuild / licenses := Seq("MIT" -> url("https://github.com/Tenchi2xh/Scurses/b
 
 lazy val root = (project in file("."))
   .aggregate(scurses, onions)
-  .settings(publish / skip := true)
+  .settings(
+    publish / skip := true,
+    publishLocal / skip := true,
+    publishSigned / skip := true
+  )
 
 lazy val scurses = (project in file("scurses"))
   .settings(
