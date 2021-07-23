@@ -1,8 +1,8 @@
 package net.team2xh.onions
 
-import java.awt.Color
-
 import net.team2xh.scurses.Colors
+
+import java.awt.Color
 
 object Palettes {
 
@@ -14,13 +14,11 @@ object Palettes {
     palette(i)
   }
 
-  def mapToRGB(value: Double, max: Double,
-               inverted: Boolean = false,
-               quadratic: Boolean = false): Int = {
+  def mapToRGB(value: Double, max: Double, inverted: Boolean = false, quadratic: Boolean = false): Int = {
 
     val normalized = if (!inverted) 1 - value / max else value / max
-    val squared = if (quadratic) normalized * normalized else normalized
-    val color = Color.getHSBColor(squared.toFloat * 0.6666666f, 0.75f, 1.0f)
+    val squared    = if (quadratic) normalized * normalized else normalized
+    val color      = Color.getHSBColor(squared.toFloat * 0.6666666f, 0.75f, 1.0f)
     Colors.fromRGBInt(color.getRGB)
   }
 

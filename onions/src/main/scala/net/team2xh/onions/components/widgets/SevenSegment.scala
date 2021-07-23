@@ -5,14 +5,15 @@ import net.team2xh.onions.components.widgets.SevenSegment.{empty, symbols}
 import net.team2xh.onions.utils.Varying
 import net.team2xh.scurses.{Colors, Scurses}
 
-case class SevenSegment(parent: FramePanel, text: Varying[String])
-                       (implicit screen: Scurses) extends FontMapper(parent, empty, symbols, text) {
+case class SevenSegment(parent: FramePanel, text: Varying[String])(implicit screen: Scurses)
+    extends FontMapper(parent, empty, symbols, text) {
 
   color := Colors.BRIGHT_GREEN
 }
 
 object SevenSegment {
   var empty = Seq("", "", "")
+  // format: off
   val symbols = Map(
     'a' -> Seq(
       " _  ",
@@ -175,4 +176,5 @@ object SevenSegment {
       " -  ",
       "    ")
   )
+  // format: on
 }

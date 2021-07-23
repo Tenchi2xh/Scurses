@@ -5,15 +5,15 @@ import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.onions.utils.Varying
 import net.team2xh.scurses.Scurses
 
-abstract class Widget(parent: FramePanel, values: Varying[_] *)
-                     (implicit screen: Scurses) extends Component(Some(parent)) {
+abstract class Widget(parent: FramePanel, values: Varying[_]*)(implicit screen: Scurses)
+    extends Component(Some(parent)) {
 
   parent.addWidget(this)
 
   for (value <- values)
-    value.subscribe(() => {
+    value.subscribe { () =>
       needsRedraw = true
-    })
+    }
 
   def focusable: Boolean
 

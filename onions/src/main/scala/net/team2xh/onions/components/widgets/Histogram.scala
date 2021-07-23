@@ -1,21 +1,24 @@
 package net.team2xh.onions.components.widgets
 
-import java.text.DecimalFormat
-
-import net.team2xh.onions.{Symbols, Palettes}
 import net.team2xh.onions.Themes.ColorScheme
 import net.team2xh.onions.components.{FramePanel, Widget}
 import net.team2xh.onions.utils.{Drawing, Math}
+import net.team2xh.onions.{Palettes, Symbols}
 import net.team2xh.scurses.Scurses
 
+import java.text.DecimalFormat
 import scala.Numeric.Implicits._
 
-case class Histogram[T: Numeric](parent: FramePanel, initialValues: Seq[T] = Seq[Double](),
+case class Histogram[T: Numeric](parent: FramePanel,
+                                 initialValues: Seq[T] = Seq[Double](),
                                  palette: Seq[Int] = Palettes.rainbow,
-                                 min: Option[Int] = None, max: Option[Int] = None,
-                                 labelY: String = "",  showLabels: Boolean = true,
-                                 showValues: Boolean = true)
-                                (implicit screen: Scurses) extends Widget(parent) {
+                                 min: Option[Int] = None,
+                                 max: Option[Int] = None,
+                                 labelY: String = "",
+                                 showLabels: Boolean = true,
+                                 showValues: Boolean = true
+)(implicit screen: Scurses)
+    extends Widget(parent) {
 
   val gridSize = 4
 
@@ -23,10 +26,10 @@ case class Histogram[T: Numeric](parent: FramePanel, initialValues: Seq[T] = Seq
 
   override def innerHeight: Int = parent.innerHeight - 3
 
-  val limit = 400
-  var values = initialValues
+  val limit   = 400
+  var values  = initialValues
   var counter = 0
-  val df = new DecimalFormat("#.#")
+  val df      = new DecimalFormat("#.#")
 
   def push(value: T): Unit = {
     values +:= value
@@ -41,22 +44,39 @@ case class Histogram[T: Numeric](parent: FramePanel, initialValues: Seq[T] = Seq
     val valueMax = max.getOrElse(if (values.isEmpty) 10 else Math.aBitMoreThanMax(values) + 1)
 
     val valuesLength = valueMax.toString.length max valueMin.toString.length
-    val x0 = valuesLength + (if (showLabels) 2 else 0)
-    val graphWidth = (if (showLabels) innerWidth - 3 else innerWidth - 1) - valuesLength
-    val graphHeight = innerHeight - 1
+    val x0           = valuesLength + (if (showLabels) 2 else 0)
+    val graphWidth   = (if (showLabels) innerWidth - 3 else innerWidth - 1) - valuesLength
+    val graphHeight  = innerHeight - 1
 
     // Draw grid
-    Drawing.drawGrid(x0, 0, graphWidth, graphHeight, gridSize, theme.accent1, theme.background,
-      showVertical = true, showHorizontal = true, gridOffsetX = graphWidth % 4 + (gridSize - counter))
+    Drawing.drawGrid(x0,
+                     0,
+                     graphWidth,
+                     graphHeight,
+                     gridSize,
+                     theme.accent1,
+                     theme.background,
+                     showVertical = true,
+                     showHorizontal = true,
+                     gridOffsetX = graphWidth % 4 + (gridSize - counter)
+    )
 
     // Draw axis values
-    Drawing.drawAxisValues(x0 - valuesLength, 0, graphHeight, gridSize,
-      valueMin, valueMax, theme.accent3, theme.background, horizontal = false)
+    Drawing.drawAxisValues(x0 - valuesLength,
+                           0,
+                           graphHeight,
+                           gridSize,
+                           valueMin,
+                           valueMax,
+                           theme.accent3,
+                           theme.background,
+                           horizontal = false
+    )
 
     // Draw bars
     val charHeight = (valueMax - valueMin).toDouble / graphHeight
     for (i <- 0 until ((graphWidth - 1) min values.length)) {
-      val v = values(i)
+      val v  = values(i)
       val ny = graphHeight - math.round((graphHeight * (v.toDouble - valueMin)) / (valueMax - valueMin)).toInt
 
       val color = Palettes.mapToRGB((v.toDouble - valueMin).abs, (valueMax - valueMin).abs)
