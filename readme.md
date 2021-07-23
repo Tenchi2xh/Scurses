@@ -1,5 +1,6 @@
 # Scurses / Onions
 
+[![Build Status](https://img.shields.io/github/workflow/status/Tenchi2xh/Scurses/Continuous%20Integration.svg)](https://github.com/Tenchi2xh/Scurses/actions)
 <img alt="Maven Central" src="https://img.shields.io/maven-central/v/net.team2xh/scurses_2.12.svg?label=scurses%40maven-central"> <img alt="Maven Central" src="https://img.shields.io/maven-central/v/net.team2xh/onions_2.12.svg?label=onions%40maven-central">
 
 [Scurses](#scurses) and [Onions](#onions) are frameworks for drawing nice things in your terminal using simple, elegant Scala. [Scurses](#scurses) provides a low-level drawing and event handling API while [Onions](#onions) provides a high-level UI API with useful widgets.

@@ -15,6 +15,11 @@ ThisBuild / developers := List(
 )
 ThisBuild / licenses := Seq("MIT" -> url("https://github.com/Tenchi2xh/Scurses/blob/master/LICENSE"))
 
+// This is causing problems with env variables being passed in, see
+// https://github.com/sbt/sbt/issues/6468
+ThisBuild / githubWorkflowUseSbtThinClient := false
+ThisBuild / githubWorkflowPublishTargetBranches := Seq()
+
 lazy val root = (project in file("."))
   .aggregate(scurses, onions)
   .settings(
