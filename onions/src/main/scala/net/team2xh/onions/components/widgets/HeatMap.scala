@@ -9,12 +9,12 @@ import net.team2xh.scurses.Scurses
 
 import scala.Numeric.Implicits._
 
-case class HeatMap[T: Numeric](parent: FramePanel,
-                               values: Varying[Seq[(T, T)]],
-                               labelX: String = "",
-                               labelY: String = "",
-                               radius: Varying[Int] = 5,
-                               showLabels: Boolean = false
+final case class HeatMap[T: Numeric](parent: FramePanel,
+                                     values: Varying[Seq[(T, T)]],
+                                     labelX: String = "",
+                                     labelY: String = "",
+                                     radius: Varying[Int] = 5,
+                                     showLabels: Boolean = false
 )(implicit screen: Scurses)
     extends Widget(parent, values, radius) {
 

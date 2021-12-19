@@ -45,28 +45,28 @@ object RichText {
     }
   }
 
-  case class RichText(instructions: Instruction*)
+  final case class RichText(instructions: Instruction*)
 
   sealed trait Instruction
-  case class Text(text: String)                   extends Instruction
-  case class StartAttribute(attribute: Attribute) extends Instruction
-  case class StopAttribute(attribute: Attribute)  extends Instruction
-  case object ResetAttributes                     extends Instruction
+  final case class Text(text: String)                   extends Instruction
+  final case class StartAttribute(attribute: Attribute) extends Instruction
+  final case class StopAttribute(attribute: Attribute)  extends Instruction
+  case object ResetAttributes                           extends Instruction
 
   sealed trait Attribute
-  case object Bold                    extends Attribute
-  case object Underline               extends Attribute
-  case object Blink                   extends Attribute
-  case object Reverse                 extends Attribute
-  case object Foreground              extends Attribute
-  case object Background              extends Attribute
-  case class Foreground(color: Color) extends Attribute
-  case class Background(color: Color) extends Attribute
+  case object Bold                          extends Attribute
+  case object Underline                     extends Attribute
+  case object Blink                         extends Attribute
+  case object Reverse                       extends Attribute
+  case object Foreground                    extends Attribute
+  case object Background                    extends Attribute
+  final case class Foreground(color: Color) extends Attribute
+  final case class Background(color: Color) extends Attribute
 
   sealed trait Color
-  case class NamedColor(name: String) extends Color
-  case class IndexedColor(code: Int)  extends Color
-  case class HexColor(hex: String)    extends Color
+  final case class NamedColor(name: String) extends Color
+  final case class IndexedColor(code: Int)  extends Color
+  final case class HexColor(hex: String)    extends Color
 
   private def letter[_: P]   = P(CharIn("a-z"))
   private def digit[_: P]    = P(CharIn("0-9"))

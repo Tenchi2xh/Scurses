@@ -5,7 +5,7 @@ import net.team2xh.onions.components.{FramePanel, Widget}
 import net.team2xh.onions.utils.{Drawing, Varying}
 import net.team2xh.scurses.{Keys, Scurses}
 
-case class CheckBox(parent: FramePanel, text: String, checked: Varying[Boolean] = false)(implicit screen: Scurses)
+final case class CheckBox(parent: FramePanel, text: String, checked: Varying[Boolean] = false)(implicit screen: Scurses)
     extends Widget(parent, checked) {
 
   def focusable = true

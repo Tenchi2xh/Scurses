@@ -6,7 +6,7 @@ import net.team2xh.onions.utils.{TextWrap, Varying}
 import net.team2xh.scurses.RichText.RichText
 import net.team2xh.scurses.Scurses
 
-case class RichLabel(parent: FramePanel, text: Varying[RichText])(implicit screen: Scurses)
+final case class RichLabel(parent: FramePanel, text: Varying[RichText])(implicit screen: Scurses)
     extends Widget(parent, text) {
 
   var lines = Seq[RichText]()

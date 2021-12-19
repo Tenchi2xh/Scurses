@@ -30,7 +30,7 @@ object FramePanel {
   var idCounter = 0
 }
 
-case class FramePanel(parent: Component)(implicit screen: Scurses) extends Component(Some(parent)) {
+final case class FramePanel(parent: Component)(implicit screen: Scurses) extends Component(Some(parent)) {
 
   var width  = 0
   var height = 0

@@ -9,12 +9,12 @@ import net.team2xh.scurses.Scurses
 import scala.Numeric.Implicits._
 import scala.collection.mutable
 
-case class ScatterPlot[T: Numeric](parent: FramePanel,
-                                   values: Varying[Seq[(T, T)]],
-                                   labelX: String = "",
-                                   labelY: String = "",
-                                   color: Int = 81,
-                                   showLabels: Boolean = true
+final case class ScatterPlot[T: Numeric](parent: FramePanel,
+                                         values: Varying[Seq[(T, T)]],
+                                         labelX: String = "",
+                                         labelY: String = "",
+                                         color: Int = 81,
+                                         showLabels: Boolean = true
 )(implicit screen: Scurses)
     extends Widget(parent, values) {
 

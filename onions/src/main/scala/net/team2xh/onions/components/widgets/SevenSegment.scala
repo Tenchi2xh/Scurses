@@ -5,7 +5,7 @@ import net.team2xh.onions.components.widgets.SevenSegment.{empty, symbols}
 import net.team2xh.onions.utils.Varying
 import net.team2xh.scurses.{Colors, Scurses}
 
-case class SevenSegment(parent: FramePanel, text: Varying[String])(implicit screen: Scurses)
+final case class SevenSegment(parent: FramePanel, text: Varying[String])(implicit screen: Scurses)
     extends FontMapper(parent, empty, symbols, text) {
 
   color := Colors.BRIGHT_GREEN

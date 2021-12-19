@@ -6,8 +6,8 @@ import net.team2xh.onions.components.{FramePanel, Widget}
 import net.team2xh.onions.utils.Varying
 import net.team2xh.scurses.{Keys, Scurses}
 
-case class Slider(parent: FramePanel, minValue: Int, maxValue: Int)(var currentValue: Varying[Int] = minValue)(implicit
-    screen: Scurses
+final case class Slider(parent: FramePanel, minValue: Int, maxValue: Int)(val currentValue: Varying[Int] = minValue)(
+    implicit screen: Scurses
 ) extends Widget(parent, minValue) {
 
   override def redraw(focus: Boolean, theme: ColorScheme): Unit = {

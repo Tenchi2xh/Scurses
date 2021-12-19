@@ -9,7 +9,7 @@ abstract class FontMapper(parent: FramePanel,
                           empty: Seq[String],
                           symbols: Map[Char, Seq[String]],
                           text: Varying[String],
-                          var color: Varying[Int] = Colors.BRIGHT_WHITE
+                          val color: Varying[Int] = Colors.BRIGHT_WHITE
 )(implicit screen: Scurses)
     extends Widget(parent, text, color) {
 
