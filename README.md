@@ -1,8 +1,8 @@
 # Scurses / Onions
 
 [![Build Status](https://img.shields.io/github/workflow/status/Tenchi2xh/Scurses/Continuous%20Integration.svg)](https://github.com/Tenchi2xh/Scurses/actions)
-[![Maven Central Scurses](https://img.shields.io/maven-central/v/net.team2xh/scurses_2.12.svg?label=scurses%40maven-central)](https://maven-badges.herokuapp.com/maven-central/net.team2xh/scurses_2.12)
-[![Maven Central Onions](https://img.shields.io/maven-central/v/net.team2xh/onions_2.12.svg?label=onions%40maven-central)](https://maven-badges.herokuapp.com/maven-central/net.team2xh/onions_2.12)
+[![Maven Central Scurses][scurses-maven-img]][scurses-maven]
+[![Maven Central Onions][onions-maven-img]][onions-maven]
 [![MIT License](https://img.shields.io/badge/license-MIT-green.svg)](https://opensource.org/licenses/MIT)
 
 [Scurses](#scurses) and [Onions](#onions) are frameworks for drawing nice things in your terminal using simple, elegant Scala. [Scurses](#scurses) provides a low-level drawing and event handling API while [Onions](#onions) provides a high-level UI API with useful widgets.
@@ -27,7 +27,7 @@
 
 **High-level Scurses framework for easy terminal UI**
 
-<img alt="Maven Central" src="https://img.shields.io/maven-central/v/net.team2xh/onions_2.12.svg?label=onions%40maven-central">
+[![Maven Central Onions][onions-maven-img]][onions-maven]
 
 Dependency:
 
@@ -110,7 +110,7 @@ Keys | Action
 
 **Low-level terminal drawing API for Scala**
 
-<img alt="Maven Central" src="https://img.shields.io/maven-central/v/net.team2xh/scurses_2.12.svg?label=scurses%40maven-central">
+[![Maven Central Scurses][scurses-maven-img]][scurses-maven]
 
 Dependency:
 
@@ -163,3 +163,9 @@ Scurses { screen =>
   screen.keypress()
 }
 ```
+
+[scurses-maven-img]: https://img.shields.io/maven-central/v/net.team2xh/scurses_2.12.svg?label=scurses%40maven-central
+[onions-maven-img]: https://img.shields.io/maven-central/v/net.team2xh/onions_2.12.svg?label=onions%40maven-central
+
+[scurses-maven]: https://maven-badges.herokuapp.com/maven-central/net.team2xh/scurses_2.12
+[onions-maven]: https://maven-badges.herokuapp.com/maven-central/net.team2xh/onions_2.12
